@@ -30,7 +30,11 @@ const commands = [
 ---
 
 <BaseLayout title="devmachine — your VPS, as workspaces" current="home">
-  <Hero eyebrow="Your server, as workspaces" headline="Code on your own server." />
+  <Hero
+    eyebrow="Your server, as workspaces"
+    headline="Code from anywhere."
+    subline="Your own server. One workspace per project. Ready in a few commands."
+  />
 
   <section id="get-started" class="max-w-6xl mx-auto px-4 sm:px-6 pt-4 pb-20">
     <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-6">Get started</h2>
@@ -56,40 +60,44 @@ const commands = [
 
   <section id="agent-setup" class="max-w-6xl mx-auto px-4 sm:px-6 pb-20">
     <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">01 / Use your agent</p>
-    <div class="grid grid-cols-1 gap-6 min-[900px]:grid-cols-2 min-[900px]:gap-12 mb-8">
-      <h2 class="text-3xl sm:text-4xl font-light tracking-tight">Let your coding agent set it up.</h2>
-      <p class="text-[var(--muted)] max-w-2xl">
-        It works in Claude Code, Codex, Cursor and others: it reads the docs, asks
-        you what it needs, and hands you back only the one step only you should
-        take — <code class="font-mono text-sm">devmachine setup</code>, so you're
-        the one who confirms the server's host key.
-      </p>
-    </div>
+    <div class="grid grid-cols-1 gap-8 min-[900px]:grid-cols-2 min-[900px]:gap-12">
+      <div>
+        <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-4">Let your coding agent set it up.</h2>
+        <p class="text-[var(--muted)] max-w-md">
+          Paste one sentence into Claude Code, Codex or Cursor. Your agent reads
+          the guide, asks you what it needs, and does the rest. You run one
+          command yourself — <code class="font-mono text-sm">devmachine setup</code>,
+          so only you confirm it is your server.
+        </p>
+      </div>
 
-    <div class="border hairline bg-[var(--card)] p-4 sm:p-5 max-w-xl font-mono text-sm">
-      <p class="text-xs uppercase tracking-widest text-[var(--muted)] mb-2">Paste into your agent</p>
-      <div class="flex flex-wrap items-center justify-between gap-4">
-        <code id="agent-prompt" class="min-w-0 break-all">Set up devmachine for me: read https://adevmachine.github.io/docs/agent-setup.md and follow it.</code>
-        <button
-          id="agent-prompt-copy"
-          type="button"
-          class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
-        >
-          Copy
-        </button>
+      <div>
+        <div class="border hairline bg-[var(--card)] p-4 sm:p-5 font-mono text-sm">
+          <p class="text-xs uppercase tracking-widest text-[var(--muted)] mb-2">Paste into your agent</p>
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <code id="agent-prompt" class="min-w-0 break-all">Set up devmachine for me: read https://adevmachine.github.io/docs/agent-setup.md and follow it.</code>
+            <button
+              id="agent-prompt-copy"
+              type="button"
+              class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
+            >
+              Copy
+            </button>
+          </div>
+        </div>
+        <p class="text-sm mt-3">
+          <a href={`${base}agent-setup/`} class="underline underline-offset-2 text-[var(--muted)] hover:text-[var(--ink)]">
+            Read what it will do
+          </a>
+        </p>
+        <p class="text-xs font-mono uppercase tracking-wide text-[var(--muted)] mt-6">
+          For LLMs:
+          <a href={`${base}llms.txt`} class="underline underline-offset-2 hover:text-[var(--ink)]">llms.txt</a>
+          ·
+          <a href={`${base}llms-full.txt`} class="underline underline-offset-2 hover:text-[var(--ink)]">llms-full.txt</a>
+        </p>
       </div>
     </div>
-    <p class="text-sm mt-3">
-      <a href={`${base}agent-setup/`} class="underline underline-offset-2 text-[var(--muted)] hover:text-[var(--ink)]">
-        Read what it will do
-      </a>
-    </p>
-    <p class="text-xs font-mono uppercase tracking-wide text-[var(--muted)] mt-6">
-      For LLMs:
-      <a href={`${base}llms.txt`} class="underline underline-offset-2 hover:text-[var(--ink)]">llms.txt</a>
-      ·
-      <a href={`${base}llms-full.txt`} class="underline underline-offset-2 hover:text-[var(--ink)]">llms-full.txt</a>
-    </p>
   </section>
 
   <section id="how-it-works" class="dark-section">
