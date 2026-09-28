@@ -24,7 +24,7 @@ const GITHUB_BLOB = 'https://github.com/adevmachine/cli/blob/main/docs'
 const SECTION_BY_PREFIX = [
   ['concepts/', 'Concepts'],
   ['how-it-works/', 'How it works'],
-  ['reference/', 'Reference'],
+  ['reference/', 'CLI Reference'],
 ]
 
 function sectionFor(relPath) {

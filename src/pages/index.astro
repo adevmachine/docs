@@ -4,26 +4,26 @@ const base = import.meta.env.BASE_URL
 
 const howItWorks = [
   {
-    title: 'Take over a machine',
-    body: 'devmachine setup reads the host key, trusts it on first use, installs its own key, proves it, then turns password login off.',
+    title: 'Connect your server',
+    body: 'Run devmachine setup and answer a few questions. It connects to your server and locks it down, so only you can get in.',
     href: `${base}how-it-works/trust-bootstrap/`,
   },
   {
     title: 'A workspace per project',
-    body: 'A workspace is one Linux account on one machine, with git, the GitHub CLI, Node and zsh already in it. Name it in a command and work in it.',
+    body: 'Each project gets its own space on the server, with git, GitHub and Node ready. Open it by name.',
     href: `${base}concepts/machines-and-workspaces/`,
   },
   {
-    title: 'Tools as packages',
-    body: 'A coding agent, Docker, a GitHub login: add one with a command, then devmachine sync applies it to the workspace.',
+    title: 'Add tools with one command',
+    body: 'Claude Code, Docker, your GitHub login. Add one, run devmachine sync, and it is installed.',
     href: `${base}concepts/packages/`,
   },
 ]
 
 const commands = [
-  { cmd: 'devmachine setup', desc: 'get in, install a key, prove it, harden, install Ansible' },
-  { cmd: 'devmachine workspaces new alice && devmachine sync', desc: 'add a Linux account, and build it on the machine' },
-  { cmd: 'devmachine ssh alice', desc: 'work in it' },
+  { cmd: 'devmachine setup', desc: 'connect your server and make it safe' },
+  { cmd: 'devmachine workspaces new alice && devmachine sync', desc: 'create your first workspace' },
+  { cmd: 'devmachine ssh alice', desc: 'open it and start working' },
 ]
 ---
 
@@ -111,7 +111,7 @@ const commands = [
 
   <section class="max-w-6xl mx-auto px-4 sm:px-6 pt-16 pb-10">
     <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">03 / First commands</p>
-    <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-10">Take over a machine.</h2>
+    <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-10">Three commands.</h2>
     <div class="grid gap-4 max-w-3xl">
       {
         commands.map((c) => (
