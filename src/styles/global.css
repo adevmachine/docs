@@ -311,14 +311,14 @@ body {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 1040px;
+  max-width: 1280px;
   margin: 0 auto;
 }
 
 .hero-stage {
   position: relative;
   width: 100%;
-  aspect-ratio: 2.1 / 1;
+  height: 740px;
 }
 
 .term-window {
@@ -330,39 +330,38 @@ body {
 
 .term-window.term-alice {
   z-index: 2;
-  top: 4%;
-  left: 3%;
-  width: 38%;
+  top: 16px;
+  left: 1.5%;
+  width: 46%;
   opacity: 0.88;
 }
 
 .term-window.term-bob {
   z-index: 2;
-  top: 4%;
-  right: 3%;
-  width: 38%;
-  opacity: 0.72;
+  top: 16px;
+  right: 1.5%;
+  width: 46%;
+  opacity: 0.75;
 }
 
 .term-window.term-you {
   z-index: 4;
-  bottom: 4%;
-  left: 6%;
-  width: 42%;
+  bottom: 16px;
+  left: 1.5%;
+  width: 46%;
   opacity: 1;
 }
 
 .term-window.term-agent {
-  z-index: 1;
-  bottom: 4%;
-  right: 4%;
-  width: 36%;
-  opacity: 0.58;
+  z-index: 3;
+  bottom: 16px;
+  right: 1.5%;
+  width: 46%;
+  opacity: 0.85;
 }
 
 @media (max-width: 900px) {
   .hero-stage {
-    aspect-ratio: auto;
     height: 22rem;
   }
 
@@ -391,6 +390,10 @@ body {
     bottom: auto;
     left: 12%;
     width: min(24rem, 88vw);
+  }
+
+  .term-window .terminal-body {
+    height: 8.5rem;
   }
 }
 
@@ -447,7 +450,7 @@ body {
   padding: 1rem 1.1rem 1.25rem;
   font-size: 0.8rem;
   line-height: 1.7;
-  height: 9.5rem;
+  height: 18.5rem;
   overflow: hidden;
 }
 
@@ -498,6 +501,49 @@ body {
     font-size: 0.72rem;
     height: 13.5rem;
   }
+}
+
+.term-agent-welcome {
+  color: var(--terminal-muted, #7a7a7a);
+  border: 1px solid var(--terminal-border, #2a2a2a);
+  padding: 0.2rem 0.5rem;
+  margin-bottom: 0.4rem;
+  display: inline-block;
+}
+
+.term-agent-prompt {
+  color: var(--terminal-ink, #e7e7e2);
+}
+
+.term-agent-marker {
+  color: #5aa9e6;
+  margin-right: 0.1rem;
+}
+
+.term-agent-thinking {
+  color: var(--terminal-muted, #7a7a7a);
+}
+
+.term-agent-tool {
+  color: var(--terminal-muted, #7a7a7a);
+}
+
+.term-agent-diff-add {
+  color: #28c840;
+  white-space: pre;
+}
+
+.term-agent-diff-del {
+  color: #e5484d;
+  white-space: pre;
+}
+
+.term-agent-result {
+  color: #28c840;
+}
+
+.term-agent-reply {
+  color: var(--terminal-ink, #e7e7e2);
 }
 
 .tab-btn {

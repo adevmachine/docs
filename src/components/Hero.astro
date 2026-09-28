@@ -21,15 +21,6 @@ interface Win {
 
 const windows: Win[] = [
   {
-    id: 'agent',
-    title: 'agent@main',
-    typeMs: 46,
-    steps: [
-      { cmd: 'claude -p "fix the failing test"', out: ['Fixed: tests/login.test.ts passes.'] },
-      { cmd: 'claude', out: ['Ready. Ask it anything.'] },
-    ],
-  },
-  {
     id: 'bob',
     title: 'bob@main',
     typeMs: 34,
@@ -70,18 +61,19 @@ const windows: Win[] = [
 
   <div class="hero-terminal-wrap px-4 sm:px-6" id="hero-terminal">
     <div class="hero-stage">
+      <canvas class="hero-grid-bg" id="hero-grid-bg" aria-hidden="true"></canvas>
       <svg
         class="hero-link-svg"
         id="hero-link-svg"
-        viewBox="0 0 1040 495"
+        viewBox="0 0 1280 740"
         preserveAspectRatio="none"
         aria-hidden="true"
       >
         <g class="hero-link-lines" fill="none" stroke-width="1.5">
-          <path id="hero-link-you" class="hero-link-line" d="M 520 247.5 L 499.2 300"></path>
-          <path id="hero-link-alice" class="hero-link-line" d="M 520 247.5 L 426.4 195"></path>
-          <path id="hero-link-bob" class="hero-link-line" d="M 520 247.5 L 613.6 195"></path>
-          <path id="hero-link-agent" class="hero-link-line" d="M 520 247.5 L 624 300"></path>
+          <path id="hero-link-you" class="hero-link-line" d="M 640 370 L 588.8 430"></path>
+          <path id="hero-link-alice" class="hero-link-line" d="M 640 370 L 588.8 310"></path>
+          <path id="hero-link-bob" class="hero-link-line" d="M 640 370 L 691.2 310"></path>
+          <path id="hero-link-agent" class="hero-link-line" d="M 640 370 L 691.2 430"></path>
         </g>
         <circle id="hero-packet-you" class="hero-packet" r="3"></circle>
         <circle id="hero-packet-alice" class="hero-packet" r="3"></circle>
@@ -93,7 +85,7 @@ const windows: Win[] = [
             <stop offset="1" stop-color="#1e1b4b" />
           </linearGradient>
         </defs>
-        <g class="hero-hub" transform="translate(500, 227.5)">
+        <g class="hero-hub" transform="translate(620, 350)">
           <svg width="40" height="40" viewBox="0 0 32 32" aria-hidden="true">
             <rect x="3.2" y="3.2" width="25.6" height="25.6" rx="5.6" fill="url(#hero-hub-gradient)" />
             <path
@@ -132,6 +124,19 @@ const windows: Win[] = [
           </div>
         ))
       }
+      <div class="term-window term-agent" data-window="agent">
+        <div class="terminal">
+          <div class="terminal-titlebar">
+            <span class="terminal-dot" />
+            <span class="terminal-dot" />
+            <span class="terminal-dot" />
+            <span class="terminal-title font-mono">agent@main</span>
+          </div>
+          <div class="terminal-body font-mono" id="term-body-agent">
+            <div class="term-line term-agent-welcome">✻ agent@main · ~/app</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -344,7 +349,355 @@ const windows: Win[] = [
   })()
 </script>
 
+<script is:inline>
+  ;(() => {
+    const section = document.getElementById('hero')
+    const body = document.getElementById('term-body-agent')
+    if (!(section instanceof HTMLElement) || !(body instanceof HTMLElement)) return
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduceMotion) return
+
+    let visible = true
+    let paused = false
+    let generation = 0
+
+    const MAX_LINES = 9
+    const SPINNER_FRAMES = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
+
+    function sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms))
+    }
+
+    async function waitWhilePaused(gen) {
+      while ((paused || document.hidden) && gen === generation) {
+        await sleep(150)
+      }
+    }
+
+    function trimLines() {
+      while (body.children.length > MAX_LINES) {
+        body.removeChild(body.firstElementChild)
+      }
+    }
+
+    function appendLine(text, className) {
+      const line = document.createElement('div')
+      line.className = `term-line ${className}`
+      line.textContent = text
+      body.appendChild(line)
+      trimLines()
+      return line
+    }
+
+    async function typePrompt(gen, text) {
+      const line = document.createElement('div')
+      line.className = 'term-line term-agent-prompt'
+      const marker = document.createElement('span')
+      marker.className = 'term-agent-marker'
+      marker.textContent = '>'
+      const cmd = document.createElement('span')
+      cmd.className = 'term-agent-prompt-text'
+      line.appendChild(marker)
+      line.appendChild(document.createTextNode(' '))
+      line.appendChild(cmd)
+      const cursor = document.createElement('span')
+      cursor.className = 'term-cursor'
+      line.appendChild(cursor)
+      body.appendChild(line)
+      trimLines()
+
+      for (const ch of text) {
+        if (gen !== generation) return
+        await waitWhilePaused(gen)
+        if (gen !== generation) return
+        cmd.textContent += ch
+        await sleep(20 + Math.random() * 20)
+      }
+      cursor.remove()
+    }
+
+    async function showThinking(gen, duration) {
+      if (gen !== generation) return
+      await waitWhilePaused(gen)
+      if (gen !== generation) return
+      const line = appendLine(`${SPINNER_FRAMES[0]} Thinking…`, 'term-agent-thinking')
+      const start = Date.now()
+      let i = 0
+      while (Date.now() - start < duration) {
+        if (gen !== generation) return
+        await sleep(90)
+        i = (i + 1) % SPINNER_FRAMES.length
+        line.textContent = `${SPINNER_FRAMES[i]} Thinking…`
+      }
+      line.remove()
+    }
+
+    async function runAgentLoop(gen) {
+      while (gen === generation) {
+        body.innerHTML = ''
+        appendLine('✻ agent@main · ~/app', 'term-agent-welcome')
+        await sleep(400)
+        if (gen !== generation) return
+        await waitWhilePaused(gen)
+        await typePrompt(gen, 'add a health check endpoint')
+        await sleep(300)
+
+        await showThinking(gen, 700)
+        appendLine('● Read(src/server.ts)', 'term-agent-tool')
+        await sleep(500)
+
+        await showThinking(gen, 700)
+        appendLine('● Edit(src/server.ts)', 'term-agent-tool')
+        await sleep(250)
+        appendLine("+  app.get('/health', (_req, res) => res.send('ok'))", 'term-agent-diff-add')
+        await sleep(200)
+        appendLine('-  // TODO: add a health check', 'term-agent-diff-del')
+        await sleep(500)
+
+        await showThinking(gen, 700)
+        appendLine('● Bash(npm test)', 'term-agent-tool')
+        await sleep(500)
+        appendLine('✓ 12 passed', 'term-agent-result')
+        await sleep(400)
+
+        appendLine('Added GET /health and a test.', 'term-agent-reply')
+        const cursor = document.createElement('span')
+        cursor.className = 'term-cursor'
+        body.appendChild(cursor)
+        trimLines()
+        await sleep(2600 + Math.random() * 800)
+      }
+    }
+
+    function start() {
+      if (!visible || document.hidden) return
+      paused = false
+    }
+
+    function stop() {
+      paused = true
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        visible = entries[0]?.isIntersecting ?? true
+        if (visible) start()
+        else stop()
+      },
+      { threshold: 0 },
+    )
+    io.observe(section)
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stop()
+      else start()
+    })
+
+    generation = 1
+    runAgentLoop(1)
+  })()
+</script>
+
+<script is:inline>
+  ;(() => {
+    const stage = document.querySelector('.hero-stage')
+    const canvas = document.getElementById('hero-grid-bg')
+    const section = document.getElementById('hero')
+    if (!(stage instanceof HTMLElement) || !(canvas instanceof HTMLCanvasElement) || !(section instanceof HTMLElement)) return
+
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const desktopQuery = window.matchMedia('(min-width: 901px)')
+
+    let logicalWidth = 0
+    let logicalHeight = 0
+
+    function resize() {
+      const rect = stage.getBoundingClientRect()
+      logicalWidth = rect.width
+      logicalHeight = rect.height
+      const dpr = Math.min(window.devicePixelRatio || 1, 2)
+      canvas.width = Math.max(1, Math.round(logicalWidth * dpr))
+      canvas.height = Math.max(1, Math.round(logicalHeight * dpr))
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    }
+
+    function drawStatic() {
+      resize()
+      draw([])
+    }
+
+    function draw(pulses) {
+      const w = logicalWidth
+      const h = logicalHeight
+      if (!w || !h) return
+      ctx.clearRect(0, 0, w, h)
+
+      const cx = w / 2
+      const cy = h / 2
+
+      const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, 140)
+      glow.addColorStop(0, 'rgba(90, 169, 230, 0.14)')
+      glow.addColorStop(1, 'rgba(90, 169, 230, 0)')
+      ctx.fillStyle = glow
+      ctx.beginPath()
+      ctx.arc(cx, cy, 140, 0, Math.PI * 2)
+      ctx.fill()
+
+      const spokeCount = 16
+      const maxR = Math.hypot(w, h) / 2
+      const angles = []
+      for (let i = 0; i < spokeCount; i++) {
+        const angle = (i / spokeCount) * Math.PI * 2
+        angles.push(angle)
+        const x2 = cx + Math.cos(angle) * maxR
+        const y2 = cy + Math.sin(angle) * maxR
+        const grad = ctx.createLinearGradient(cx, cy, x2, y2)
+        grad.addColorStop(0, 'rgba(150, 150, 150, 0.22)')
+        grad.addColorStop(1, 'rgba(150, 150, 150, 0)')
+        ctx.strokeStyle = grad
+        ctx.lineWidth = 1
+        ctx.beginPath()
+        ctx.moveTo(cx, cy)
+        ctx.lineTo(x2, y2)
+        ctx.stroke()
+      }
+
+      const rings = 4
+      for (let r = 1; r <= rings; r++) {
+        const radius = maxR * 0.9 * (r / rings)
+        const alpha = 0.12 * (1 - r / (rings + 1))
+        ctx.strokeStyle = `rgba(150, 150, 150, ${alpha})`
+        ctx.lineWidth = 1
+        ctx.beginPath()
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2)
+        ctx.stroke()
+      }
+
+      for (const p of pulses) {
+        const r = p.startR * (1 - p.t)
+        const x = cx + Math.cos(p.angle) * r
+        const y = cy + Math.sin(p.angle) * r
+        ctx.save()
+        ctx.shadowColor = 'rgba(90, 169, 230, 0.9)'
+        ctx.shadowBlur = 8
+        ctx.fillStyle = 'rgba(90, 169, 230, 0.9)'
+        ctx.beginPath()
+        ctx.arc(x, y, 2.5, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.restore()
+      }
+
+      return angles
+    }
+
+    if (reduceMotion) {
+      drawStatic()
+      window.addEventListener('resize', drawStatic)
+      return
+    }
+
+    let running = false
+    let rafId = null
+    let lastTime = 0
+    let spawnTimer = 0
+    let pulses = []
+    const maxR = () => Math.hypot(logicalWidth, logicalHeight) / 2
+    const spokeCount = 16
+
+    function spawnPulse() {
+      const i = Math.floor(Math.random() * spokeCount)
+      const angle = (i / spokeCount) * Math.PI * 2
+      pulses.push({ angle, startR: maxR() * 0.92, t: 0, duration: 1600 + Math.random() * 800 })
+    }
+
+    function tick(time) {
+      if (!running) return
+      const dt = lastTime ? time - lastTime : 16
+      lastTime = time
+
+      spawnTimer -= dt
+      if (spawnTimer <= 0) {
+        spawnPulse()
+        spawnTimer = 900 + Math.random() * 700
+      }
+
+      pulses = pulses.filter((p) => {
+        p.t += dt / p.duration
+        return p.t < 1
+      })
+
+      draw(pulses)
+      rafId = requestAnimationFrame(tick)
+    }
+
+    function play() {
+      if (running || !desktopQuery.matches) return
+      running = true
+      lastTime = 0
+      rafId = requestAnimationFrame(tick)
+    }
+
+    function pause() {
+      running = false
+      if (rafId != null) cancelAnimationFrame(rafId)
+      rafId = null
+    }
+
+    resize()
+    draw([])
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        const isVisible = entries[0]?.isIntersecting ?? true
+        if (isVisible && !document.hidden && desktopQuery.matches) play()
+        else pause()
+      },
+      { threshold: 0 },
+    )
+    io.observe(section)
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) pause()
+      else if (desktopQuery.matches) play()
+    })
+
+    desktopQuery.addEventListener('change', () => {
+      if (desktopQuery.matches) {
+        resize()
+        play()
+      } else {
+        pause()
+      }
+    })
+
+    window.addEventListener('resize', () => {
+      resize()
+      if (!running) draw(pulses)
+    })
+  })()
+</script>
+
 <style>
+  .hero-grid-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    display: none;
+    pointer-events: none;
+  }
+
+  @media (min-width: 901px) {
+    .hero-grid-bg {
+      display: block;
+    }
+  }
+
   .hero-link-svg {
     position: absolute;
     inset: 0;
@@ -372,7 +725,7 @@ const windows: Win[] = [
   }
 
   .hero-hub-label {
-    font-size: 9px;
+    font-size: 8px;
     fill: var(--muted);
     letter-spacing: 0.02em;
   }
