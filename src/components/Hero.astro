@@ -271,23 +271,52 @@ const windows: Win[] = [
 <script is:inline>
   ;(() => {
     const section = document.getElementById('hero')
+    const stage = document.querySelector('.hero-stage')
     const svg = document.getElementById('hero-link-svg')
-    if (!(section instanceof HTMLElement) || !svg) return
+    if (!(section instanceof HTMLElement) || !(stage instanceof HTMLElement) || !svg) return
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reduceMotion) return
+    const desktopQuery = window.matchMedia('(min-width: 901px)')
+
+    const VIEW_W = 1280
+    const VIEW_H = 740
+    const HUB = { x: VIEW_W / 2, y: VIEW_H / 2 }
+
+    // An underdamped spring: the window overshoots a little and settles,
+    // which is what makes the release read as elastic.
+    const STIFFNESS = 220
+    const DAMPING = 15
 
     const keys = ['you', 'alice', 'bob', 'agent']
-    const paths = {}
-    const lengths = {}
-    const packets = {}
+    const links = {}
     for (const key of keys) {
+      const win = stage.querySelector(`[data-window="${key}"]`)
       const path = document.getElementById(`hero-link-${key}`)
       const packet = document.getElementById(`hero-packet-${key}`)
-      if (path instanceof SVGPathElement && packet) {
-        paths[key] = path
-        lengths[key] = path.getTotalLength()
-        packets[key] = packet
+      if (!(win instanceof HTMLElement) || !(path instanceof SVGPathElement) || !packet) continue
+      links[key] = { win, path, packet, x: 0, y: 0, vx: 0, vy: 0, dragging: false }
+    }
+
+    function place(link) {
+      link.win.style.translate = link.x || link.y ? `${link.x}px ${link.y}px` : ''
+    }
+
+    // The line ends at the point of the window nearest the hub, so it stays
+    // attached from any side while the window moves around it.
+    function updateLines() {
+      const box = stage.getBoundingClientRect()
+      if (!box.width || !box.height) return
+      const hubX = box.left + box.width / 2
+      const hubY = box.top + box.height / 2
+      for (const key of keys) {
+        const link = links[key]
+        if (!link) continue
+        const r = link.win.getBoundingClientRect()
+        const px = Math.min(Math.max(hubX, r.left), r.right)
+        const py = Math.min(Math.max(hubY, r.top), r.bottom)
+        const x = ((px - box.left) / box.width) * VIEW_W
+        const y = ((py - box.top) / box.height) * VIEW_H
+        link.path.setAttribute('d', `M ${HUB.x} ${HUB.y} L ${x.toFixed(1)} ${y.toFixed(1)}`)
       }
     }
 
@@ -295,57 +324,131 @@ const windows: Win[] = [
     const travelDuration = 1100
     const phase = { you: 0, alice: 900, bob: 1800, agent: 2700 }
 
-    let running = false
+    function movePackets(time) {
+      for (const key of keys) {
+        const link = links[key]
+        if (!link) continue
+        const local = (time + phase[key]) % cyclePeriod
+        if (local >= travelDuration) {
+          link.packet.setAttribute('opacity', '0')
+          continue
+        }
+        const cycleIndex = Math.floor((time + phase[key]) / cyclePeriod)
+        const outward = cycleIndex % 2 === 0
+        const t = local / travelDuration
+        const length = link.path.getTotalLength()
+        const pos = link.path.getPointAtLength((outward ? t : 1 - t) * length)
+        link.packet.setAttribute('cx', String(pos.x))
+        link.packet.setAttribute('cy', String(pos.y))
+        link.packet.setAttribute('opacity', String(Math.sin(Math.PI * t)))
+      }
+    }
+
+    function stepSprings(dt) {
+      let moving = false
+      for (const key of keys) {
+        const link = links[key]
+        if (!link || link.dragging) continue
+        if (!link.x && !link.y && !link.vx && !link.vy) continue
+        link.vx += (-STIFFNESS * link.x - DAMPING * link.vx) * dt
+        link.vy += (-STIFFNESS * link.y - DAMPING * link.vy) * dt
+        link.x += link.vx * dt
+        link.y += link.vy * dt
+        if (Math.hypot(link.x, link.y) < 0.3 && Math.hypot(link.vx, link.vy) < 3) {
+          link.x = link.y = link.vx = link.vy = 0
+        } else {
+          moving = true
+        }
+        place(link)
+      }
+      return moving
+    }
+
+    let visible = true
     let rafId = null
+    let lastTime = 0
 
     function tick(time) {
-      if (!running) return
-      for (const key of keys) {
-        const path = paths[key]
-        const packet = packets[key]
-        if (!path || !packet) continue
-        const local = (time + phase[key]) % cyclePeriod
-        if (local < travelDuration) {
-          const cycleIndex = Math.floor((time + phase[key]) / cyclePeriod)
-          const outward = cycleIndex % 2 === 0
-          const t = local / travelDuration
-          const pos = path.getPointAtLength((outward ? t : 1 - t) * lengths[key])
-          packet.setAttribute('cx', String(pos.x))
-          packet.setAttribute('cy', String(pos.y))
-          packet.setAttribute('opacity', String(Math.sin(Math.PI * t)))
-        } else {
-          packet.setAttribute('opacity', '0')
-        }
+      const dt = Math.min(lastTime ? (time - lastTime) / 1000 : 1 / 60, 1 / 30)
+      lastTime = time
+      const springing = stepSprings(dt)
+      updateLines()
+      if (!reduceMotion) movePackets(time)
+      const dragging = keys.some((key) => links[key]?.dragging)
+      const animating = !reduceMotion && visible && !document.hidden
+      if (animating || springing || dragging) {
+        rafId = requestAnimationFrame(tick)
+      } else {
+        rafId = null
       }
-      rafId = requestAnimationFrame(tick)
     }
 
-    function play() {
-      if (running) return
-      running = true
-      rafId = requestAnimationFrame(tick)
+    function wake() {
+      if (rafId == null) {
+        lastTime = 0
+        rafId = requestAnimationFrame(tick)
+      }
     }
 
-    function pause() {
-      running = false
-      if (rafId != null) cancelAnimationFrame(rafId)
-      rafId = null
+    for (const key of keys) {
+      const link = links[key]
+      if (!link) continue
+      let startX = 0
+      let startY = 0
+
+      link.win.addEventListener('pointerdown', (e) => {
+        if (!desktopQuery.matches || e.button !== 0) return
+        link.dragging = true
+        link.vx = link.vy = 0
+        startX = e.clientX - link.x
+        startY = e.clientY - link.y
+        link.win.setPointerCapture(e.pointerId)
+        link.win.classList.add('is-dragging')
+        e.preventDefault()
+        wake()
+      })
+
+      link.win.addEventListener('pointermove', (e) => {
+        if (!link.dragging) return
+        link.x = e.clientX - startX
+        link.y = e.clientY - startY
+        place(link)
+      })
+
+      const release = () => {
+        if (!link.dragging) return
+        link.dragging = false
+        link.win.classList.remove('is-dragging')
+        if (reduceMotion) {
+          link.x = link.y = 0
+          place(link)
+        }
+        wake()
+      }
+      link.win.addEventListener('pointerup', release)
+      link.win.addEventListener('pointercancel', release)
+      link.win.addEventListener('lostpointercapture', release)
     }
 
     const io = new IntersectionObserver(
       (entries) => {
-        const visible = entries[0]?.isIntersecting ?? true
-        if (visible && !document.hidden) play()
-        else pause()
+        visible = entries[0]?.isIntersecting ?? true
+        if (visible) wake()
       },
       { threshold: 0 },
     )
     io.observe(section)
 
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden) pause()
-      else play()
+      if (!document.hidden) wake()
     })
+    window.addEventListener('resize', () => {
+      updateLines()
+      wake()
+    })
+
+    updateLines()
+    wake()
   })()
 </script>
 
@@ -503,37 +606,20 @@ const windows: Win[] = [
   ;(() => {
     const stage = document.querySelector('.hero-stage')
     const canvas = document.getElementById('hero-grid-bg')
-    const section = document.getElementById('hero')
-    if (!(stage instanceof HTMLElement) || !(canvas instanceof HTMLCanvasElement) || !(section instanceof HTMLElement)) return
+    if (!(stage instanceof HTMLElement) || !(canvas instanceof HTMLCanvasElement)) return
 
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const desktopQuery = window.matchMedia('(min-width: 901px)')
-
-    let logicalWidth = 0
-    let logicalHeight = 0
-
-    function resize() {
+    function draw() {
       const rect = stage.getBoundingClientRect()
-      logicalWidth = rect.width
-      logicalHeight = rect.height
-      const dpr = Math.min(window.devicePixelRatio || 1, 2)
-      canvas.width = Math.max(1, Math.round(logicalWidth * dpr))
-      canvas.height = Math.max(1, Math.round(logicalHeight * dpr))
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-    }
-
-    function drawStatic() {
-      resize()
-      draw([])
-    }
-
-    function draw(pulses) {
-      const w = logicalWidth
-      const h = logicalHeight
+      const w = rect.width
+      const h = rect.height
       if (!w || !h) return
+      const dpr = Math.min(window.devicePixelRatio || 1, 2)
+      canvas.width = Math.max(1, Math.round(w * dpr))
+      canvas.height = Math.max(1, Math.round(h * dpr))
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       ctx.clearRect(0, 0, w, h)
 
       const cx = w / 2
@@ -547,137 +633,21 @@ const windows: Win[] = [
       ctx.arc(cx, cy, 140, 0, Math.PI * 2)
       ctx.fill()
 
-      const spokeCount = 16
       const maxR = Math.hypot(w, h) / 2
-      const angles = []
-      for (let i = 0; i < spokeCount; i++) {
-        const angle = (i / spokeCount) * Math.PI * 2
-        angles.push(angle)
-        const x2 = cx + Math.cos(angle) * maxR
-        const y2 = cy + Math.sin(angle) * maxR
-        const grad = ctx.createLinearGradient(cx, cy, x2, y2)
-        grad.addColorStop(0, 'rgba(150, 150, 150, 0.22)')
-        grad.addColorStop(1, 'rgba(150, 150, 150, 0)')
-        ctx.strokeStyle = grad
-        ctx.lineWidth = 1
-        ctx.beginPath()
-        ctx.moveTo(cx, cy)
-        ctx.lineTo(x2, y2)
-        ctx.stroke()
-      }
-
-      const rings = 4
+      const rings = 3
       for (let r = 1; r <= rings; r++) {
-        const radius = maxR * 0.9 * (r / rings)
-        const alpha = 0.12 * (1 - r / (rings + 1))
+        const radius = maxR * 0.8 * (r / rings)
+        const alpha = 0.1 * (1 - r / (rings + 1))
         ctx.strokeStyle = `rgba(150, 150, 150, ${alpha})`
         ctx.lineWidth = 1
         ctx.beginPath()
         ctx.arc(cx, cy, radius, 0, Math.PI * 2)
         ctx.stroke()
       }
-
-      for (const p of pulses) {
-        const r = p.startR * (1 - p.t)
-        const x = cx + Math.cos(p.angle) * r
-        const y = cy + Math.sin(p.angle) * r
-        ctx.save()
-        ctx.shadowColor = 'rgba(90, 169, 230, 0.9)'
-        ctx.shadowBlur = 8
-        ctx.fillStyle = 'rgba(90, 169, 230, 0.9)'
-        ctx.beginPath()
-        ctx.arc(x, y, 2.5, 0, Math.PI * 2)
-        ctx.fill()
-        ctx.restore()
-      }
-
-      return angles
     }
 
-    if (reduceMotion) {
-      drawStatic()
-      window.addEventListener('resize', drawStatic)
-      return
-    }
-
-    let running = false
-    let rafId = null
-    let lastTime = 0
-    let spawnTimer = 0
-    let pulses = []
-    const maxR = () => Math.hypot(logicalWidth, logicalHeight) / 2
-    const spokeCount = 16
-
-    function spawnPulse() {
-      const i = Math.floor(Math.random() * spokeCount)
-      const angle = (i / spokeCount) * Math.PI * 2
-      pulses.push({ angle, startR: maxR() * 0.92, t: 0, duration: 1600 + Math.random() * 800 })
-    }
-
-    function tick(time) {
-      if (!running) return
-      const dt = lastTime ? time - lastTime : 16
-      lastTime = time
-
-      spawnTimer -= dt
-      if (spawnTimer <= 0) {
-        spawnPulse()
-        spawnTimer = 900 + Math.random() * 700
-      }
-
-      pulses = pulses.filter((p) => {
-        p.t += dt / p.duration
-        return p.t < 1
-      })
-
-      draw(pulses)
-      rafId = requestAnimationFrame(tick)
-    }
-
-    function play() {
-      if (running || !desktopQuery.matches) return
-      running = true
-      lastTime = 0
-      rafId = requestAnimationFrame(tick)
-    }
-
-    function pause() {
-      running = false
-      if (rafId != null) cancelAnimationFrame(rafId)
-      rafId = null
-    }
-
-    resize()
-    draw([])
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        const isVisible = entries[0]?.isIntersecting ?? true
-        if (isVisible && !document.hidden && desktopQuery.matches) play()
-        else pause()
-      },
-      { threshold: 0 },
-    )
-    io.observe(section)
-
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) pause()
-      else if (desktopQuery.matches) play()
-    })
-
-    desktopQuery.addEventListener('change', () => {
-      if (desktopQuery.matches) {
-        resize()
-        play()
-      } else {
-        pause()
-      }
-    })
-
-    window.addEventListener('resize', () => {
-      resize()
-      if (!running) draw(pulses)
-    })
+    draw()
+    window.addEventListener('resize', draw)
   })()
 </script>
 
@@ -733,6 +703,19 @@ const windows: Win[] = [
   .hero-packet {
     fill: #5aa9e6;
     opacity: 0;
+  }
+
+  @media (min-width: 901px) {
+    .term-window {
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+    }
+
+    .term-window.is-dragging {
+      cursor: grabbing;
+      z-index: 10;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
