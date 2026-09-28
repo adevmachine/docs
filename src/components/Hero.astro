@@ -73,23 +73,23 @@ const windows: Win[] = [
       <svg
         class="hero-link-svg"
         id="hero-link-svg"
-        viewBox="0 0 992 448"
-        preserveAspectRatio="xMidYMid slice"
+        viewBox="0 0 1040 495"
+        preserveAspectRatio="none"
         aria-hidden="true"
       >
         <g class="hero-link-lines" fill="none" stroke-width="1.5">
-          <path id="hero-link-you" class="hero-link-line" d="M 496 233 L 496 144"></path>
-          <path id="hero-link-alice" class="hero-link-line" d="M 496 233 Q 496 96 121 96"></path>
-          <path id="hero-link-bob" class="hero-link-line" d="M 496 233 Q 496 24 636 24"></path>
-          <path id="hero-link-agent" class="hero-link-line" d="M 496 233 Q 496 8 55 8"></path>
+          <path id="hero-link-you" class="hero-link-line" d="M 520 247.5 L 499.2 300"></path>
+          <path id="hero-link-alice" class="hero-link-line" d="M 520 247.5 L 426.4 195"></path>
+          <path id="hero-link-bob" class="hero-link-line" d="M 520 247.5 L 613.6 195"></path>
+          <path id="hero-link-agent" class="hero-link-line" d="M 520 247.5 L 624 300"></path>
         </g>
         <circle id="hero-packet-you" class="hero-packet" r="3"></circle>
         <circle id="hero-packet-alice" class="hero-packet" r="3"></circle>
         <circle id="hero-packet-bob" class="hero-packet" r="3"></circle>
         <circle id="hero-packet-agent" class="hero-packet" r="3"></circle>
-        <g class="hero-hub" transform="translate(479, 216)">
-          <rect width="34" height="34" class="hero-hub-box"></rect>
-          <text x="17" y="47" text-anchor="middle" class="hero-hub-label font-mono">devmachine</text>
+        <g class="hero-hub" transform="translate(502, 229.5)">
+          <rect width="36" height="36" class="hero-hub-box"></rect>
+          <text x="18" y="50" text-anchor="middle" class="hero-hub-label font-mono">devmachine</text>
         </g>
       </svg>
       {
@@ -131,6 +131,8 @@ const windows: Win[] = [
     let paused = false
     let generation = 0
 
+    const MAX_LINES = 5
+
     function sleep(ms) {
       return new Promise((resolve) => setTimeout(resolve, ms))
     }
@@ -147,6 +149,12 @@ const windows: Win[] = [
       return cursor
     }
 
+    function trimLines(body) {
+      while (body.children.length > MAX_LINES) {
+        body.removeChild(body.firstElementChild)
+      }
+    }
+
     async function typeCommand(gen, body, text, typeMs) {
       const line = document.createElement('div')
       line.className = 'term-line'
@@ -160,14 +168,13 @@ const windows: Win[] = [
       const cursor = makeCursor()
       line.appendChild(cursor)
       body.appendChild(line)
-      body.scrollTop = body.scrollHeight
+      trimLines(body)
 
       for (const ch of text) {
         if (gen !== generation) return
         await waitWhilePaused(gen)
         if (gen !== generation) return
         cmd.textContent += ch
-        body.scrollTop = body.scrollHeight
         await sleep(typeMs * 0.6 + Math.random() * typeMs * 0.5)
       }
       cursor.remove()
@@ -181,7 +188,7 @@ const windows: Win[] = [
       line.className = 'term-line term-out'
       line.textContent = text
       body.appendChild(line)
-      body.scrollTop = body.scrollHeight
+      trimLines(body)
       await sleep(200)
     }
 
@@ -203,6 +210,7 @@ const windows: Win[] = [
         }
         const cursor = makeCursor()
         body.appendChild(cursor)
+        trimLines(body)
         await sleep(2400 + Math.random() * 800)
       }
     }
