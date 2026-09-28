@@ -338,34 +338,43 @@ body {
 
 .term-window.term-alice {
   z-index: 2;
-  top: 16px;
-  left: 1.5%;
-  width: 46%;
-  opacity: 0.88;
+  top: 40px;
+  left: 3%;
+  width: 44%;
+  opacity: 0.82;
+  scale: 0.93;
+  transform-origin: top left;
 }
 
 .term-window.term-bob {
-  z-index: 2;
-  top: 16px;
-  right: 1.5%;
-  width: 46%;
-  opacity: 0.75;
+  z-index: 1;
+  top: 0;
+  right: 0.5%;
+  width: 45%;
+  opacity: 0.72;
+  scale: 0.97;
+  transform-origin: top right;
 }
 
 .term-window.term-you {
   z-index: 4;
-  bottom: 16px;
-  left: 1.5%;
-  width: 46%;
+  bottom: 0;
+  left: 0;
+  width: 47.5%;
   opacity: 1;
+  scale: 1.02;
+  transform-origin: bottom left;
+  box-shadow: 0 24px 60px -20px rgb(0 0 0 / 0.45);
 }
 
 .term-window.term-agent {
   z-index: 3;
-  bottom: 16px;
-  right: 1.5%;
-  width: 46%;
-  opacity: 0.85;
+  bottom: 34px;
+  right: 2.5%;
+  width: 45%;
+  opacity: 0.88;
+  scale: 0.98;
+  transform-origin: bottom right;
 }
 
 @media (max-width: 900px) {
@@ -375,6 +384,7 @@ body {
 
   .term-window {
     width: auto;
+    scale: none;
   }
 
   .term-window.term-bob,
