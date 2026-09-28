@@ -1,0 +1,26 @@
+src/styles/global.css
+  s_a0cbf6c120c4f8::t_50c8b09e1a045d 321
+  s_a0cbf6c120c4f8::t_df77134e0179d4 238-239
+  s_a0cbf6c120c4f8::t_0bfb12b5b04ffe 333,341,349,357
+  s_a0cbf6c120c4f8::t_49549b219e3745 450-451
+  s_a0cbf6c120c4f8::t_bef827779c45a2 314,332,334-336,342-348,350-352,358-360,365,369-372,382-383,391
+src/components/Hero.astro
+  s_a0cbf6c120c4f8::t_68d688b7c70d2d 76-77,81-84,90-92
+  s_a0cbf6c120c4f8::t_9d67ca326c2acf 134-135,152-157,171,191,213
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "91b3832c1d5bc9a4b9752107dcc2308bfe4dbe09",
+  "prompts": {},
+  "sessions": {
+    "s_a0cbf6c120c4f8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f7d54e1b-857f-44e4-a7a9-0ca76ea55bb2",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Djalma Araújo <djalma@nossomos.cc>"
+    }
+  }
+}
