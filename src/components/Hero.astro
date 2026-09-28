@@ -7,35 +7,48 @@ interface Props {
 
 const { eyebrow, headline, subline } = Astro.props
 
-const steps: { cmd: string; out: string[] }[] = [
-  { cmd: 'brew install mydevmachine/tap/devmachine', out: [] },
+interface Step {
+  cmd: string
+  out: string[]
+}
+
+interface Win {
+  id: string
+  title: string
+  typeMs: number
+  steps: Step[]
+}
+
+const windows: Win[] = [
   {
-    cmd: 'devmachine setup',
-    out: [
-      'wrote ~/.config/devmachine/config.yml',
-      'password login is off; the key is the only way in.',
-      'installing Ansible...',
-      'Next: `devmachine doctor`, then `devmachine sync`.',
+    id: 'agent',
+    title: 'agent@main',
+    typeMs: 46,
+    steps: [
+      { cmd: 'openclaw run build', out: ['task done'] },
+      { cmd: 'claude', out: ['Ready. Ask it anything.'] },
     ],
   },
   {
-    cmd: 'devmachine workspaces new alice',
-    out: [
-      'alice is in the configuration, on main, with the default packages.',
-      'The machine is untouched: `devmachine sync` is what creates the account.',
+    id: 'bob',
+    title: 'bob@main',
+    typeMs: 34,
+    steps: [{ cmd: 'docker compose up', out: ['Container web  Started', 'Container db   Started'] }],
+  },
+  {
+    id: 'alice',
+    title: 'alice@main',
+    typeMs: 40,
+    steps: [{ cmd: 'npm run dev', out: ['Local: http://localhost:5173', 'ready in 312 ms'] }],
+  },
+  {
+    id: 'you',
+    title: 'you@laptop',
+    typeMs: 28,
+    steps: [
+      { cmd: 'devmachine ssh alice', out: ['alice@main:~$'] },
+      { cmd: 'devmachine sync', out: ['main: ok=12 changed=3 failed=0'] },
     ],
-  },
-  {
-    cmd: 'devmachine sync',
-    out: ['main: ok=12 changed=3 failed=0'],
-  },
-  {
-    cmd: 'devmachine ssh alice',
-    out: ['alice@main:~$'],
-  },
-  {
-    cmd: 'claude',
-    out: ['Ready. Ask it anything.'],
   },
 ]
 ---
@@ -55,38 +68,39 @@ const steps: { cmd: string; out: string[] }[] = [
     </p>
   </div>
 
-  <div class="hero-terminal-wrap px-4 sm:px-6">
-    <div class="terminal" id="hero-terminal">
-      <div class="terminal-titlebar">
-        <span class="terminal-dot"></span>
-        <span class="terminal-dot"></span>
-        <span class="terminal-dot"></span>
-        <span class="terminal-title font-mono">~ devmachine</span>
-      </div>
-      <div class="terminal-body font-mono" id="hero-terminal-body">
-        {
-          steps.map((step) => (
-            <>
-              <div class="term-line">
-                <span class="term-prompt">$</span>
-                <span class="term-cmd">{step.cmd}</span>
+  <div class="hero-terminal-wrap px-4 sm:px-6" id="hero-terminal">
+    <div class="hero-stage">
+      {
+        windows.map((win) => (
+          <div class={`term-window term-${win.id}`} data-window={win.id}>
+            <div class="terminal">
+              <div class="terminal-titlebar">
+                <span class="terminal-dot" />
+                <span class="terminal-dot" />
+                <span class="terminal-dot" />
+                <span class="terminal-title font-mono">{win.title}</span>
               </div>
-              {step.out.map((line) => (
-                <div class="term-line term-out">{line}</div>
-              ))}
-            </>
-          ))
-        }
-      </div>
+              <div class="terminal-body font-mono" id={`term-body-${win.id}`}>
+                <div class="term-line">
+                  <span class="term-prompt">$</span>
+                  <span class="term-cmd">{win.steps[0].cmd}</span>
+                </div>
+                {win.steps[0].out.map((line) => (
+                  <div class="term-line term-out">{line}</div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))
+      }
     </div>
   </div>
 </section>
 
-<script is:inline define:vars={{ steps }}>
+<script is:inline define:vars={{ windows }}>
   ;(() => {
     const section = document.getElementById('hero')
-    const body = document.getElementById('hero-terminal-body')
-    if (!(section instanceof HTMLElement) || !(body instanceof HTMLElement)) return
+    if (!(section instanceof HTMLElement)) return
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduceMotion) return
@@ -111,12 +125,7 @@ const steps: { cmd: string; out: string[] }[] = [
       return cursor
     }
 
-    function scrollToEnd() {
-      body.scrollLeft = 0
-      body.scrollTop = body.scrollHeight
-    }
-
-    async function typeCommand(gen, text) {
+    async function typeCommand(gen, body, text, typeMs) {
       const line = document.createElement('div')
       line.className = 'term-line'
       const prompt = document.createElement('span')
@@ -129,20 +138,20 @@ const steps: { cmd: string; out: string[] }[] = [
       const cursor = makeCursor()
       line.appendChild(cursor)
       body.appendChild(line)
-      scrollToEnd()
+      body.scrollTop = body.scrollHeight
 
       for (const ch of text) {
         if (gen !== generation) return
         await waitWhilePaused(gen)
         if (gen !== generation) return
         cmd.textContent += ch
-        scrollToEnd()
-        await sleep(30 + Math.random() * 15)
+        body.scrollTop = body.scrollHeight
+        await sleep(typeMs * 0.6 + Math.random() * typeMs * 0.5)
       }
       cursor.remove()
     }
 
-    async function showOutputLine(gen, text) {
+    async function showOutputLine(gen, body, text) {
       if (gen !== generation) return
       await waitWhilePaused(gen)
       if (gen !== generation) return
@@ -150,27 +159,29 @@ const steps: { cmd: string; out: string[] }[] = [
       line.className = 'term-line term-out'
       line.textContent = text
       body.appendChild(line)
-      scrollToEnd()
-      await sleep(180)
+      body.scrollTop = body.scrollHeight
+      await sleep(200)
     }
 
-    async function runLoop(gen) {
+    async function runWindowLoop(gen, win) {
+      const body = document.getElementById(`term-body-${win.id}`)
+      if (!(body instanceof HTMLElement)) return
       while (gen === generation) {
         body.innerHTML = ''
-        for (const step of steps) {
+        for (const step of win.steps) {
           if (gen !== generation) return
           await waitWhilePaused(gen)
           if (gen !== generation) return
-          await typeCommand(gen, step.cmd)
-          await sleep(220)
+          await typeCommand(gen, body, step.cmd, win.typeMs)
+          await sleep(240)
           for (const line of step.out) {
-            await showOutputLine(gen, line)
+            await showOutputLine(gen, body, line)
           }
-          await sleep(420)
+          await sleep(500 + Math.random() * 400)
         }
         const cursor = makeCursor()
         body.appendChild(cursor)
-        await sleep(2600)
+        await sleep(2400 + Math.random() * 800)
       }
     }
 
@@ -199,6 +210,8 @@ const steps: { cmd: string; out: string[] }[] = [
     })
 
     generation = 1
-    runLoop(1)
+    for (const win of windows) {
+      runWindowLoop(1, win)
+    }
   })()
 </script>

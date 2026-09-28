@@ -37,43 +37,62 @@ const commands = [
   />
 
   <section id="get-started" class="max-w-6xl mx-auto px-4 sm:px-6 pt-4 pb-20">
-    <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-6">Get started</h2>
-    <p class="text-lg text-[var(--muted)] max-w-2xl mb-8">
-      devmachine turns a VPS into workspaces you develop in: one Linux account
-      per project, each with its own tools, logins and coding agent.
-    </p>
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">01 / Get started</p>
+    <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-6">Two ways to start.</h2>
 
-    <div class="border hairline bg-[var(--card)] p-4 sm:p-5 max-w-xl relative font-mono text-sm">
-      <p class="text-xs uppercase tracking-widest text-[var(--muted)] mb-2">Install and set up</p>
-      <div class="flex flex-wrap items-start justify-between gap-4">
-        <code id="install-cmd" class="min-w-0 break-all leading-relaxed">brew install mydevmachine/tap/devmachine<br />devmachine setup</code>
+    <div class="max-w-xl">
+      <div role="tablist" aria-label="Ways to get started" class="flex border hairline">
         <button
-          id="install-copy"
-          type="button"
-          class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
+          role="tab"
+          id="tab-yourself"
+          aria-controls="panel-yourself"
+          aria-selected="true"
+          tabindex="0"
+          class="tab-btn flex-1 px-4 py-2 text-sm font-mono uppercase tracking-wide"
         >
-          Copy
+          Yourself
+        </button>
+        <button
+          role="tab"
+          id="tab-agent"
+          aria-controls="panel-agent"
+          aria-selected="false"
+          tabindex="-1"
+          class="tab-btn flex-1 px-4 py-2 text-sm font-mono uppercase tracking-wide"
+        >
+          With your agent
         </button>
       </div>
-    </div>
-  </section>
 
-  <section id="agent-setup" class="max-w-6xl mx-auto px-4 sm:px-6 pb-20">
-    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">01 / Use your agent</p>
-    <div class="grid grid-cols-1 gap-8 min-[900px]:grid-cols-2 min-[900px]:gap-12">
-      <div>
-        <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-4">Let your coding agent set it up.</h2>
-        <p class="text-[var(--muted)] max-w-md">
-          Paste one sentence into Claude Code, Codex or Cursor. Your agent reads
-          the guide, asks you what it needs, and does the rest. You run one
-          command yourself — <code class="font-mono text-sm">devmachine setup</code>,
-          so only you confirm it is your server.
+      <div role="tabpanel" id="panel-yourself" aria-labelledby="tab-yourself" tabindex="0" class="pt-5">
+        <p class="text-xs uppercase tracking-widest text-[var(--muted)] mb-2">From your computer, run</p>
+        <div class="border hairline bg-[var(--card)] p-4 sm:p-5 relative font-mono text-sm">
+          <div class="flex flex-wrap items-start justify-between gap-4">
+            <code id="install-cmd" class="min-w-0 break-all leading-relaxed">brew install mydevmachine/tap/devmachine<br />devmachine setup</code>
+            <button
+              id="install-copy"
+              type="button"
+              class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
+            >
+              Copy
+            </button>
+          </div>
+        </div>
+        <p class="text-sm mt-3 text-[var(--muted)]">
+          Then <code class="font-mono text-[var(--ink)]">devmachine workspaces new alice && devmachine sync</code>,
+          and <code class="font-mono text-[var(--ink)]">devmachine ssh alice</code>.
+          <a href={`${base}getting-started/`} class="underline underline-offset-2 hover:text-[var(--ink)]">
+            Getting started →
+          </a>
         </p>
       </div>
 
-      <div>
+      <div role="tabpanel" id="panel-agent" aria-labelledby="tab-agent" tabindex="0" class="pt-5" hidden>
+        <p class="text-sm text-[var(--muted)] mb-3">
+          Paste this into Claude Code, Codex or Cursor. It asks what it needs and does
+          the rest; you only run <code class="font-mono text-[var(--ink)]">devmachine setup</code> yourself.
+        </p>
         <div class="border hairline bg-[var(--card)] p-4 sm:p-5 font-mono text-sm">
-          <p class="text-xs uppercase tracking-widest text-[var(--muted)] mb-2">Paste into your agent</p>
           <div class="flex flex-wrap items-center justify-between gap-4">
             <code id="agent-prompt" class="min-w-0 break-all">Set up devmachine for me: read https://mydevmachine.sh/agent-setup.md and follow it.</code>
             <button
@@ -90,7 +109,7 @@ const commands = [
             Read what it will do
           </a>
         </p>
-        <p class="text-xs font-mono uppercase tracking-wide text-[var(--muted)] mt-6">
+        <p class="text-xs font-mono uppercase tracking-wide text-[var(--muted)] mt-3">
           For LLMs:
           <a href={`${base}llms.txt`} class="underline underline-offset-2 hover:text-[var(--ink)]">llms.txt</a>
           ·
@@ -142,6 +161,34 @@ const commands = [
   </section>
 
   <script is:inline>
+    ;(() => {
+      const tabs = Array.from(document.querySelectorAll('#get-started [role="tab"]'))
+      if (!tabs.length) return
+
+      function selectTab(tab, focus) {
+        for (const t of tabs) {
+          const selected = t === tab
+          t.setAttribute('aria-selected', String(selected))
+          t.tabIndex = selected ? 0 : -1
+          const panel = document.getElementById(t.getAttribute('aria-controls'))
+          if (panel) panel.hidden = !selected
+        }
+        if (focus) tab.focus()
+      }
+
+      tabs.forEach((tab, i) => {
+        tab.addEventListener('click', () => selectTab(tab, false))
+        tab.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+            e.preventDefault()
+            const dir = e.key === 'ArrowRight' ? 1 : -1
+            const next = tabs[(i + dir + tabs.length) % tabs.length]
+            selectTab(next, true)
+          }
+        })
+      })
+    })()
+
     document.getElementById('install-copy')?.addEventListener('click', (e) => {
       const btn = e.currentTarget
       navigator.clipboard?.writeText('brew install mydevmachine/tap/devmachine\ndevmachine setup')

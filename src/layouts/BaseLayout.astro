@@ -47,28 +47,19 @@ const frame = current === 'docs' ? 'max-w-7xl' : 'max-w-6xl'
     >
       <div class={`${frame} mx-auto px-4 sm:px-6 h-16 flex items-center justify-between`}>
         <a href={`${base}`} class="font-semibold tracking-tight text-lg">devmachine</a>
-        <nav class="hidden md:flex items-center gap-1 text-sm">
-          <a href={`${base}getting-started/`} class="px-3 py-1.5">Documentation</a>
-          <a
-            href="https://github.com/mydevmachine/devmachine"
-            class="px-3 py-1.5"
-            target="_blank"
-            rel="noreferrer"
-          >
-            GitHub
-          </a>
-        </nav>
         <div class="flex items-center gap-2">
-          <button
-            id="theme-toggle"
-            type="button"
-            class="theme-toggle inline-flex items-center justify-center w-8 h-8 border hairline"
-            aria-label="Switch between light and dark"
-            title="Light / dark"
-          >
-            <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
-            <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-          </button>
+          <nav class="hidden md:flex items-center gap-1 text-sm">
+            <a href={`${base}examples/`} class="px-3 py-1.5">Real examples</a>
+            <a href={`${base}getting-started/`} class="px-3 py-1.5">Documentation</a>
+            <a
+              href="https://github.com/mydevmachine/devmachine"
+              class="px-3 py-1.5"
+              target="_blank"
+              rel="noreferrer"
+            >
+              GitHub
+            </a>
+          </nav>
           <button
             id="mobile-nav-toggle"
             type="button"
@@ -79,6 +70,7 @@ const frame = current === 'docs' ? 'max-w-7xl' : 'max-w-6xl'
         </div>
       </div>
       <nav id="mobile-nav" class="hidden md:hidden border-t hairline px-4 py-3 flex flex-col gap-2 text-sm bg-[var(--bg)]">
+        <a href={`${base}examples/`}>Real examples</a>
         <a href={`${base}getting-started/`}>Documentation</a>
         <a href="https://github.com/mydevmachine/devmachine" target="_blank" rel="noreferrer">GitHub</a>
       </nav>
@@ -87,11 +79,25 @@ const frame = current === 'docs' ? 'max-w-7xl' : 'max-w-6xl'
       <slot />
     </main>
     <footer class="border-t hairline mt-12">
-      <div class={`${frame} mx-auto px-4 sm:px-6 py-8 flex flex-wrap gap-x-8 gap-y-2 text-sm text-[var(--muted)]`}>
-        <a href="https://github.com/mydevmachine/devmachine" target="_blank" rel="noreferrer">GitHub</a>
-        <a href="https://github.com/mydevmachine/devmachine/blob/main/LICENSE" target="_blank" rel="noreferrer">License</a>
-        <a href={`${base}llms.txt`}>llms.txt</a>
-        <a href={`${base}llms-full.txt`}>llms-full.txt</a>
+      <div class={`${frame} mx-auto px-4 sm:px-6 py-8 flex items-start justify-between gap-4`}>
+        <div class="flex flex-wrap gap-x-8 gap-y-2 text-sm text-[var(--muted)] min-w-0">
+          <a href={`${base}examples/`}>Real examples</a>
+          <a href={`${base}getting-started/`}>Documentation</a>
+          <a href="https://github.com/mydevmachine/devmachine" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="https://github.com/mydevmachine/devmachine/blob/main/LICENSE" target="_blank" rel="noreferrer">License</a>
+          <a href={`${base}llms.txt`}>llms.txt</a>
+          <a href={`${base}llms-full.txt`}>llms-full.txt</a>
+        </div>
+        <button
+          id="theme-toggle"
+          type="button"
+          class="theme-toggle inline-flex items-center justify-center w-8 h-8 border hairline shrink-0"
+          aria-label="Switch between light and dark"
+          title="Light / dark"
+        >
+          <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+          <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
       </div>
     </footer>
     <script is:inline>

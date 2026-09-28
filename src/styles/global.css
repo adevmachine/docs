@@ -311,8 +311,109 @@ body {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 42rem;
+  max-width: 52rem;
   margin: 0 auto;
+}
+
+.hero-stage {
+  position: relative;
+  width: 100%;
+  height: 24rem;
+}
+
+.term-window {
+  position: absolute;
+  width: 26rem;
+  max-width: 88vw;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.term-window .terminal-body {
+  height: 8.5rem;
+}
+
+.term-window.term-you {
+  z-index: 4;
+  top: 7.5rem;
+  left: 46%;
+  width: 27rem;
+  opacity: 1;
+}
+
+.term-window.term-alice {
+  z-index: 3;
+  top: 5rem;
+  left: 10%;
+  width: 23rem;
+  opacity: 0.86;
+}
+
+.term-window.term-bob {
+  z-index: 2;
+  top: 1rem;
+  right: 2%;
+  width: 21rem;
+  opacity: 0.7;
+}
+
+.term-window.term-agent {
+  z-index: 1;
+  top: 0;
+  left: 4%;
+  width: 19rem;
+  opacity: 0.5;
+}
+
+@media (max-width: 900px) {
+  .hero-stage {
+    height: 20rem;
+  }
+
+  .term-window.term-bob,
+  .term-window.term-agent {
+    display: none;
+  }
+
+  .term-window.term-alice {
+    z-index: 1;
+    top: 0;
+    left: 2%;
+    transform: none;
+    width: min(21rem, 82vw);
+    opacity: 0.85;
+  }
+
+  .term-window.term-you {
+    z-index: 2;
+    top: 2.75rem;
+    left: 14%;
+    transform: none;
+    width: min(22rem, 86vw);
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-stage {
+    height: 19rem;
+  }
+
+  .term-window.term-alice {
+    left: 1%;
+    width: min(19rem, 80vw);
+  }
+
+  .term-window.term-you {
+    top: 2.5rem;
+    left: 12%;
+    width: min(20rem, 84vw);
+  }
+
+  .term-window .terminal-body {
+    height: 7.5rem;
+    font-size: 0.72rem;
+  }
 }
 
 .terminal {
@@ -398,6 +499,27 @@ body {
     font-size: 0.72rem;
     height: 13.5rem;
   }
+}
+
+.tab-btn {
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.tab-btn:hover {
+  color: var(--ink);
+}
+
+.tab-btn[aria-selected="true"] {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
+
+.tab-btn:not(:last-child) {
+  border-right: 1px solid var(--line);
 }
 
 .grid-cards {

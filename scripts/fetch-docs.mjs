@@ -22,6 +22,7 @@ const BASE = ''
 const GITHUB_BLOB = 'https://github.com/mydevmachine/devmachine/blob/main/docs'
 
 const SECTION_BY_PREFIX = [
+  ['examples/', 'Real examples'],
   ['concepts/', 'Concepts'],
   ['how-it-works/', 'How it works'],
   ['reference/', 'CLI Reference'],
@@ -123,7 +124,7 @@ const pages = []
 
 for (const relPath of keptFiles) {
   const raw = readFileSync(join(sourceDir, relPath), 'utf8')
-  const title = firstHeading(raw, relPath)
+  const title = relPath === 'examples/index.md' ? 'All examples' : firstHeading(raw, relPath)
   const section = sectionFor(relPath)
   const body = rewriteLinks(raw.replace(/^#\s+.+\n/, ''), relPath)
   const firstParagraph = (body.match(/^(?!#|```|\s*$)(.+)$/m) || [, ''])[1]

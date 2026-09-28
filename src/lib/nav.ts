@@ -1,6 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content'
 
-const SECTION_ORDER = ['Getting started', 'Concepts', 'How it works', 'CLI Reference', 'Troubleshooting']
+const SECTION_ORDER = ['Getting started', 'Real examples', 'Concepts', 'How it works', 'CLI Reference', 'Troubleshooting']
 
 export type DocEntry = CollectionEntry<'docs'>
 
