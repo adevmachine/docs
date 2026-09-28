@@ -152,23 +152,21 @@ const commands = [
         </button>
       </div>
 
-      <div role="tabpanel" id="panel-yourself" aria-labelledby="tab-yourself" tabindex="0" class="pt-6 grid grid-cols-1 min-[900px]:grid-cols-2 gap-8 items-start">
-        <div>
-          <p class="text-xs uppercase tracking-widest text-[var(--muted)] mb-2">From your computer, run</p>
-          <div class="border hairline bg-[var(--card)] p-4 sm:p-5 relative font-mono text-sm">
-            <div class="flex flex-wrap items-start justify-between gap-4">
-              <code id="install-cmd" class="min-w-0 break-all leading-relaxed">brew install mydevmachine/tap/devmachine<br />devmachine setup</code>
-              <button
-                id="install-copy"
-                type="button"
-                class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
-              >
-                Copy
-              </button>
-            </div>
+      <div role="tabpanel" id="panel-yourself" aria-labelledby="tab-yourself" tabindex="0" class="pt-6">
+        <p class="text-xs uppercase tracking-widest text-[var(--muted)] mb-2">From your computer, run</p>
+        <div class="border hairline bg-[var(--card)] p-4 sm:p-5 relative font-mono text-sm">
+          <div class="flex flex-wrap items-start justify-between gap-4">
+            <code id="install-cmd" class="min-w-0 break-all leading-relaxed">brew install mydevmachine/tap/devmachine<br />devmachine setup</code>
+            <button
+              id="install-copy"
+              type="button"
+              class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
+            >
+              Copy
+            </button>
           </div>
         </div>
-        <p class="text-sm text-[var(--muted)]">
+        <p class="text-sm mt-3 text-[var(--muted)]">
           Then <code class="font-mono text-[var(--ink)]">devmachine workspaces new alice && devmachine sync</code>,
           and <code class="font-mono text-[var(--ink)]">devmachine ssh alice</code>.
           <a href={`${base}getting-started/`} class="underline underline-offset-2 hover:text-[var(--ink)]">
@@ -177,38 +175,34 @@ const commands = [
         </p>
       </div>
 
-      <div role="tabpanel" id="panel-agent" aria-labelledby="tab-agent" tabindex="0" class="pt-6 grid grid-cols-1 min-[900px]:grid-cols-2 gap-8 items-start" hidden>
-        <div>
-          <p class="text-sm text-[var(--muted)] mb-3">
-            Paste this into Claude Code, Codex or Cursor. It asks what it needs and does
-            the rest; you only run <code class="font-mono text-[var(--ink)]">devmachine setup</code> yourself.
-          </p>
-          <div class="border hairline bg-[var(--card)] p-4 sm:p-5 font-mono text-sm">
-            <div class="flex flex-wrap items-center justify-between gap-4">
-              <code id="agent-prompt" class="min-w-0 break-all">Set up devmachine for me: read https://mydevmachine.sh/agent-setup.md and follow it.</code>
-              <button
-                id="agent-prompt-copy"
-                type="button"
-                class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
-              >
-                Copy
-              </button>
-            </div>
+      <div role="tabpanel" id="panel-agent" aria-labelledby="tab-agent" tabindex="0" class="pt-6" hidden>
+        <p class="text-sm text-[var(--muted)] mb-3">
+          Paste this into Claude Code, Codex or Cursor. It asks what it needs and does
+          the rest; you only run <code class="font-mono text-[var(--ink)]">devmachine setup</code> yourself.
+        </p>
+        <div class="border hairline bg-[var(--card)] p-4 sm:p-5 font-mono text-sm">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <code id="agent-prompt" class="min-w-0 break-all">Set up devmachine for me: read https://mydevmachine.sh/agent-setup.md and follow it.</code>
+            <button
+              id="agent-prompt-copy"
+              type="button"
+              class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
+            >
+              Copy
+            </button>
           </div>
         </div>
-        <div>
-          <p class="text-sm">
-            <a href={`${base}agent-setup/`} class="underline underline-offset-2 text-[var(--muted)] hover:text-[var(--ink)]">
-              Read what it will do
-            </a>
-          </p>
-          <p class="text-xs font-mono uppercase tracking-wide text-[var(--muted)] mt-3">
-            For LLMs:
-            <a href={`${base}llms.txt`} class="underline underline-offset-2 hover:text-[var(--ink)]">llms.txt</a>
-            ·
-            <a href={`${base}llms-full.txt`} class="underline underline-offset-2 hover:text-[var(--ink)]">llms-full.txt</a>
-          </p>
-        </div>
+        <p class="text-sm mt-3">
+          <a href={`${base}agent-setup/`} class="underline underline-offset-2 text-[var(--muted)] hover:text-[var(--ink)]">
+            Read what it will do
+          </a>
+        </p>
+        <p class="text-xs font-mono uppercase tracking-wide text-[var(--muted)] mt-3">
+          For LLMs:
+          <a href={`${base}llms.txt`} class="underline underline-offset-2 hover:text-[var(--ink)]">llms.txt</a>
+          ·
+          <a href={`${base}llms-full.txt`} class="underline underline-offset-2 hover:text-[var(--ink)]">llms-full.txt</a>
+        </p>
       </div>
     </div>
   </section>
@@ -240,14 +234,14 @@ const commands = [
   <section id="first-commands" class="max-w-6xl mx-auto px-4 sm:px-6 pt-16 pb-10">
     <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">04 / First commands</p>
     <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-10">Four commands.</h2>
-    <div class="grid grid-cols-1 gap-4 max-w-3xl">
+    <div class="grid grid-cols-1 gap-4">
       {
         commands.map((c) => (
-          <div class="border hairline p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
-            <div class="overflow-x-auto sm:shrink-0 sm:w-[26rem]">
+          <div class="border hairline p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-6">
+            <div class="overflow-x-auto">
               <code class="font-mono text-sm whitespace-nowrap block">{c.cmd}</code>
             </div>
-            <p class="text-sm text-[var(--muted)]">{c.desc}</p>
+            <p class="text-sm text-[var(--muted)] sm:text-right shrink-0">{c.desc}</p>
           </div>
         ))
       }

@@ -87,9 +87,26 @@ const windows: Win[] = [
         <circle id="hero-packet-alice" class="hero-packet" r="3"></circle>
         <circle id="hero-packet-bob" class="hero-packet" r="3"></circle>
         <circle id="hero-packet-agent" class="hero-packet" r="3"></circle>
-        <g class="hero-hub" transform="translate(502, 229.5)">
-          <rect width="36" height="36" class="hero-hub-box"></rect>
-          <text x="18" y="50" text-anchor="middle" class="hero-hub-label font-mono">devmachine</text>
+        <defs>
+          <linearGradient id="hero-hub-gradient" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#0f172a" />
+            <stop offset="1" stop-color="#1e1b4b" />
+          </linearGradient>
+        </defs>
+        <g class="hero-hub" transform="translate(500, 227.5)">
+          <svg width="40" height="40" viewBox="0 0 32 32" aria-hidden="true">
+            <rect x="3.2" y="3.2" width="25.6" height="25.6" rx="5.6" fill="url(#hero-hub-gradient)" />
+            <path
+              d="M 11.6 9.8 L 18.4 16 L 11.6 22.2"
+              fill="none"
+              stroke="#28c840"
+              stroke-width="2.9"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <rect x="20.2" y="18.9" width="5.4" height="2" rx="0.4" fill="#5aa9e6" />
+          </svg>
+          <text x="20" y="54" text-anchor="middle" class="hero-hub-label font-mono">devmachine</text>
         </g>
       </svg>
       {
