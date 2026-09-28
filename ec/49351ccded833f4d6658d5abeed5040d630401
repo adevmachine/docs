@@ -1,0 +1,26 @@
+src/styles/global.css
+  s_a0cbf6c120c4f8::t_df524cafe5056d 351
+  s_a0cbf6c120c4f8::t_ba7957513fcf34 231,234-240,243,246-275,282,285,289,296,306-350,352-401
+  s_a0cbf6c120c4f8::t_597bc2d91f2b03 402
+src/components/Hero.astro
+  s_a0cbf6c120c4f8::t_0031c31c5b0d5b 5,8-40,44-45,53-81,85,88-89,92-93,95-96,98-99,102-105,108-111,114-116,119-140,142,145-154,157-169,171-173,178-179,183,186-198,201-202
+src/pages/index.astro
+  s_a0cbf6c120c4f8::t_05d116a50f4e6b 63-72,74-98
+  s_a0cbf6c120c4f8::t_b99796bc4e6330 33-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "ec49351ccded833f4d6658d5abeed5040d630401",
+  "prompts": {},
+  "sessions": {
+    "s_a0cbf6c120c4f8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f7d54e1b-857f-44e4-a7a9-0ca76ea55bb2",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Djalma Araújo <djalma@nossomos.cc>"
+    }
+  }
+}
