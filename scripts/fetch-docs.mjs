@@ -38,8 +38,8 @@ function sectionFor(relPath) {
 }
 
 function slugFor(relPath) {
-  const noExt = relPath.replace(/\.md$/, '')
-  if (noExt === 'index') return `${BASE}/`
+  const noExt = relPath.replace(/\.md$/, '').replace(/(^|\/)index$/, '')
+  if (noExt === '') return `${BASE}/`
   return `${BASE}/${noExt}/`
 }
 
