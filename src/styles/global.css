@@ -18,8 +18,12 @@
   --hero-bg: #d6d6d0;
   --hero-bg-center: #eeeeea;
   --hero-fog: #f5f5f2;
-  --hero-dot: #ffffff;
+  --hero-dot: #0f141a;
   --hero-dot-bright: #ffffff;
+  --hero-line-rgb: 15, 20, 26;
+  --hero-line-alpha: 0.13;
+  --hero-accent-rgb: 37, 99, 235;
+  --hero-accent-alpha: 0.55;
 
   --pagefind-ui-border-radius: 0px;
   --pagefind-ui-image-border-radius: 0px;
@@ -31,6 +35,10 @@
   --hero-fog: #050505;
   --hero-dot: #9a9a9a;
   --hero-dot-bright: #f5f5f2;
+  --hero-line-rgb: 255, 255, 255;
+  --hero-line-alpha: 0.09;
+  --hero-accent-rgb: 90, 169, 230;
+  --hero-accent-alpha: 0.6;
 }
 
 html {

@@ -46,6 +46,7 @@ const windows: Win[] = [
 
 <section class="hero" id="hero">
   <div class="hero-backdrop" aria-hidden="true"></div>
+  <canvas class="hero-grid-bg" id="hero-grid-bg" aria-hidden="true"></canvas>
   <div class="hero-copy max-w-3xl mx-auto px-4 sm:px-6">
     <p class="hero-eyebrow text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-4">
       <span class="hero-eyebrow-dot"></span>
@@ -61,7 +62,6 @@ const windows: Win[] = [
 
   <div class="hero-terminal-wrap px-4 sm:px-6" id="hero-terminal">
     <div class="hero-stage">
-      <canvas class="hero-grid-bg" id="hero-grid-bg" aria-hidden="true"></canvas>
       <svg
         class="hero-link-svg"
         id="hero-link-svg"
@@ -604,50 +604,201 @@ const windows: Win[] = [
 
 <script is:inline>
   ;(() => {
+    const hero = document.getElementById('hero')
     const stage = document.querySelector('.hero-stage')
     const canvas = document.getElementById('hero-grid-bg')
-    if (!(stage instanceof HTMLElement) || !(canvas instanceof HTMLCanvasElement)) return
+    if (!(hero instanceof HTMLElement) || !(stage instanceof HTMLElement) || !(canvas instanceof HTMLCanvasElement)) return
 
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    function draw() {
-      const rect = stage.getBoundingClientRect()
-      const w = rect.width
-      const h = rect.height
-      if (!w || !h) return
-      const dpr = Math.min(window.devicePixelRatio || 1, 2)
-      canvas.width = Math.max(1, Math.round(w * dpr))
-      canvas.height = Math.max(1, Math.round(h * dpr))
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-      ctx.clearRect(0, 0, w, h)
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const CELL = 40
+    const PULSE_EVERY = 2600
+    const PULSE_LIFE = 5200
+    const BAND = 70
 
-      const cx = w / 2
-      const cy = h / 2
+    let w = 0
+    let h = 0
+    let cx = 0
+    let cy = 0
+    let dpr = 1
+    let colors = null
+    let base = null
+    let dots = []
+    let visible = true
+    let frame = 0
 
-      const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, 140)
-      glow.addColorStop(0, 'rgba(90, 169, 230, 0.14)')
-      glow.addColorStop(1, 'rgba(90, 169, 230, 0)')
-      ctx.fillStyle = glow
-      ctx.beginPath()
-      ctx.arc(cx, cy, 140, 0, Math.PI * 2)
-      ctx.fill()
-
-      const maxR = Math.hypot(w, h) / 2
-      const rings = 3
-      for (let r = 1; r <= rings; r++) {
-        const radius = maxR * 0.8 * (r / rings)
-        const alpha = 0.1 * (1 - r / (rings + 1))
-        ctx.strokeStyle = `rgba(150, 150, 150, ${alpha})`
-        ctx.lineWidth = 1
-        ctx.beginPath()
-        ctx.arc(cx, cy, radius, 0, Math.PI * 2)
-        ctx.stroke()
+    function readColors() {
+      const style = getComputedStyle(document.documentElement)
+      const read = (name, fallback) => style.getPropertyValue(name).trim() || fallback
+      return {
+        line: read('--hero-line-rgb', '15, 20, 26'),
+        lineAlpha: parseFloat(read('--hero-line-alpha', '0.1')),
+        accent: read('--hero-accent-rgb', '37, 99, 235'),
+        accentAlpha: parseFloat(read('--hero-accent-alpha', '0.5')),
       }
     }
 
-    draw()
-    window.addEventListener('resize', draw)
+    function fade(x, y) {
+      const dx = (x - cx) / (w * 0.6)
+      const dy = (y - cy) / (h * 0.6)
+      return Math.max(0, 1 - Math.hypot(dx, dy))
+    }
+
+    function buildBase() {
+      base = document.createElement('canvas')
+      base.width = canvas.width
+      base.height = canvas.height
+      const b = base.getContext('2d')
+      b.setTransform(dpr, 0, 0, dpr, 0, 0)
+      const { line, lineAlpha, accent } = colors
+
+      const glow = b.createRadialGradient(cx, cy, 0, cx, cy, Math.min(w, h) * 0.45)
+      glow.addColorStop(0, `rgba(${accent}, ${lineAlpha * 1.6})`)
+      glow.addColorStop(1, `rgba(${accent}, 0)`)
+      b.fillStyle = glow
+      b.fillRect(0, 0, w, h)
+
+      const ox = cx % CELL
+      const oy = cy % CELL
+      b.lineWidth = 1
+      for (let x = ox; x <= w; x += CELL) {
+        const g = b.createLinearGradient(x, 0, x, h)
+        g.addColorStop(0, `rgba(${line}, 0)`)
+        g.addColorStop(0.5, `rgba(${line}, ${lineAlpha * fade(x, cy)})`)
+        g.addColorStop(1, `rgba(${line}, 0)`)
+        b.strokeStyle = g
+        b.beginPath()
+        b.moveTo(Math.round(x) + 0.5, 0)
+        b.lineTo(Math.round(x) + 0.5, h)
+        b.stroke()
+      }
+      for (let y = oy; y <= h; y += CELL) {
+        const g = b.createLinearGradient(0, y, w, y)
+        g.addColorStop(0, `rgba(${line}, 0)`)
+        g.addColorStop(0.5, `rgba(${line}, ${lineAlpha * fade(cx, y)})`)
+        g.addColorStop(1, `rgba(${line}, 0)`)
+        b.strokeStyle = g
+        b.beginPath()
+        b.moveTo(0, Math.round(y) + 0.5)
+        b.lineTo(w, Math.round(y) + 0.5)
+        b.stroke()
+      }
+
+      dots = []
+      for (let x = ox; x <= w; x += CELL) {
+        for (let y = oy; y <= h; y += CELL) {
+          const f = fade(x, y)
+          if (f <= 0) continue
+          dots.push({ x, y, f, d: Math.hypot(x - cx, y - cy) })
+          b.fillStyle = `rgba(${line}, ${Math.min(1, lineAlpha * 2.6 * f)})`
+          b.fillRect(x - 1, y - 1, 2, 2)
+        }
+      }
+
+      const maxR = Math.hypot(w, h) / 2
+      for (let r = 1; r <= 5; r++) {
+        const radius = maxR * 0.17 * r
+        b.strokeStyle = `rgba(${line}, ${lineAlpha * 2 * (1 - r / 6)})`
+        b.setLineDash(r % 2 ? [] : [4, 6])
+        b.beginPath()
+        b.arc(cx, cy, radius, 0, Math.PI * 2)
+        b.stroke()
+      }
+      b.setLineDash([])
+    }
+
+    function resize() {
+      const rect = hero.getBoundingClientRect()
+      const hub = stage.getBoundingClientRect()
+      w = rect.width
+      h = rect.height
+      if (!w || !h) return false
+      cx = hub.left - rect.left + hub.width / 2
+      cy = hub.top - rect.top + hub.height / 2
+      dpr = Math.min(window.devicePixelRatio || 1, 2)
+      canvas.width = Math.max(1, Math.round(w * dpr))
+      canvas.height = Math.max(1, Math.round(h * dpr))
+      colors = readColors()
+      buildBase()
+      return true
+    }
+
+    // The windows are translucent on purpose, for depth; the grid showing
+    // through them would muddy their text, so their footprint stays clear.
+    function clearUnderWindows() {
+      const origin = hero.getBoundingClientRect()
+      for (const win of stage.querySelectorAll('.term-window')) {
+        const box = win.getBoundingClientRect()
+        ctx.clearRect(box.left - origin.left, box.top - origin.top, box.width, box.height)
+      }
+    }
+
+    function draw(now) {
+      if (!base) return
+      ctx.setTransform(1, 0, 0, 1, 0, 0)
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      ctx.drawImage(base, 0, 0)
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      if (reduceMotion) {
+        clearUnderWindows()
+        return
+      }
+
+      const maxR = Math.hypot(w, h) / 2
+      const { accent, accentAlpha } = colors
+      const first = Math.floor((now - PULSE_LIFE) / PULSE_EVERY) + 1
+      for (let k = first; k * PULSE_EVERY <= now; k++) {
+        const t = (now - k * PULSE_EVERY) / PULSE_LIFE
+        if (t < 0 || t > 1) continue
+        const radius = 50 + (maxR - 50) * (1 - Math.pow(1 - t, 2))
+        const life = 1 - t
+
+        ctx.strokeStyle = `rgba(${accent}, ${accentAlpha * life})`
+        ctx.lineWidth = 1.5
+        ctx.beginPath()
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2)
+        ctx.stroke()
+
+        for (const dot of dots) {
+          const near = 1 - Math.abs(dot.d - radius) / BAND
+          if (near <= 0) continue
+          const a = accentAlpha * 1.6 * near * life * dot.f
+          ctx.fillStyle = `rgba(${accent}, ${Math.min(1, a)})`
+          const size = 2 + 2 * near
+          ctx.fillRect(dot.x - size / 2, dot.y - size / 2, size, size)
+        }
+      }
+      clearUnderWindows()
+    }
+
+    function loop(now) {
+      frame = 0
+      if (!visible || document.hidden) return
+      draw(now)
+      frame = requestAnimationFrame(loop)
+    }
+
+    function start() {
+      draw(performance.now())
+      if (reduceMotion) return
+      if (!frame) frame = requestAnimationFrame(loop)
+    }
+
+    if (resize()) start()
+
+    window.addEventListener('resize', () => {
+      if (resize()) start()
+    })
+    new MutationObserver(() => {
+      if (resize()) start()
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+    document.addEventListener('visibilitychange', start)
+    new IntersectionObserver((entries) => {
+      visible = entries.some((e) => e.isIntersecting)
+      start()
+    }).observe(hero)
   })()
 </script>
 
