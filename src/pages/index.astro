@@ -39,27 +39,12 @@ const commands = [
       devmachine turns a VPS into workspaces you develop in: one Linux account
       per project, each with its own tools, logins and coding agent.
     </p>
-    <div class="flex flex-wrap gap-3 mb-10">
-      <a href={`${base}getting-started/`} class="px-5 py-2.5 rounded-full bg-[var(--ink)] text-[var(--bg)] font-medium text-sm">
-        Get started
-      </a>
-      <a href={`${base}`} class="px-5 py-2.5 rounded-full border hairline font-medium text-sm">
-        Read the docs
-      </a>
-      <a
-        href="https://github.com/adevmachine/cli"
-        target="_blank"
-        rel="noreferrer"
-        class="px-5 py-2.5 rounded-full border hairline font-medium text-sm"
-      >
-        GitHub
-      </a>
-    </div>
+    <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-6">Get started</h2>
 
     <div class="border hairline rounded-2xl bg-[var(--card)] p-4 sm:p-5 max-w-xl relative font-mono text-sm">
-      <p class="text-xs uppercase tracking-widest text-[var(--muted)] mb-2">Simple install</p>
-      <div class="flex flex-wrap items-center justify-between gap-4">
-        <code id="install-cmd" class="min-w-0 break-all">brew install adevmachine/tap/devmachine</code>
+      <p class="text-xs uppercase tracking-widest text-[var(--muted)] mb-2">Install and set up</p>
+      <div class="flex flex-wrap items-start justify-between gap-4">
+        <code id="install-cmd" class="min-w-0 break-all leading-relaxed">brew install adevmachine/tap/devmachine<br />devmachine setup</code>
         <button
           id="install-copy"
           type="button"
@@ -142,7 +127,7 @@ const commands = [
   <script is:inline>
     document.getElementById('install-copy')?.addEventListener('click', (e) => {
       const btn = e.currentTarget
-      navigator.clipboard?.writeText('brew install adevmachine/tap/devmachine')
+      navigator.clipboard?.writeText('brew install adevmachine/tap/devmachine\ndevmachine setup')
       btn.textContent = 'Copied'
       setTimeout(() => {
         btn.textContent = 'Copy'
