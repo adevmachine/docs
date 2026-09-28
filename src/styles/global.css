@@ -109,11 +109,14 @@ body {
   color: var(--dark-ink);
   border: 1px solid var(--dark-line);
   border-radius: 0.75rem;
-  padding: 1rem 1.25rem;
-  overflow-x: auto;
+  padding: 1rem 4.5rem 1rem 1.25rem;
   margin-top: 1.25rem;
   margin-bottom: 1.25rem;
   position: relative;
+}
+
+.prose-doc pre .pre-scroll {
+  overflow-x: auto;
 }
 
 .prose-doc pre code {
@@ -191,7 +194,7 @@ body {
   border: 1px solid var(--dark-line);
   border-radius: 999px;
   padding: 0.25rem 0.6rem;
-  background: transparent;
+  background: var(--dark-bg);
   color: var(--dark-ink);
   cursor: pointer;
 }

@@ -9,21 +9,21 @@ const howItWorks = [
     href: `${base}how-it-works/trust-bootstrap/`,
   },
   {
-    title: 'Add workspaces',
-    body: 'A workspace is one Linux user on one machine. Name it in a command and never type an address again.',
+    title: 'A workspace per project',
+    body: 'A workspace is one Linux account on one machine, with git, the GitHub CLI, Node and zsh already in it. Name it in a command and work in it.',
     href: `${base}concepts/machines-and-workspaces/`,
   },
   {
-    title: 'Sync packages',
-    body: 'Everything a machine gets is a package, fetched fresh and converged with Ansible. Nothing is baked into the binary.',
+    title: 'Tools as packages',
+    body: 'A coding agent, Docker, a GitHub login: add one with a command, then devmachine sync applies it to the workspace.',
     href: `${base}concepts/packages/`,
   },
 ]
 
 const commands = [
   { cmd: 'devmachine setup', desc: 'get in, install a key, prove it, harden, install Ansible' },
-  { cmd: 'devmachine workspaces new alice', desc: 'add a Linux user, ready to work in' },
-  { cmd: 'devmachine sync', desc: 'fetch the recipes and converge the machine' },
+  { cmd: 'devmachine workspaces new alice && devmachine sync', desc: 'add a Linux account, and build it on the machine' },
+  { cmd: 'devmachine ssh alice', desc: 'work in it' },
 ]
 ---
 
@@ -36,9 +36,8 @@ const commands = [
       Your VPS, as workspaces.
     </h1>
     <p class="text-lg text-[var(--muted)] max-w-2xl mb-8">
-      devmachine sets up and operates a personal development VPS: the first SSH
-      handshake, hardening, users, Docker, a reverse proxy with automatic TLS,
-      subdomains and DNS.
+      devmachine turns a VPS into workspaces you develop in: one Linux account
+      per project, each with its own tools, logins and coding agent.
     </p>
     <div class="flex flex-wrap gap-3 mb-10">
       <a href={`${base}getting-started/`} class="px-5 py-2.5 rounded-full bg-[var(--ink)] text-[var(--bg)] font-medium text-sm">
@@ -89,14 +88,14 @@ const commands = [
     </div>
   </section>
 
-  <section class="max-w-6xl mx-auto px-4 sm:px-6 py-20">
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 pt-16 pb-10">
     <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">02 / First commands</p>
     <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-10">Take over a machine.</h2>
     <div class="grid gap-4 max-w-3xl">
       {
         commands.map((c) => (
           <div class="border hairline rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
-            <code class="font-mono text-sm break-all sm:shrink-0 sm:w-[19rem]">{c.cmd}</code>
+            <code class="font-mono text-sm break-all sm:shrink-0 sm:w-[26rem]">{c.cmd}</code>
             <p class="text-sm text-[var(--muted)]">{c.desc}</p>
           </div>
         ))
