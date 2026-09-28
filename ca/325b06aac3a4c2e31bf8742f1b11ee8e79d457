@@ -1,0 +1,48 @@
+src/components/Hero.astro
+  s_a0cbf6c120c4f8::t_bca8313fcc8393 10-22,24-29,33-36,39-42,45-51,71-81,83-95,100,103,128,141,148-149,154,162-163,166-168,171,175-176,178,180,184,213-215
+src/layouts/BaseLayout.astro
+  s_a0cbf6c120c4f8::t_4eec0dace4975b 94
+  s_a0cbf6c120c4f8::t_90b2c2479a131d 85-93,95-100
+  s_a0cbf6c120c4f8::t_e7d563a0415a69 84
+  s_a0cbf6c120c4f8::t_4d7390aa3860b4 51,53-62
+  s_a0cbf6c120c4f8::t_74932a0d0db029 52,73
+  s_a0cbf6c120c4f8::t_f536e50e30c9f5 82-83
+scripts/fetch-docs.mjs
+  s_a0cbf6c120c4f8::t_6921f6d1fa731c 25
+  s_a0cbf6c120c4f8::t_61f77ab46c841d 127
+src/styles/global.css
+  s_a0cbf6c120c4f8::t_f53643dfc74897 339-340,347-348,355,357,364-366
+  s_a0cbf6c120c4f8::t_d08a0978b6ea0f 314,318-338,342-346,349,351-354,359-362,367-378,381,386-387,394-401,405-406,411-416
+  s_a0cbf6c120c4f8::t_79971fd2dcc8f7 417,504-524
+  s_a0cbf6c120c4f8::t_d03cf54d67fe8d 341,350,356,358,363,379-380,382-385,388-393,402-404,407-410
+  s_10b4ff069ee395::t_6c9720ea1c9e1a 418
+src/lib/nav.ts
+  s_a0cbf6c120c4f8::t_d95ff146d7162e 3
+src/pages/index.astro
+  s_a0cbf6c120c4f8::t_1132473e8d95b7 164-191
+  s_a0cbf6c120c4f8::t_e906b34de32f2a 40-41,43-44,46-51,53-63,67-86,90-94,112
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "ca325b06aac3a4c2e31bf8742f1b11ee8e79d457",
+  "prompts": {},
+  "sessions": {
+    "s_10b4ff069ee395": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b76fff91-f1bf-45d9-9df1-dfe4f1872b87",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Djalma Araújo <djalma@nossomos.cc>"
+    },
+    "s_a0cbf6c120c4f8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f7d54e1b-857f-44e4-a7a9-0ca76ea55bb2",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Djalma Araújo <djalma@nossomos.cc>"
+    }
+  }
+}
