@@ -9,7 +9,7 @@ const { eyebrow, headline } = Astro.props
 
 <section class="hero" id="hero">
   <canvas id="hero-canvas" aria-hidden="true"></canvas>
-  <div class="hero-copy">
+  <div class="hero-copy max-w-6xl mx-auto px-4 sm:px-6">
     <p class="hero-eyebrow text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-4">
       <span class="hero-eyebrow-dot"></span>
       {eyebrow}
@@ -29,8 +29,9 @@ const { eyebrow, headline } = Astro.props
     if (!ctx) return
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const streamCount = 90
-    const dotsPerStream = 14
+    const streamCount = 130
+    const dotsPerStream = 20
+    const SPRITE_SIZE = 96
     let streams = []
     let width = 0
     let height = 0
@@ -38,20 +39,66 @@ const { eyebrow, headline } = Astro.props
     let running = false
     let visible = true
     let rafId = 0
+    let sprite = null
+    let brightSprite = null
+    let bgGradient = null
+    let dotRgb = '255,255,255'
+    let brightRgb = '255,255,255'
 
-    function color(alpha, bright) {
-      const styles = getComputedStyle(document.documentElement)
-      const base = styles.getPropertyValue(bright ? '--hero-dot-bright' : '--hero-dot').trim() || '#ffffff'
-      return { base, alpha }
+    function cssVar(name, fallback) {
+      return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback
+    }
+
+    function hexToRgb(hex) {
+      const h = hex.replace('#', '')
+      const n = h.length === 3 ? h.split('').map((c) => c + c).join('') : h
+      const num = parseInt(n, 16)
+      return [(num >> 16) & 255, (num >> 8) & 255, num & 255]
+    }
+
+    function makeSprite(hex) {
+      const [r, g, b] = hexToRgb(hex)
+      const off = document.createElement('canvas')
+      off.width = SPRITE_SIZE
+      off.height = SPRITE_SIZE
+      const octx = off.getContext('2d')
+      const cx = SPRITE_SIZE / 2
+      const grad = octx.createRadialGradient(cx, cx, 0, cx, cx, cx)
+      grad.addColorStop(0, `rgba(${r},${g},${b},1)`)
+      grad.addColorStop(0.22, `rgba(${r},${g},${b},1)`)
+      grad.addColorStop(0.45, `rgba(${r},${g},${b},0.35)`)
+      grad.addColorStop(1, `rgba(${r},${g},${b},0)`)
+      octx.fillStyle = grad
+      octx.fillRect(0, 0, SPRITE_SIZE, SPRITE_SIZE)
+      return off
+    }
+
+    function buildSprites() {
+      const dotHex = cssVar('--hero-dot', '#ffffff')
+      const brightHex = cssVar('--hero-dot-bright', '#ffffff')
+      sprite = makeSprite(dotHex)
+      brightSprite = makeSprite(brightHex)
+      dotRgb = hexToRgb(dotHex).join(',')
+      brightRgb = hexToRgb(brightHex).join(',')
+    }
+
+    function buildBackground() {
+      const cx = width * 0.5
+      const cy = height * 0.4
+      const r = Math.max(width, height) * 0.75
+      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r)
+      g.addColorStop(0, cssVar('--hero-bg-center', cssVar('--hero-bg', '#e4e4e0')))
+      g.addColorStop(1, cssVar('--hero-bg', '#e4e4e0'))
+      bgGradient = g
     }
 
     function makeStream() {
       return {
         angle: Math.random() * Math.PI * 2,
-        speed: 0.15 + Math.random() * 0.25,
+        speed: 0.16 + Math.random() * 0.26,
         boost: 0,
         boostTarget: 0,
-        dots: Array.from({ length: dotsPerStream }, (_, i) => i / dotsPerStream + Math.random() * 0.02),
+        dots: Array.from({ length: dotsPerStream }, (_, i) => i / dotsPerStream + Math.random() * 0.015),
       }
     }
 
@@ -63,41 +110,59 @@ const { eyebrow, headline } = Astro.props
       canvas.width = Math.round(width * dpr)
       canvas.height = Math.round(height * dpr)
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      buildBackground()
     }
 
     function drawFrame(t) {
       ctx.clearRect(0, 0, width, height)
+      if (bgGradient) {
+        ctx.fillStyle = bgGradient
+        ctx.fillRect(0, 0, width, height)
+      }
       const cx = width * 0.5
       const cy = height * 0.4
-      const maxRadius = Math.max(width, height) * 0.8
-      const dotColor = color(1, false).base
-      const brightColor = color(1, true).base
+      const maxRadius = Math.max(width, height) * 0.85
+      ctx.globalCompositeOperation = 'lighter'
 
       for (const s of streams) {
         if (!reduceMotion) {
-          if (Math.random() < 0.0025) s.boostTarget = 1
-          s.boost += (s.boostTarget - s.boost) * 0.04
+          if (Math.random() < 0.003) s.boostTarget = 1
+          s.boost += (s.boostTarget - s.boost) * 0.045
           if (s.boost > 0.98) s.boostTarget = 0
         }
-        const speed = s.speed * (1 + s.boost * 2.2)
+        const speed = s.speed * (1 + s.boost * 2.4)
         const dx = Math.cos(s.angle)
         const dy = Math.sin(s.angle) * 1.2
+        const farX = cx + dx * maxRadius
+        const farY = cy + dy * maxRadius
+        const lineRgb = s.boost > 0.12 ? brightRgb : dotRgb
+        const lineAlpha = (0.05 + s.boost * 0.22) * (reduceMotion ? 0.6 : 1)
+        const lineGrad = ctx.createLinearGradient(cx, cy, farX, farY)
+        lineGrad.addColorStop(0, `rgba(${lineRgb},0)`)
+        lineGrad.addColorStop(1, `rgba(${lineRgb},${lineAlpha})`)
+        ctx.strokeStyle = lineGrad
+        ctx.lineWidth = s.boost > 0.12 ? 1.4 : 0.75
+        ctx.beginPath()
+        ctx.moveTo(cx, cy)
+        ctx.lineTo(farX, farY)
+        ctx.stroke()
+
         for (let i = 0; i < s.dots.length; i++) {
-          let p = reduceMotion ? s.dots[i] : (s.dots[i] + t * speed * 0.00006) % 1
+          const p = reduceMotion ? s.dots[i] : (s.dots[i] + t * speed * 0.00006) % 1
           const depth = p * p
           const r = depth * maxRadius
           const x = cx + dx * r
           const y = cy + dy * r
-          if (x < -20 || x > width + 20 || y < -20 || y > height + 20) continue
-          const size = 0.5 + depth * 3.2 + s.boost * 1.4
-          const alpha = (0.05 + depth * 0.8) * (0.65 + s.boost * 0.35)
-          ctx.beginPath()
-          ctx.fillStyle = s.boost > 0.15 ? brightColor : dotColor
+          if (x < -40 || x > width + 40 || y < -40 || y > height + 40) continue
+          const size = (2 + depth * 13 + s.boost * 7) * (1 + s.boost * 0.4)
+          const alpha = Math.min(1, 0.14 + depth * 1.15) * (0.75 + s.boost * 0.5)
+          const img = s.boost > 0.12 ? brightSprite : sprite
+          if (!img) continue
           ctx.globalAlpha = Math.min(1, alpha)
-          ctx.arc(x, y, size, 0, Math.PI * 2)
-          ctx.fill()
+          ctx.drawImage(img, x - size / 2, y - size / 2, size, size)
         }
       }
+      ctx.globalCompositeOperation = 'source-over'
       ctx.globalAlpha = 1
     }
 
@@ -119,8 +184,18 @@ const { eyebrow, headline } = Astro.props
     }
 
     streams = Array.from({ length: streamCount }, makeStream)
+    buildSprites()
     resize()
     drawFrame(0)
+
+    const themeToggle = document.getElementById('theme-toggle')
+    themeToggle?.addEventListener('click', () => {
+      requestAnimationFrame(() => {
+        buildSprites()
+        buildBackground()
+        if (!running) drawFrame(performance.now())
+      })
+    })
 
     if (!reduceMotion) {
       const io = new IntersectionObserver(

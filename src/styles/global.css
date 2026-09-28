@@ -15,7 +15,8 @@
   --dark-ink: #f5f5f2;
   --dark-line: #292929;
 
-  --hero-bg: #e4e4e0;
+  --hero-bg: #d6d6d0;
+  --hero-bg-center: #eeeeea;
   --hero-fog: #f5f5f2;
   --hero-dot: #ffffff;
   --hero-dot-bright: #ffffff;
@@ -26,6 +27,7 @@
 
 :root[data-theme="dark"] {
   --hero-bg: #050505;
+  --hero-bg-center: #161616;
   --hero-fog: #050505;
   --hero-dot: #9a9a9a;
   --hero-dot-bright: #f5f5f2;

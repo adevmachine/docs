@@ -122,7 +122,9 @@ const commands = [
       {
         commands.map((c) => (
           <div class="border hairline p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
-            <code class="font-mono text-sm break-all sm:shrink-0 sm:w-[26rem]">{c.cmd}</code>
+            <div class="overflow-x-auto sm:shrink-0 sm:w-[26rem]">
+              <code class="font-mono text-sm whitespace-nowrap block">{c.cmd}</code>
+            </div>
             <p class="text-sm text-[var(--muted)]">{c.desc}</p>
           </div>
         ))
