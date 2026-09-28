@@ -1,0 +1,37 @@
+README.md
+  s_a0cbf6c120c4f8::t_a441cedd17a2bd 4,18,73,75
+astro.config.mjs
+  s_a0cbf6c120c4f8::t_58cef11847df33 5
+public/CNAME
+  s_a0cbf6c120c4f8::t_a460bdf94c47f6 1
+scripts/check-links.mjs
+  s_a0cbf6c120c4f8::t_c0a7267153a124 19-20
+scripts/fetch-docs.mjs
+  s_a0cbf6c120c4f8::t_1bc9601f842f11 21
+src/lib/nav.ts
+  s_a0cbf6c120c4f8::t_48a5a3332688d3 8-9,13-14
+src/pages/[...slug].md.ts
+  s_a0cbf6c120c4f8::t_cf6454eebf239e 6
+src/pages/index.astro
+  s_a0cbf6c120c4f8::t_05b3e912805736 78,157
+src/pages/llms-full.txt.ts
+  s_a0cbf6c120c4f8::t_07ea16d1889637 9
+src/pages/llms.txt.ts
+  s_a0cbf6c120c4f8::t_8b0f8ab54604e0 15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "804c92edfbeb1cfe0bd38bc612c2ef24929c9fd1",
+  "prompts": {},
+  "sessions": {
+    "s_a0cbf6c120c4f8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f7d54e1b-857f-44e4-a7a9-0ca76ea55bb2",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Djalma Araújo <djalma@nossomos.cc>"
+    }
+  }
+}
