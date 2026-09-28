@@ -1,0 +1,149 @@
+---
+interface Props {
+  eyebrow: string
+  headline: string
+}
+
+const { eyebrow, headline } = Astro.props
+---
+
+<section class="hero" id="hero">
+  <canvas id="hero-canvas" aria-hidden="true"></canvas>
+  <div class="hero-copy">
+    <p class="hero-eyebrow text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-4">
+      <span class="hero-eyebrow-dot"></span>
+      {eyebrow}
+    </p>
+    <h1 class="text-5xl sm:text-7xl font-light leading-[0.95] tracking-tight" style="letter-spacing: -0.03em;">
+      {headline}
+    </h1>
+  </div>
+</section>
+
+<script is:inline>
+  ;(() => {
+    const section = document.getElementById('hero')
+    const canvas = document.getElementById('hero-canvas')
+    if (!(section instanceof HTMLElement) || !(canvas instanceof HTMLCanvasElement)) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const streamCount = 90
+    const dotsPerStream = 14
+    let streams = []
+    let width = 0
+    let height = 0
+    let dpr = 1
+    let running = false
+    let visible = true
+    let rafId = 0
+
+    function color(alpha, bright) {
+      const styles = getComputedStyle(document.documentElement)
+      const base = styles.getPropertyValue(bright ? '--hero-dot-bright' : '--hero-dot').trim() || '#ffffff'
+      return { base, alpha }
+    }
+
+    function makeStream() {
+      return {
+        angle: Math.random() * Math.PI * 2,
+        speed: 0.15 + Math.random() * 0.25,
+        boost: 0,
+        boostTarget: 0,
+        dots: Array.from({ length: dotsPerStream }, (_, i) => i / dotsPerStream + Math.random() * 0.02),
+      }
+    }
+
+    function resize() {
+      const rect = section.getBoundingClientRect()
+      dpr = Math.min(window.devicePixelRatio || 1, 2)
+      width = rect.width
+      height = rect.height
+      canvas.width = Math.round(width * dpr)
+      canvas.height = Math.round(height * dpr)
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    }
+
+    function drawFrame(t) {
+      ctx.clearRect(0, 0, width, height)
+      const cx = width * 0.5
+      const cy = height * 0.4
+      const maxRadius = Math.max(width, height) * 0.8
+      const dotColor = color(1, false).base
+      const brightColor = color(1, true).base
+
+      for (const s of streams) {
+        if (!reduceMotion) {
+          if (Math.random() < 0.0025) s.boostTarget = 1
+          s.boost += (s.boostTarget - s.boost) * 0.04
+          if (s.boost > 0.98) s.boostTarget = 0
+        }
+        const speed = s.speed * (1 + s.boost * 2.2)
+        const dx = Math.cos(s.angle)
+        const dy = Math.sin(s.angle) * 1.2
+        for (let i = 0; i < s.dots.length; i++) {
+          let p = reduceMotion ? s.dots[i] : (s.dots[i] + t * speed * 0.00006) % 1
+          const depth = p * p
+          const r = depth * maxRadius
+          const x = cx + dx * r
+          const y = cy + dy * r
+          if (x < -20 || x > width + 20 || y < -20 || y > height + 20) continue
+          const size = 0.5 + depth * 3.2 + s.boost * 1.4
+          const alpha = (0.05 + depth * 0.8) * (0.65 + s.boost * 0.35)
+          ctx.beginPath()
+          ctx.fillStyle = s.boost > 0.15 ? brightColor : dotColor
+          ctx.globalAlpha = Math.min(1, alpha)
+          ctx.arc(x, y, size, 0, Math.PI * 2)
+          ctx.fill()
+        }
+      }
+      ctx.globalAlpha = 1
+    }
+
+    function loop(t) {
+      if (!running) return
+      drawFrame(t)
+      rafId = requestAnimationFrame(loop)
+    }
+
+    function start() {
+      if (running || !visible) return
+      running = true
+      rafId = requestAnimationFrame(loop)
+    }
+
+    function stop() {
+      running = false
+      if (rafId) cancelAnimationFrame(rafId)
+    }
+
+    streams = Array.from({ length: streamCount }, makeStream)
+    resize()
+    drawFrame(0)
+
+    if (!reduceMotion) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          visible = entries[0]?.isIntersecting ?? true
+          if (visible && !document.hidden) start()
+          else stop()
+        },
+        { threshold: 0 },
+      )
+      io.observe(section)
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) stop()
+        else start()
+      })
+
+      start()
+    }
+
+    window.addEventListener('resize', () => {
+      resize()
+      drawFrame(performance.now())
+    })
+  })()
+</script>

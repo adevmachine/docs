@@ -23,7 +23,7 @@ const { groups, currentUrl } = Astro.props
               <a
                 href={item.url}
                 class:list={[
-                  'block py-1 px-2 -mx-2 rounded-md',
+                  'block py-1 px-2 -mx-2',
                   item.url === currentUrl ? 'font-semibold bg-[var(--card)] border hairline' : 'text-[var(--muted)] hover:text-[var(--ink)]',
                 ]}
               >

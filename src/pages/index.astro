@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
+import Hero from '../components/Hero.astro'
 const base = import.meta.env.BASE_URL
 
 const howItWorks = [
@@ -28,27 +29,23 @@ const commands = [
 ---
 
 <BaseLayout title="devmachine — your VPS, as workspaces" current="home">
-  <section class="max-w-6xl mx-auto px-4 sm:px-6 pt-16 pb-20">
-    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-4">
-      Personal development machines
-    </p>
-    <h1 class="text-5xl sm:text-7xl font-extrabold leading-[0.95] tracking-tight mb-6" style="letter-spacing: -0.04em;">
-      Your VPS, as workspaces.
-    </h1>
+  <Hero eyebrow="Your server, as workspaces" headline="Code on your own server." />
+
+  <section id="get-started" class="max-w-6xl mx-auto px-4 sm:px-6 pt-4 pb-20">
+    <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-6">Get started</h2>
     <p class="text-lg text-[var(--muted)] max-w-2xl mb-8">
       devmachine turns a VPS into workspaces you develop in: one Linux account
       per project, each with its own tools, logins and coding agent.
     </p>
-    <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-6">Get started</h2>
 
-    <div class="border hairline rounded-2xl bg-[var(--card)] p-4 sm:p-5 max-w-xl relative font-mono text-sm">
+    <div class="border hairline bg-[var(--card)] p-4 sm:p-5 max-w-xl relative font-mono text-sm">
       <p class="text-xs uppercase tracking-widest text-[var(--muted)] mb-2">Install and set up</p>
       <div class="flex flex-wrap items-start justify-between gap-4">
         <code id="install-cmd" class="min-w-0 break-all leading-relaxed">brew install adevmachine/tap/devmachine<br />devmachine setup</code>
         <button
           id="install-copy"
           type="button"
-          class="text-xs uppercase tracking-wide px-3 py-1 rounded-full border hairline shrink-0"
+          class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
         >
           Copy
         </button>
@@ -56,24 +53,26 @@ const commands = [
     </div>
   </section>
 
-  <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-20">
+  <section id="agent-setup" class="max-w-6xl mx-auto px-4 sm:px-6 pb-20">
     <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">01 / Use your agent</p>
-    <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-4">Let your coding agent set it up.</h2>
-    <p class="text-[var(--muted)] max-w-2xl mb-8">
-      It works in Claude Code, Codex, Cursor and others: it reads the docs, asks
-      you what it needs, and hands you back only the one step only you should
-      take — <code class="font-mono text-sm">devmachine setup</code>, so you're
-      the one who confirms the server's host key.
-    </p>
+    <div class="grid grid-cols-1 gap-6 min-[900px]:grid-cols-2 min-[900px]:gap-12 mb-8">
+      <h2 class="text-3xl sm:text-4xl font-light tracking-tight">Let your coding agent set it up.</h2>
+      <p class="text-[var(--muted)] max-w-2xl">
+        It works in Claude Code, Codex, Cursor and others: it reads the docs, asks
+        you what it needs, and hands you back only the one step only you should
+        take — <code class="font-mono text-sm">devmachine setup</code>, so you're
+        the one who confirms the server's host key.
+      </p>
+    </div>
 
-    <div class="border hairline rounded-2xl bg-[var(--card)] p-4 sm:p-5 max-w-xl font-mono text-sm">
+    <div class="border hairline bg-[var(--card)] p-4 sm:p-5 max-w-xl font-mono text-sm">
       <p class="text-xs uppercase tracking-widest text-[var(--muted)] mb-2">Paste into your agent</p>
       <div class="flex flex-wrap items-center justify-between gap-4">
         <code id="agent-prompt" class="min-w-0 break-all">Set up devmachine for me: read https://adevmachine.github.io/docs/agent-setup.md and follow it.</code>
         <button
           id="agent-prompt-copy"
           type="button"
-          class="text-xs uppercase tracking-wide px-3 py-1 rounded-full border hairline shrink-0"
+          class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
         >
           Copy
         </button>
@@ -92,15 +91,22 @@ const commands = [
     </p>
   </section>
 
-  <section class="dark-section">
+  <section id="how-it-works" class="dark-section">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 py-20">
       <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">02 / How it works</p>
-      <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-12">Three ideas, in order.</h2>
-      <div class="grid sm:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 gap-6 min-[900px]:grid-cols-2 min-[900px]:gap-12 mb-12">
+        <h2 class="text-3xl sm:text-4xl font-light tracking-tight">Three ideas, in order.</h2>
+        <p class="text-[#9a9a9a] max-w-2xl">
+          One command connects the server. One command makes a workspace.
+          One command adds a tool to it.
+        </p>
+      </div>
+      <div class="grid-cards grid-cols-1 sm:grid-cols-3">
         {
-          howItWorks.map((item) => (
-            <a href={item.href} class="block border hairline rounded-2xl p-6 hover:border-[var(--dark-ink,#f5f5f2)]">
-              <h3 class="text-xl font-semibold mb-3">{item.title}</h3>
+          howItWorks.map((item, i) => (
+            <a href={item.href} class="block p-6 hover:bg-white/5">
+              <p class="text-xs font-mono text-[#9a9a9a] mb-10">{String(i + 1).padStart(2, '0')}</p>
+              <h3 class="text-2xl font-light tracking-tight mb-3">{item.title}</h3>
               <p class="text-sm text-[#9a9a9a] leading-relaxed">{item.body}</p>
             </a>
           ))
@@ -109,13 +115,13 @@ const commands = [
     </div>
   </section>
 
-  <section class="max-w-6xl mx-auto px-4 sm:px-6 pt-16 pb-10">
+  <section id="first-commands" class="max-w-6xl mx-auto px-4 sm:px-6 pt-16 pb-10">
     <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">03 / First commands</p>
     <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-10">Three commands.</h2>
-    <div class="grid gap-4 max-w-3xl">
+    <div class="grid grid-cols-1 gap-4 max-w-3xl">
       {
         commands.map((c) => (
-          <div class="border hairline rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
+          <div class="border hairline p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
             <code class="font-mono text-sm break-all sm:shrink-0 sm:w-[26rem]">{c.cmd}</code>
             <p class="text-sm text-[var(--muted)]">{c.desc}</p>
           </div>

@@ -39,14 +39,19 @@ const frame = current === 'docs' ? 'max-w-7xl' : 'max-w-6xl'
     </script>
   </head>
   <body class="min-h-screen flex flex-col">
-    <header class="border-b hairline sticky top-0 z-40 bg-[var(--bg)]">
+    <header
+      class:list={[
+        'z-40',
+        current === 'home' ? 'absolute top-0 inset-x-0 bg-transparent' : 'border-b hairline sticky top-0 bg-[var(--bg)]',
+      ]}
+    >
       <div class={`${frame} mx-auto px-4 sm:px-6 h-16 flex items-center justify-between`}>
-        <a href={`${base}`} class="font-extrabold tracking-tight text-lg">devmachine</a>
+        <a href={`${base}`} class="font-semibold tracking-tight text-lg">devmachine</a>
         <nav class="hidden md:flex items-center gap-1 text-sm">
-          <a href={`${base}getting-started/`} class="px-3 py-1.5 rounded-full">Documentation</a>
+          <a href={`${base}getting-started/`} class="px-3 py-1.5">Documentation</a>
           <a
             href="https://github.com/adevmachine/cli"
-            class="px-3 py-1.5 rounded-full"
+            class="px-3 py-1.5"
             target="_blank"
             rel="noreferrer"
           >
@@ -57,7 +62,7 @@ const frame = current === 'docs' ? 'max-w-7xl' : 'max-w-6xl'
           <button
             id="theme-toggle"
             type="button"
-            class="theme-toggle inline-flex items-center justify-center w-8 h-8 rounded-full border hairline"
+            class="theme-toggle inline-flex items-center justify-center w-8 h-8 border hairline"
             aria-label="Switch between light and dark"
             title="Light / dark"
           >
@@ -67,18 +72,18 @@ const frame = current === 'docs' ? 'max-w-7xl' : 'max-w-6xl'
           <button
             id="mobile-nav-toggle"
             type="button"
-            class="md:hidden text-xs font-mono uppercase tracking-wide px-3 py-1.5 rounded-full border hairline"
+            class="md:hidden text-xs font-mono uppercase tracking-wide px-3 py-1.5 border hairline"
           >
             Menu
           </button>
         </div>
       </div>
-      <nav id="mobile-nav" class="hidden md:hidden border-t hairline px-4 py-3 flex flex-col gap-2 text-sm">
+      <nav id="mobile-nav" class="hidden md:hidden border-t hairline px-4 py-3 flex flex-col gap-2 text-sm bg-[var(--bg)]">
         <a href={`${base}getting-started/`}>Documentation</a>
         <a href="https://github.com/adevmachine/cli" target="_blank" rel="noreferrer">GitHub</a>
       </nav>
     </header>
-    <main class="flex-1">
+    <main class="flex-1 min-w-0">
       <slot />
     </main>
     <footer class="border-t hairline mt-12">

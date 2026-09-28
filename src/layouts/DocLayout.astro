@@ -33,7 +33,7 @@ const editUrl = `https://github.com/adevmachine/cli/blob/main/${entry.data.sourc
     <button
       id="sidebar-toggle"
       type="button"
-      class="lg:hidden mt-4 text-xs font-mono uppercase tracking-wide px-3 py-1.5 rounded-full border hairline"
+      class="lg:hidden mt-4 text-xs font-mono uppercase tracking-wide px-3 py-1.5 border hairline"
     >
       Browse docs
     </button>
@@ -44,7 +44,7 @@ const editUrl = `https://github.com/adevmachine/cli/blob/main/${entry.data.sourc
     <article class="py-10 min-w-0">
       <div id="search" class="mb-8"></div>
       <p class="text-xs font-mono uppercase tracking-wide text-[var(--muted)] mb-2">{entry.data.section}</p>
-      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-6" style="letter-spacing: -0.03em;">
+      <h1 class="text-3xl sm:text-4xl font-light tracking-tight mb-6" style="letter-spacing: -0.03em;">
         {entry.data.title}
       </h1>
       <div class="prose-doc max-w-[72ch]">
@@ -60,7 +60,7 @@ const editUrl = `https://github.com/adevmachine/cli/blob/main/${entry.data.sourc
       <nav class="mt-6 grid sm:grid-cols-2 gap-4">
         {
           prev && (
-            <a href={prev.url} class="block border hairline rounded-xl p-4 hover:border-[var(--ink)]">
+            <a href={prev.url} class="block border hairline p-4 hover:border-[var(--ink)]">
               <p class="text-xs font-mono uppercase tracking-wide text-[var(--muted)]">Previous</p>
               <p class="font-medium mt-1">{prev.title}</p>
             </a>
@@ -68,7 +68,7 @@ const editUrl = `https://github.com/adevmachine/cli/blob/main/${entry.data.sourc
         }
         {
           next && (
-            <a href={next.url} class="block border hairline rounded-xl p-4 text-right hover:border-[var(--ink)] sm:col-start-2">
+            <a href={next.url} class="block border hairline p-4 text-right hover:border-[var(--ink)] sm:col-start-2">
               <p class="text-xs font-mono uppercase tracking-wide text-[var(--muted)]">Next</p>
               <p class="font-medium mt-1">{next.title}</p>
             </a>
