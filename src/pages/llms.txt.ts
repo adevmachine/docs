@@ -8,7 +8,7 @@ export const GET: APIRoute = async () => {
   const lines = [
     '# devmachine',
     '',
-    '> devmachine sets up and operates a personal development VPS: the first SSH handshake, hardening, users, Docker, a reverse proxy with automatic TLS, subdomains and DNS.',
+    '> devmachine turns a VPS into workspaces you develop in: one Linux account per project, each with its own tools, logins and coding agent.',
     '',
     '## Docs',
     '',
