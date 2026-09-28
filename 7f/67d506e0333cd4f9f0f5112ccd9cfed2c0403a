@@ -1,0 +1,47 @@
+src/styles/global.css
+  s_a0cbf6c120c4f8::t_6f4d3cac229f78 17-31
+  s_a0cbf6c120c4f8::t_45df511ca20c3e 226-284
+src/components/SidebarNav.astro
+  s_a0cbf6c120c4f8::t_651a9ee51c56af 26
+src/components/Hero.astro
+  s_a0cbf6c120c4f8::t_4791635e977ba9 1-49,51-69,73-82,85-87,94-149
+  s_a0cbf6c120c4f8::t_36c3aa6dd04c20 50
+  s_a0cbf6c120c4f8::t_14194653fd18f3 70-72,83-84,88-93
+src/layouts/BaseLayout.astro
+  s_a0cbf6c120c4f8::t_164e4449edb8b8 42-47,49,51,54,65,75,81
+  s_a0cbf6c120c4f8::t_055ac349c9f733 86
+src/pages/index.astro
+  s_a0cbf6c120c4f8::t_4f9ae36c0b19d8 3,33,35,41,48,59-66,68,75,98-103,106-109,118,121,124
+  s_a0cbf6c120c4f8::t_6cfb196f960f45 32
+  s_a0cbf6c120c4f8::t_e91c1781a6baec 34
+  s_a0cbf6c120c4f8::t_241bb0690e9b43 58
+  s_a0cbf6c120c4f8::t_3e47d62cc2c644 97
+  s_a0cbf6c120c4f8::t_9ec60a5ebb41ad 104
+  s_8be05770aada19::t_b963b2f9227218 56,94
+src/layouts/DocLayout.astro
+  s_a0cbf6c120c4f8::t_626ebedc12c295 36,47,63,71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "7f67d506e0333cd4f9f0f5112ccd9cfed2c0403a",
+  "prompts": {},
+  "sessions": {
+    "s_8be05770aada19": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-a5f7027e7f1dc453e",
+        "model": "unknown"
+      },
+      "human_author": "Djalma Araújo <djalma@nossomos.cc>"
+    },
+    "s_a0cbf6c120c4f8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f7d54e1b-857f-44e4-a7a9-0ca76ea55bb2",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Djalma Araújo <djalma@nossomos.cc>"
+    }
+  }
+}
