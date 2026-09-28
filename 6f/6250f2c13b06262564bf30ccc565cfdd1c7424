@@ -1,0 +1,47 @@
+src/components/HeroPipes.astro
+  s_a0cbf6c120c4f8::t_99b5d96986d0bc 321-322,327,330,344,351,356,359
+  s_a0cbf6c120c4f8::t_9a837248ff34a2 1-320,323-326,328-329,331-343,345-350,352-355,357-358,360-497
+src/pages/preview/pipes.astro
+  s_a0cbf6c120c4f8::t_53389644668abb 1-6,8-27
+  s_a0cbf6c120c4f8::t_8139fab9c94af1 7
+.github/workflows/deploy.yml
+  s_a0cbf6c120c4f8::t_fac391180ac8e1 29
+README.md
+  s_a0cbf6c120c4f8::t_97d8040daba4ea 3-4,10,30,57,75
+astro.config.mjs
+  s_a0cbf6c120c4f8::t_ded86add8bee13 5
+scripts/check-links.mjs
+  s_a0cbf6c120c4f8::t_5cf4071fb44f73 20
+scripts/fetch-docs.mjs
+  s_a0cbf6c120c4f8::t_7ee57ffe1b4710 22
+src/components/Hero.astro
+  s_a0cbf6c120c4f8::t_dc67d1443eda04 11
+src/layouts/BaseLayout.astro
+  s_a0cbf6c120c4f8::t_c621c94a64a652 53,83,91-92
+src/layouts/DocLayout.astro
+  s_a0cbf6c120c4f8::t_ba72f4b5d30551 17
+src/pages/[...slug].md.ts
+  s_a0cbf6c120c4f8::t_1b422205ba76a2 6
+src/pages/index.astro
+  s_a0cbf6c120c4f8::t_4a7f13034a47e3 49,78,147,157
+src/pages/llms-full.txt.ts
+  s_a0cbf6c120c4f8::t_b193e4f9bca10f 9
+src/pages/llms.txt.ts
+  s_a0cbf6c120c4f8::t_b8bad6971e633f 15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "6f6250f2c13b06262564bf30ccc565cfdd1c7424",
+  "prompts": {},
+  "sessions": {
+    "s_a0cbf6c120c4f8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f7d54e1b-857f-44e4-a7a9-0ca76ea55bb2",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Djalma Araújo <djalma@nossomos.cc>"
+    }
+  }
+}
