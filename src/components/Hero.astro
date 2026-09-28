@@ -70,6 +70,28 @@ const windows: Win[] = [
 
   <div class="hero-terminal-wrap px-4 sm:px-6" id="hero-terminal">
     <div class="hero-stage">
+      <svg
+        class="hero-link-svg"
+        id="hero-link-svg"
+        viewBox="0 0 992 448"
+        preserveAspectRatio="xMidYMid slice"
+        aria-hidden="true"
+      >
+        <g class="hero-link-lines" fill="none" stroke-width="1.5">
+          <path id="hero-link-you" class="hero-link-line" d="M 496 233 L 496 144"></path>
+          <path id="hero-link-alice" class="hero-link-line" d="M 496 233 Q 496 96 121 96"></path>
+          <path id="hero-link-bob" class="hero-link-line" d="M 496 233 Q 496 24 636 24"></path>
+          <path id="hero-link-agent" class="hero-link-line" d="M 496 233 Q 496 8 55 8"></path>
+        </g>
+        <circle id="hero-packet-you" class="hero-packet" r="3"></circle>
+        <circle id="hero-packet-alice" class="hero-packet" r="3"></circle>
+        <circle id="hero-packet-bob" class="hero-packet" r="3"></circle>
+        <circle id="hero-packet-agent" class="hero-packet" r="3"></circle>
+        <g class="hero-hub" transform="translate(479, 216)">
+          <rect width="34" height="34" class="hero-hub-box"></rect>
+          <text x="17" y="47" text-anchor="middle" class="hero-hub-label font-mono">devmachine</text>
+        </g>
+      </svg>
       {
         windows.map((win) => (
           <div class={`term-window term-${win.id}`} data-window={win.id}>
@@ -215,3 +237,129 @@ const windows: Win[] = [
     }
   })()
 </script>
+
+<script is:inline>
+  ;(() => {
+    const section = document.getElementById('hero')
+    const svg = document.getElementById('hero-link-svg')
+    if (!(section instanceof HTMLElement) || !svg) return
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduceMotion) return
+
+    const keys = ['you', 'alice', 'bob', 'agent']
+    const paths = {}
+    const lengths = {}
+    const packets = {}
+    for (const key of keys) {
+      const path = document.getElementById(`hero-link-${key}`)
+      const packet = document.getElementById(`hero-packet-${key}`)
+      if (path instanceof SVGPathElement && packet) {
+        paths[key] = path
+        lengths[key] = path.getTotalLength()
+        packets[key] = packet
+      }
+    }
+
+    const cyclePeriod = 6000
+    const travelDuration = 1100
+    const phase = { you: 0, alice: 900, bob: 1800, agent: 2700 }
+
+    let running = false
+    let rafId = null
+
+    function tick(time) {
+      if (!running) return
+      for (const key of keys) {
+        const path = paths[key]
+        const packet = packets[key]
+        if (!path || !packet) continue
+        const local = (time + phase[key]) % cyclePeriod
+        if (local < travelDuration) {
+          const cycleIndex = Math.floor((time + phase[key]) / cyclePeriod)
+          const outward = cycleIndex % 2 === 0
+          const t = local / travelDuration
+          const pos = path.getPointAtLength((outward ? t : 1 - t) * lengths[key])
+          packet.setAttribute('cx', String(pos.x))
+          packet.setAttribute('cy', String(pos.y))
+          packet.setAttribute('opacity', String(Math.sin(Math.PI * t)))
+        } else {
+          packet.setAttribute('opacity', '0')
+        }
+      }
+      rafId = requestAnimationFrame(tick)
+    }
+
+    function play() {
+      if (running) return
+      running = true
+      rafId = requestAnimationFrame(tick)
+    }
+
+    function pause() {
+      running = false
+      if (rafId != null) cancelAnimationFrame(rafId)
+      rafId = null
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        const visible = entries[0]?.isIntersecting ?? true
+        if (visible && !document.hidden) play()
+        else pause()
+      },
+      { threshold: 0 },
+    )
+    io.observe(section)
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) pause()
+      else play()
+    })
+  })()
+</script>
+
+<style>
+  .hero-link-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    display: none;
+  }
+
+  @media (min-width: 901px) {
+    .hero-link-svg {
+      display: block;
+    }
+  }
+
+  .hero-link-line {
+    stroke: var(--muted);
+    opacity: 0.35;
+  }
+
+  .hero-hub-box {
+    fill: var(--hero-bg-center);
+    stroke: var(--muted);
+    stroke-width: 1.5;
+  }
+
+  .hero-hub-label {
+    font-size: 9px;
+    fill: var(--muted);
+    letter-spacing: 0.02em;
+  }
+
+  .hero-packet {
+    fill: #5aa9e6;
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-packet {
+      display: none;
+    }
+  }
+</style>

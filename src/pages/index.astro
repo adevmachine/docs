@@ -29,18 +29,106 @@ const commands = [
 ]
 ---
 
-<BaseLayout title="devmachine — your VPS, as workspaces" current="home">
+
+<BaseLayout title="devmachine - Code from anywhere." current="home">
   <Hero
     eyebrow="Your server, as workspaces"
     headline="Code from anywhere."
     subline="Your own server. One workspace per project. Ready in a few commands."
   />
 
+  <section id="before-you-start" class="max-w-6xl mx-auto px-4 sm:px-6 pt-4 pb-20">
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">01 / Before you start</p>
+    <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-10">First, a machine.</h2>
+
+    <div class="grid-cards grid-cols-1 sm:grid-cols-2 mb-8">
+      <div class="p-6">
+        <p class="text-xs font-mono text-[var(--muted)] mb-10">01</p>
+        <h3 class="text-2xl font-light tracking-tight mb-3">A VPS</h3>
+        <p class="text-sm text-[var(--muted)] leading-relaxed mb-4">
+          Rent a server: Debian or Ubuntu, reachable as root over SSH.
+        </p>
+        <p class="text-sm mb-4">
+          <a
+            href="https://www.hostinger.com/br?REFERRALCODE=MYDEVMACHINE"
+            target="_blank"
+            rel="noopener sponsored"
+            class="underline underline-offset-2 hover:text-[var(--ink)]"
+          >
+            Get a VPS at Hostinger →
+          </a>
+        </p>
+        <p class="text-xs text-[var(--muted)]">Any provider works.</p>
+      </div>
+      <div class="p-6">
+        <p class="text-xs font-mono text-[var(--muted)] mb-10">02</p>
+        <h3 class="text-2xl font-light tracking-tight mb-3">Your own computer</h3>
+        <p class="text-sm text-[var(--muted)] leading-relaxed mb-4">
+          No server yet? devmachine can make a virtual machine on your computer with Lima and
+          set it up exactly like a VPS: a full workspace, locally, still useful for development.
+        </p>
+        <div class="border hairline bg-[var(--card)] p-3 font-mono text-sm mb-4">
+          <code>devmachine machines create-local sandbox</code>
+        </div>
+        <p class="text-sm">
+          <a
+            href={`${base}examples/a-local-vm-with-lima/`}
+            class="underline underline-offset-2 hover:text-[var(--ink)]"
+          >
+            Try it on your own computer first →
+          </a>
+        </p>
+      </div>
+    </div>
+
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">Requirements</p>
+    <div class="grid-cards grid-cols-1 sm:grid-cols-3 mb-4">
+      <div class="p-6">
+        <h3 class="text-lg font-light tracking-tight mb-2">A few apps</h3>
+        <p class="text-sm text-[var(--muted)] leading-relaxed mb-4">8 GB RAM.</p>
+        <a
+          href="https://www.hostinger.com/br/cart?product=vps%3Avps_kvm_2&period=12&referral_type=cart_link&REFERRALCODE=MYDEVMACHINE&referral_id=01a0ea01-3e95-70ee-adac-62e288bb18ca"
+          target="_blank"
+          rel="noopener sponsored"
+          class="text-sm underline underline-offset-2 hover:text-[var(--ink)]"
+        >
+          Hostinger KVM 2 →
+        </a>
+      </div>
+      <div class="p-6 relative" style="box-shadow: inset 0 0 0 1px #5aa9e6;">
+        <p class="text-xs font-mono uppercase tracking-wide text-[#5aa9e6] mb-2">Recommended</p>
+        <h3 class="text-lg font-light tracking-tight mb-2">16 GB RAM</h3>
+        <p class="text-sm text-[var(--muted)] leading-relaxed mb-4">Several apps and coding agents at once.</p>
+        <a
+          href="https://www.hostinger.com/br/cart?product=vps%3Avps_kvm_4&period=12&referral_type=cart_link&REFERRALCODE=MYDEVMACHINE&referral_id=01a0ea01-8399-726f-bca3-d2c4a9e10489"
+          target="_blank"
+          rel="noopener sponsored"
+          class="text-sm underline underline-offset-2 hover:text-[var(--ink)]"
+        >
+          Hostinger KVM 4 →
+        </a>
+      </div>
+      <div class="p-6">
+        <h3 class="text-lg font-light tracking-tight mb-2">Full development</h3>
+        <p class="text-sm text-[var(--muted)] leading-relaxed mb-4">Docker and many intensive apps running together.</p>
+        <a
+          href="https://www.hostinger.com/br/cart?product=vps%3Avps_kvm_8&period=12&referral_type=cart_link&REFERRALCODE=MYDEVMACHINE&referral_id=01a0ea01-e19e-70d7-aa34-3210ff05a36e"
+          target="_blank"
+          rel="noopener sponsored"
+          class="text-sm underline underline-offset-2 hover:text-[var(--ink)]"
+        >
+          Hostinger KVM 8 →
+        </a>
+      </div>
+    </div>
+    <p class="text-xs text-[var(--muted)]">Any Debian or Ubuntu VPS works; these are the ones we use.</p>
+  </section>
+
   <section id="get-started" class="max-w-6xl mx-auto px-4 sm:px-6 pt-4 pb-20">
-    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">01 / Get started</p>
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">02 / Get started</p>
     <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-6">Two ways to start.</h2>
 
-    <div class="max-w-xl">
+    <div>
       <div role="tablist" aria-label="Ways to get started" class="flex border hairline">
         <button
           role="tab"
@@ -64,21 +152,23 @@ const commands = [
         </button>
       </div>
 
-      <div role="tabpanel" id="panel-yourself" aria-labelledby="tab-yourself" tabindex="0" class="pt-5">
-        <p class="text-xs uppercase tracking-widest text-[var(--muted)] mb-2">From your computer, run</p>
-        <div class="border hairline bg-[var(--card)] p-4 sm:p-5 relative font-mono text-sm">
-          <div class="flex flex-wrap items-start justify-between gap-4">
-            <code id="install-cmd" class="min-w-0 break-all leading-relaxed">brew install mydevmachine/tap/devmachine<br />devmachine setup</code>
-            <button
-              id="install-copy"
-              type="button"
-              class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
-            >
-              Copy
-            </button>
+      <div role="tabpanel" id="panel-yourself" aria-labelledby="tab-yourself" tabindex="0" class="pt-6 grid grid-cols-1 min-[900px]:grid-cols-2 gap-8 items-start">
+        <div>
+          <p class="text-xs uppercase tracking-widest text-[var(--muted)] mb-2">From your computer, run</p>
+          <div class="border hairline bg-[var(--card)] p-4 sm:p-5 relative font-mono text-sm">
+            <div class="flex flex-wrap items-start justify-between gap-4">
+              <code id="install-cmd" class="min-w-0 break-all leading-relaxed">brew install mydevmachine/tap/devmachine<br />devmachine setup</code>
+              <button
+                id="install-copy"
+                type="button"
+                class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
+              >
+                Copy
+              </button>
+            </div>
           </div>
         </div>
-        <p class="text-sm mt-3 text-[var(--muted)]">
+        <p class="text-sm text-[var(--muted)]">
           Then <code class="font-mono text-[var(--ink)]">devmachine workspaces new alice && devmachine sync</code>,
           and <code class="font-mono text-[var(--ink)]">devmachine ssh alice</code>.
           <a href={`${base}getting-started/`} class="underline underline-offset-2 hover:text-[var(--ink)]">
@@ -87,41 +177,45 @@ const commands = [
         </p>
       </div>
 
-      <div role="tabpanel" id="panel-agent" aria-labelledby="tab-agent" tabindex="0" class="pt-5" hidden>
-        <p class="text-sm text-[var(--muted)] mb-3">
-          Paste this into Claude Code, Codex or Cursor. It asks what it needs and does
-          the rest; you only run <code class="font-mono text-[var(--ink)]">devmachine setup</code> yourself.
-        </p>
-        <div class="border hairline bg-[var(--card)] p-4 sm:p-5 font-mono text-sm">
-          <div class="flex flex-wrap items-center justify-between gap-4">
-            <code id="agent-prompt" class="min-w-0 break-all">Set up devmachine for me: read https://mydevmachine.sh/agent-setup.md and follow it.</code>
-            <button
-              id="agent-prompt-copy"
-              type="button"
-              class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
-            >
-              Copy
-            </button>
+      <div role="tabpanel" id="panel-agent" aria-labelledby="tab-agent" tabindex="0" class="pt-6 grid grid-cols-1 min-[900px]:grid-cols-2 gap-8 items-start" hidden>
+        <div>
+          <p class="text-sm text-[var(--muted)] mb-3">
+            Paste this into Claude Code, Codex or Cursor. It asks what it needs and does
+            the rest; you only run <code class="font-mono text-[var(--ink)]">devmachine setup</code> yourself.
+          </p>
+          <div class="border hairline bg-[var(--card)] p-4 sm:p-5 font-mono text-sm">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+              <code id="agent-prompt" class="min-w-0 break-all">Set up devmachine for me: read https://mydevmachine.sh/agent-setup.md and follow it.</code>
+              <button
+                id="agent-prompt-copy"
+                type="button"
+                class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
+              >
+                Copy
+              </button>
+            </div>
           </div>
         </div>
-        <p class="text-sm mt-3">
-          <a href={`${base}agent-setup/`} class="underline underline-offset-2 text-[var(--muted)] hover:text-[var(--ink)]">
-            Read what it will do
-          </a>
-        </p>
-        <p class="text-xs font-mono uppercase tracking-wide text-[var(--muted)] mt-3">
-          For LLMs:
-          <a href={`${base}llms.txt`} class="underline underline-offset-2 hover:text-[var(--ink)]">llms.txt</a>
-          ·
-          <a href={`${base}llms-full.txt`} class="underline underline-offset-2 hover:text-[var(--ink)]">llms-full.txt</a>
-        </p>
+        <div>
+          <p class="text-sm">
+            <a href={`${base}agent-setup/`} class="underline underline-offset-2 text-[var(--muted)] hover:text-[var(--ink)]">
+              Read what it will do
+            </a>
+          </p>
+          <p class="text-xs font-mono uppercase tracking-wide text-[var(--muted)] mt-3">
+            For LLMs:
+            <a href={`${base}llms.txt`} class="underline underline-offset-2 hover:text-[var(--ink)]">llms.txt</a>
+            ·
+            <a href={`${base}llms-full.txt`} class="underline underline-offset-2 hover:text-[var(--ink)]">llms-full.txt</a>
+          </p>
+        </div>
       </div>
     </div>
   </section>
 
   <section id="how-it-works" class="dark-section">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 py-20">
-      <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">02 / How it works</p>
+      <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">03 / How it works</p>
       <div class="grid grid-cols-1 gap-6 min-[900px]:grid-cols-2 min-[900px]:gap-12 mb-12">
         <h2 class="text-3xl sm:text-4xl font-light tracking-tight">Three ideas, in order.</h2>
         <p class="text-[#9a9a9a] max-w-2xl">
@@ -144,7 +238,7 @@ const commands = [
   </section>
 
   <section id="first-commands" class="max-w-6xl mx-auto px-4 sm:px-6 pt-16 pb-10">
-    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">03 / First commands</p>
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">04 / First commands</p>
     <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-10">Four commands.</h2>
     <div class="grid grid-cols-1 gap-4 max-w-3xl">
       {
