@@ -1,13 +1,13 @@
 # devmachine docs
 
-The documentation site for the [devmachine CLI](https://github.com/adevmachine/cli),
-served from GitHub Pages at <https://adevmachine.github.io/docs/>.
+The documentation site for the [devmachine CLI](https://github.com/mydevmachine/devmachine),
+served from GitHub Pages at <https://mydevmachine.github.io/docs/>.
 
 ## What this is
 
 An Astro + Tailwind CSS site with Pagefind search. It renders the CLI's
 documentation; it never keeps its own copy. The source of truth for every doc
-page stays in `adevmachine/cli`'s `docs/` directory.
+page stays in `mydevmachine/devmachine`'s `docs/` directory.
 
 ## How content is fetched
 
@@ -27,7 +27,7 @@ repository.
 
 ## Run locally
 
-Needs a checkout of `adevmachine/cli` next to this repository (or set
+Needs a checkout of `mydevmachine/devmachine` next to this repository (or set
 `DEVMACHINE_CLI_DOCS` to point at its `docs/` directory).
 
 ```
@@ -54,7 +54,7 @@ node scripts/check-links.mjs
 ## Deploy
 
 `.github/workflows/deploy.yml` runs on push to `main`, on `workflow_dispatch`,
-and every 6 hours. It checks out this repository and `adevmachine/cli`,
+and every 6 hours. It checks out this repository and `mydevmachine/devmachine`,
 builds against the CLI's live docs, and deploys to GitHub Pages. Because the
 schedule pulls fresh docs on its own, a doc change in the CLI repository
 reaches the site within six hours without touching this one — or immediately,
@@ -72,7 +72,7 @@ page's raw-Markdown URL (see below).
 Each doc page is also served as raw Markdown at its URL plus `.md` (for
 example `/docs/getting-started.md`), generated at build time by
 `src/pages/[...slug].md.ts` from the same content collection as the HTML
-page. Its links are rewritten to absolute `https://adevmachine.github.io/...`
+page. Its links are rewritten to absolute `https://mydevmachine.github.io/...`
 URLs, so a coding agent that fetches one page can follow links to the rest
 without knowing the site's base path. Every HTML page links to its Markdown
 twin with `<link rel="alternate" type="text/markdown">`, and

@@ -14,7 +14,7 @@ const groups = await getNavGroups()
 const { prev, next } = await getPrevNext(entry.id)
 const currentUrl = urlFor(entry)
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3)
-const editUrl = `https://github.com/adevmachine/cli/blob/main/${entry.data.sourcePath}`
+const editUrl = `https://github.com/mydevmachine/devmachine/blob/main/${entry.data.sourcePath}`
 ---
 
 <BaseLayout

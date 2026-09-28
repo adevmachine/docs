@@ -46,7 +46,7 @@ const commands = [
     <div class="border hairline bg-[var(--card)] p-4 sm:p-5 max-w-xl relative font-mono text-sm">
       <p class="text-xs uppercase tracking-widest text-[var(--muted)] mb-2">Install and set up</p>
       <div class="flex flex-wrap items-start justify-between gap-4">
-        <code id="install-cmd" class="min-w-0 break-all leading-relaxed">brew install adevmachine/tap/devmachine<br />devmachine setup</code>
+        <code id="install-cmd" class="min-w-0 break-all leading-relaxed">brew install mydevmachine/tap/devmachine<br />devmachine setup</code>
         <button
           id="install-copy"
           type="button"
@@ -75,7 +75,7 @@ const commands = [
         <div class="border hairline bg-[var(--card)] p-4 sm:p-5 font-mono text-sm">
           <p class="text-xs uppercase tracking-widest text-[var(--muted)] mb-2">Paste into your agent</p>
           <div class="flex flex-wrap items-center justify-between gap-4">
-            <code id="agent-prompt" class="min-w-0 break-all">Set up devmachine for me: read https://adevmachine.github.io/docs/agent-setup.md and follow it.</code>
+            <code id="agent-prompt" class="min-w-0 break-all">Set up devmachine for me: read https://mydevmachine.github.io/docs/agent-setup.md and follow it.</code>
             <button
               id="agent-prompt-copy"
               type="button"
@@ -144,7 +144,7 @@ const commands = [
   <script is:inline>
     document.getElementById('install-copy')?.addEventListener('click', (e) => {
       const btn = e.currentTarget
-      navigator.clipboard?.writeText('brew install adevmachine/tap/devmachine\ndevmachine setup')
+      navigator.clipboard?.writeText('brew install mydevmachine/tap/devmachine\ndevmachine setup')
       btn.textContent = 'Copied'
       setTimeout(() => {
         btn.textContent = 'Copy'
@@ -154,7 +154,7 @@ const commands = [
     document.getElementById('agent-prompt-copy')?.addEventListener('click', (e) => {
       const btn = e.currentTarget
       navigator.clipboard?.writeText(
-        'Set up devmachine for me: read https://adevmachine.github.io/docs/agent-setup.md and follow it.',
+        'Set up devmachine for me: read https://mydevmachine.github.io/docs/agent-setup.md and follow it.',
       )
       btn.textContent = 'Copied'
       setTimeout(() => {

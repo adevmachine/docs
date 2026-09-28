@@ -6,7 +6,7 @@ export const prerender = true
 export const GET: APIRoute = async () => {
   const docs = await getSortedDocs()
   const parts = docs.map((entry) => {
-    const url = `https://adevmachine.github.io${urlFor(entry)}`
+    const url = `https://mydevmachine.github.io${urlFor(entry)}`
     return `# ${url}\n\n${entry.body ?? ''}`
   })
   return new Response(parts.join('\n\n---\n\n'), {

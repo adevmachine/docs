@@ -19,7 +19,7 @@ const outDir = join(root, 'src', 'content', 'docs')
 
 const DROPPED = new Set(['development.md', 'releasing.md'])
 const BASE = '/docs'
-const GITHUB_BLOB = 'https://github.com/adevmachine/cli/blob/main/docs'
+const GITHUB_BLOB = 'https://github.com/mydevmachine/devmachine/blob/main/docs'
 
 const SECTION_BY_PREFIX = [
   ['concepts/', 'Concepts'],

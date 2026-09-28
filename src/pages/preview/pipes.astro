@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import HeroPipes from '../../components/HeroPipes.astro'
+const base = import.meta.env.BASE_URL
+---
+
+<BaseLayout title="Preview — pipes hero — devmachine" current="docs">
+  <div class="preview-bar text-xs font-mono uppercase tracking-widest text-center py-2 px-4 border-b hairline">
+    Preview of a hero option — the live home page is unchanged.
+    <a href={`${base}`} class="underline underline-offset-2">Back to the home page</a>
+  </div>
+
+  <HeroPipes
+    eyebrow="Your server, as workspaces"
+    headline="Code from anywhere."
+    subline="Your own server. One workspace per project. Ready in a few commands."
+  />
+</BaseLayout>
+
+<style>
+  .preview-bar {
+    position: relative;
+    z-index: 50;
+    background: var(--bg);
+    color: var(--muted);
+  }
+</style>

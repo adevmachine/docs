@@ -26,7 +26,7 @@ jobs:
       - name: Checkout devmachine CLI
         uses: actions/checkout@v4
         with:
-          repository: adevmachine/cli
+          repository: mydevmachine/devmachine
           path: cli
 
       - name: Set up Node

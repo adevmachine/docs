@@ -17,7 +17,7 @@ function listHtmlFiles(dir) {
 }
 
 const BASE = '/docs'
-const SITE_ORIGIN = 'https://adevmachine.github.io'
+const SITE_ORIGIN = 'https://mydevmachine.github.io'
 
 function listMarkdownFiles(dir) {
   const out = []
