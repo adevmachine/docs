@@ -1,7 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro'
 import SidebarNav from '../components/SidebarNav.astro'
-import { getNavGroups, getPrevNext, urlFor, type DocEntry } from '../lib/nav'
+import { getNavGroups, getPrevNext, urlFor, markdownUrlFor, type DocEntry } from '../lib/nav'
 const base = import.meta.env.BASE_URL
 
 interface Props {
@@ -17,7 +17,12 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3)
 const editUrl = `https://github.com/adevmachine/cli/blob/main/${entry.data.sourcePath}`
 ---
 
-<BaseLayout title={`${entry.data.title} — devmachine docs`} description={entry.data.summary} current="docs">
+<BaseLayout
+  title={`${entry.data.title} — devmachine docs`}
+  description={entry.data.summary}
+  current="docs"
+  markdownUrl={markdownUrlFor(entry)}
+>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:grid lg:grid-cols-[220px_minmax(0,1fr)_200px] lg:gap-10">
     <aside class="hidden lg:block py-10">
       <div class="sticky top-24">

@@ -17,9 +17,22 @@ function listHtmlFiles(dir) {
 }
 
 const BASE = '/docs'
+const SITE_ORIGIN = 'https://adevmachine.github.io'
+
+function listMarkdownFiles(dir) {
+  const out = []
+  for (const name of readdirSync(dir)) {
+    const full = join(dir, name)
+    if (statSync(full).isDirectory()) out.push(...listMarkdownFiles(full))
+    else if (name.endsWith('.md')) out.push(full)
+  }
+  return out
+}
 
 function resolveLocal(href) {
-  const [pathPart, anchor] = href.split('#')
+  let normalized = href
+  if (normalized.startsWith(SITE_ORIGIN)) normalized = normalized.slice(SITE_ORIGIN.length)
+  const [pathPart, anchor] = normalized.split('#')
   let target = pathPart
   if (target === '') return { file: null, anchor }
   if (!target.startsWith('/')) return { file: null, anchor }
@@ -40,7 +53,8 @@ for (const file of files) {
   let match
   while ((match = hrefRe.exec(html))) {
     const href = match[1]
-    if (href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('#')) continue
+    const isLocal = href.startsWith('/') || href.startsWith(SITE_ORIGIN)
+    if (!isLocal || href.startsWith('mailto:') || href.startsWith('#')) continue
     checked++
     const { file: targetFile, anchor } = resolveLocal(href)
     if (!targetFile) continue
@@ -49,7 +63,7 @@ for (const file of files) {
       broken++
       continue
     }
-    if (anchor) {
+    if (anchor && targetFile.endsWith('.html')) {
       const targetHtml = readFileSync(targetFile, 'utf8')
       const idRe = new RegExp(`id="${anchor}"`)
       if (!idRe.test(targetHtml)) {
@@ -60,7 +74,27 @@ for (const file of files) {
   }
 }
 
-console.log(`Checked ${checked} local links across ${files.length} pages.`)
+console.log(`Checked ${checked} local links across ${files.length} HTML pages.`)
+
+// Every doc page's raw-Markdown counterpart (<link rel="alternate" type="text/markdown">)
+// must exist as an actual .md file in the build output.
+let markdownChecked = 0
+for (const file of files) {
+  const html = readFileSync(file, 'utf8')
+  const alt = html.match(/<link rel="alternate" type="text\/markdown" href="([^"]+)"/)
+  if (!alt) continue
+  markdownChecked++
+  const { file: targetFile } = resolveLocal(alt[1])
+  if (!targetFile || !existsSync(targetFile)) {
+    console.error(`BROKEN .md ALTERNATE: ${file.replace(distDir, '')} -> ${alt[1]}`)
+    broken++
+  }
+}
+console.log(`Checked ${markdownChecked} .md alternate links.`)
+
+const mdFiles = listMarkdownFiles(distDir)
+console.log(`Found ${mdFiles.length} raw-Markdown files in dist/.`)
+
 if (broken > 0) {
   console.error(`${broken} broken link(s) found.`)
   process.exit(1)

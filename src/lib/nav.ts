@@ -9,6 +9,11 @@ export function urlFor(entry: DocEntry): string {
   return `/docs/${entry.id.replace(/\.md$/, '')}/`.replace(/\/+$/, '/')
 }
 
+export function markdownUrlFor(entry: DocEntry): string {
+  if (entry.id === 'index') return '/docs.md'
+  return `/docs/${entry.id.replace(/\.md$/, '')}.md`
+}
+
 export async function getSortedDocs(): Promise<DocEntry[]> {
   const all = await getCollection('docs')
   return all

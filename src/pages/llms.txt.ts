@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro'
-import { getSortedDocs, urlFor } from '../lib/nav'
+import { getSortedDocs, markdownUrlFor } from '../lib/nav'
 
 export const prerender = true
 
@@ -12,7 +12,7 @@ export const GET: APIRoute = async () => {
     '',
     '## Docs',
     '',
-    ...docs.map((entry) => `- [${entry.data.title}](https://adevmachine.github.io${urlFor(entry)}): ${entry.data.summary}`),
+    ...docs.map((entry) => `- [${entry.data.title}](https://adevmachine.github.io${markdownUrlFor(entry)}): ${entry.data.summary}`),
     '',
   ]
   return new Response(lines.join('\n'), {

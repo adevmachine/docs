@@ -5,14 +5,14 @@
 // repository never keeps its own copy of the CLI's documentation.
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, statSync, rmSync } from 'node:fs'
-import { join, dirname, relative, posix } from 'node:path'
+import { join, dirname, relative, resolve, posix } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = join(__dirname, '..')
 
 const sourceDir = process.env.DEVMACHINE_CLI_DOCS
-  ? join(process.cwd(), process.env.DEVMACHINE_CLI_DOCS)
+  ? resolve(process.cwd(), process.env.DEVMACHINE_CLI_DOCS)
   : join(root, '..', 'devmachine-cli', 'docs')
 
 const outDir = join(root, 'src', 'content', 'docs')
@@ -32,6 +32,7 @@ function sectionFor(relPath) {
     if (relPath.startsWith(prefix)) return name
   }
   if (relPath === 'getting-started.md') return 'Getting started'
+  if (relPath === 'agent-setup.md') return 'Getting started'
   if (relPath === 'troubleshooting.md') return 'Troubleshooting'
   return null
 }

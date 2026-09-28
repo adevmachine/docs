@@ -64,4 +64,16 @@ by triggering `workflow_dispatch`.
 
 `/llms.txt` and `/llms-full.txt` are generated at build time from the same
 content collection: a link index with one-line summaries, and every page's
-full Markdown concatenated in sidebar order.
+full Markdown concatenated in sidebar order. `llms.txt` links point at each
+page's raw-Markdown URL (see below).
+
+## Every page as Markdown
+
+Each doc page is also served as raw Markdown at its URL plus `.md` (for
+example `/docs/getting-started.md`), generated at build time by
+`src/pages/[...slug].md.ts` from the same content collection as the HTML
+page. Its links are rewritten to absolute `https://adevmachine.github.io/...`
+URLs, so a coding agent that fetches one page can follow links to the rest
+without knowing the site's base path. Every HTML page links to its Markdown
+twin with `<link rel="alternate" type="text/markdown">`, and
+`scripts/check-links.mjs` verifies each one exists in the build.
