@@ -1,0 +1,201 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f5f5f2;
+  --ink: #0f141a;
+  --muted: #656871;
+  --line: #dedee3;
+  --card: #ffffff;
+
+  --dark-bg: #050505;
+  --dark-ink: #f5f5f2;
+  --dark-line: #292929;
+}
+
+html {
+  background: var(--bg);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.dark-section {
+  background: var(--dark-bg);
+  color: var(--dark-ink);
+}
+
+.dark-section .hairline {
+  border-color: var(--dark-line);
+}
+
+.hairline {
+  border-color: var(--line);
+}
+
+.prose-doc h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  scroll-margin-top: 6rem;
+}
+
+.prose-doc h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  scroll-margin-top: 6rem;
+}
+
+.prose-doc p {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  line-height: 1.75;
+  color: var(--ink);
+}
+
+.prose-doc ul,
+.prose-doc ol {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+  line-height: 1.75;
+}
+
+.prose-doc ul {
+  list-style: disc;
+}
+
+.prose-doc ol {
+  list-style: decimal;
+}
+
+.prose-doc a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: var(--line);
+}
+
+.prose-doc a:hover {
+  text-decoration-color: var(--ink);
+}
+
+.prose-doc code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  background: #ececea;
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.25rem;
+  font-size: 0.9em;
+}
+
+.prose-doc pre {
+  background: var(--dark-bg);
+  color: var(--dark-ink);
+  border: 1px solid var(--dark-line);
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+  position: relative;
+}
+
+.prose-doc pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.prose-doc table {
+  display: block;
+  overflow-x: auto;
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.925rem;
+}
+
+.prose-doc table tbody,
+.prose-doc table thead,
+.prose-doc table tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.prose-doc th,
+.prose-doc td {
+  border: 1px solid var(--line);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.prose-doc th {
+  background: #ececea;
+  font-weight: 600;
+}
+
+.prose-doc blockquote {
+  border-left: 2px solid var(--line);
+  padding-left: 1rem;
+  color: var(--muted);
+  margin: 1.25rem 0;
+}
+
+.prose-doc hr {
+  border-color: var(--line);
+  margin: 2rem 0;
+}
+
+:root[data-theme="dark"] {
+  --bg: #050505;
+  --ink: #f5f5f2;
+  --muted: #9a9a9a;
+  --line: #292929;
+  --card: #0f0f0f;
+}
+
+:root[data-theme="dark"] .prose-doc code {
+  background: #1a1a1a;
+}
+
+:root[data-theme="dark"] .prose-doc th {
+  background: #1a1a1a;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid var(--dark-line);
+  border-radius: 999px;
+  padding: 0.25rem 0.6rem;
+  background: transparent;
+  color: var(--dark-ink);
+  cursor: pointer;
+}
+
+.copy-btn:hover {
+  background: #1a1a1a;
+}

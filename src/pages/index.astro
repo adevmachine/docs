@@ -1,0 +1,117 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+const base = import.meta.env.BASE_URL
+
+const howItWorks = [
+  {
+    title: 'Take over a machine',
+    body: 'devmachine setup reads the host key, trusts it on first use, installs its own key, proves it, then turns password login off.',
+    href: `${base}how-it-works/trust-bootstrap/`,
+  },
+  {
+    title: 'Add workspaces',
+    body: 'A workspace is one Linux user on one machine. Name it in a command and never type an address again.',
+    href: `${base}concepts/machines-and-workspaces/`,
+  },
+  {
+    title: 'Sync packages',
+    body: 'Everything a machine gets is a package, fetched fresh and converged with Ansible. Nothing is baked into the binary.',
+    href: `${base}concepts/packages/`,
+  },
+]
+
+const commands = [
+  { cmd: 'devmachine setup', desc: 'get in, install a key, prove it, harden, install Ansible' },
+  { cmd: 'devmachine workspaces new alice', desc: 'add a Linux user, ready to work in' },
+  { cmd: 'devmachine sync', desc: 'fetch the recipes and converge the machine' },
+]
+---
+
+<BaseLayout title="devmachine — your VPS, as workspaces" current="home">
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 pt-16 pb-20">
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-4">
+      Personal development machines
+    </p>
+    <h1 class="text-5xl sm:text-7xl font-extrabold leading-[0.95] tracking-tight mb-6" style="letter-spacing: -0.04em;">
+      Your VPS, as workspaces.
+    </h1>
+    <p class="text-lg text-[var(--muted)] max-w-2xl mb-8">
+      devmachine sets up and operates a personal development VPS: the first SSH
+      handshake, hardening, users, Docker, a reverse proxy with automatic TLS,
+      subdomains and DNS.
+    </p>
+    <div class="flex flex-wrap gap-3 mb-10">
+      <a href={`${base}getting-started/`} class="px-5 py-2.5 rounded-full bg-[var(--ink)] text-[var(--bg)] font-medium text-sm">
+        Get started
+      </a>
+      <a href={`${base}`} class="px-5 py-2.5 rounded-full border hairline font-medium text-sm">
+        Read the docs
+      </a>
+      <a
+        href="https://github.com/adevmachine/cli"
+        target="_blank"
+        rel="noreferrer"
+        class="px-5 py-2.5 rounded-full border hairline font-medium text-sm"
+      >
+        GitHub
+      </a>
+    </div>
+
+    <div class="border hairline rounded-2xl bg-[var(--card)] p-4 sm:p-5 max-w-xl relative font-mono text-sm">
+      <p class="text-xs uppercase tracking-widest text-[var(--muted)] mb-2">Simple install</p>
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <code id="install-cmd" class="min-w-0 break-all">brew install adevmachine/tap/devmachine</code>
+        <button
+          id="install-copy"
+          type="button"
+          class="text-xs uppercase tracking-wide px-3 py-1 rounded-full border hairline shrink-0"
+        >
+          Copy
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="dark-section">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-20">
+      <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">01 / How it works</p>
+      <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-12">Three ideas, in order.</h2>
+      <div class="grid sm:grid-cols-3 gap-6">
+        {
+          howItWorks.map((item) => (
+            <a href={item.href} class="block border hairline rounded-2xl p-6 hover:border-[var(--dark-ink,#f5f5f2)]">
+              <h3 class="text-xl font-semibold mb-3">{item.title}</h3>
+              <p class="text-sm text-[#9a9a9a] leading-relaxed">{item.body}</p>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 py-20">
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">02 / First commands</p>
+    <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-10">Take over a machine.</h2>
+    <div class="grid gap-4 max-w-3xl">
+      {
+        commands.map((c) => (
+          <div class="border hairline rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
+            <code class="font-mono text-sm break-all sm:shrink-0 sm:w-[19rem]">{c.cmd}</code>
+            <p class="text-sm text-[var(--muted)]">{c.desc}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <script is:inline>
+    document.getElementById('install-copy')?.addEventListener('click', (e) => {
+      const btn = e.currentTarget
+      navigator.clipboard?.writeText('brew install adevmachine/tap/devmachine')
+      btn.textContent = 'Copied'
+      setTimeout(() => {
+        btn.textContent = 'Copy'
+      }, 1500)
+    })
+  </script>
+</BaseLayout>
