@@ -18,7 +18,7 @@ const sourceDir = process.env.DEVMACHINE_CLI_DOCS
 const outDir = join(root, 'src', 'content', 'docs')
 
 const DROPPED = new Set(['development.md', 'releasing.md'])
-const BASE = '/docs'
+const BASE = ''
 const GITHUB_BLOB = 'https://github.com/mydevmachine/devmachine/blob/main/docs'
 
 const SECTION_BY_PREFIX = [

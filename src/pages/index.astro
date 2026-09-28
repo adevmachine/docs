@@ -75,7 +75,7 @@ const commands = [
         <div class="border hairline bg-[var(--card)] p-4 sm:p-5 font-mono text-sm">
           <p class="text-xs uppercase tracking-widest text-[var(--muted)] mb-2">Paste into your agent</p>
           <div class="flex flex-wrap items-center justify-between gap-4">
-            <code id="agent-prompt" class="min-w-0 break-all">Set up devmachine for me: read https://mydevmachine.github.io/docs/agent-setup.md and follow it.</code>
+            <code id="agent-prompt" class="min-w-0 break-all">Set up devmachine for me: read https://mydevmachine.sh/agent-setup.md and follow it.</code>
             <button
               id="agent-prompt-copy"
               type="button"
@@ -154,7 +154,7 @@ const commands = [
     document.getElementById('agent-prompt-copy')?.addEventListener('click', (e) => {
       const btn = e.currentTarget
       navigator.clipboard?.writeText(
-        'Set up devmachine for me: read https://mydevmachine.github.io/docs/agent-setup.md and follow it.',
+        'Set up devmachine for me: read https://mydevmachine.sh/agent-setup.md and follow it.',
       )
       btn.textContent = 'Copied'
       setTimeout(() => {

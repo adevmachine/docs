@@ -5,13 +5,13 @@ const SECTION_ORDER = ['Getting started', 'Concepts', 'How it works', 'CLI Refer
 export type DocEntry = CollectionEntry<'docs'>
 
 export function urlFor(entry: DocEntry): string {
-  if (entry.id === 'index') return '/docs/'
-  return `/docs/${entry.id.replace(/\.md$/, '')}/`.replace(/\/+$/, '/')
+  if (entry.id === 'index') return '/'
+  return `/${entry.id.replace(/\.md$/, '')}/`.replace(/\/+$/, '/')
 }
 
 export function markdownUrlFor(entry: DocEntry): string {
-  if (entry.id === 'index') return '/docs.md'
-  return `/docs/${entry.id.replace(/\.md$/, '')}.md`
+  if (entry.id === 'index') return '/index.md'
+  return `/${entry.id.replace(/\.md$/, '')}.md`
 }
 
 export async function getSortedDocs(): Promise<DocEntry[]> {

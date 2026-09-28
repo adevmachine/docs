@@ -1,7 +1,7 @@
 # devmachine docs
 
 The documentation site for the [devmachine CLI](https://github.com/mydevmachine/devmachine),
-served from GitHub Pages at <https://mydevmachine.github.io/docs/>.
+served from GitHub Pages at <https://mydevmachine.sh/>.
 
 ## What this is
 
@@ -15,7 +15,7 @@ page stays in `mydevmachine/devmachine`'s `docs/` directory.
 `src/content/docs/` (gitignored, rebuilt on every `dev` or `build`). It:
 
 - reads from `$DEVMACHINE_CLI_DOCS` (default `../devmachine-cli/docs`);
-- rewrites relative `.md` links, anchors included, to site URLs under `/docs`;
+- rewrites relative `.md` links, anchors included, to site URLs at the site root;
 - drops `development.md` and `releasing.md` (maintainer pages) and points a
   "Contributing" link at GitHub instead;
 - reads each page's first `# Heading` as its title;
@@ -70,9 +70,9 @@ page's raw-Markdown URL (see below).
 ## Every page as Markdown
 
 Each doc page is also served as raw Markdown at its URL plus `.md` (for
-example `/docs/getting-started.md`), generated at build time by
+example `/getting-started.md`), generated at build time by
 `src/pages/[...slug].md.ts` from the same content collection as the HTML
-page. Its links are rewritten to absolute `https://mydevmachine.github.io/...`
+page. Its links are rewritten to absolute `https://mydevmachine.sh/...`
 URLs, so a coding agent that fetches one page can follow links to the rest
 without knowing the site's base path. Every HTML page links to its Markdown
 twin with `<link rel="alternate" type="text/markdown">`, and

@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content'
 
 export const prerender = true
 
-const SITE = 'https://mydevmachine.github.io'
+const SITE = 'https://mydevmachine.sh'
 
 export async function getStaticPaths() {
   const docs = await getCollection('docs', (entry) => entry.id !== 'index')

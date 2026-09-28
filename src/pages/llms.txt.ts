@@ -12,7 +12,7 @@ export const GET: APIRoute = async () => {
     '',
     '## Docs',
     '',
-    ...docs.map((entry) => `- [${entry.data.title}](https://mydevmachine.github.io${markdownUrlFor(entry)}): ${entry.data.summary}`),
+    ...docs.map((entry) => `- [${entry.data.title}](https://mydevmachine.sh${markdownUrlFor(entry)}): ${entry.data.summary}`),
     '',
   ]
   return new Response(lines.join('\n'), {
