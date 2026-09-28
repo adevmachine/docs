@@ -23,7 +23,7 @@
   --hero-line-rgb: 15, 20, 26;
   --hero-line-alpha: 0.13;
   --hero-accent-rgb: 37, 99, 235;
-  --hero-accent-alpha: 0.55;
+  --hero-accent-alpha: 0.32;
 
   --pagefind-ui-border-radius: 0px;
   --pagefind-ui-image-border-radius: 0px;
@@ -38,7 +38,7 @@
   --hero-line-rgb: 255, 255, 255;
   --hero-line-alpha: 0.09;
   --hero-accent-rgb: 90, 169, 230;
-  --hero-accent-alpha: 0.6;
+  --hero-accent-alpha: 0.38;
 }
 
 html {

@@ -614,9 +614,9 @@ const windows: Win[] = [
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const CELL = 40
-    const PULSE_EVERY = 2600
-    const PULSE_LIFE = 5200
-    const BAND = 70
+    const PULSE_EVERY = 4500
+    const PULSE_LIFE = 9500
+    const BAND = 120
 
     let w = 0
     let h = 0
@@ -756,7 +756,7 @@ const windows: Win[] = [
         const life = 1 - t
 
         ctx.strokeStyle = `rgba(${accent}, ${accentAlpha * life})`
-        ctx.lineWidth = 1.5
+        ctx.lineWidth = 1
         ctx.beginPath()
         ctx.arc(cx, cy, radius, 0, Math.PI * 2)
         ctx.stroke()
@@ -764,7 +764,7 @@ const windows: Win[] = [
         for (const dot of dots) {
           const near = 1 - Math.abs(dot.d - radius) / BAND
           if (near <= 0) continue
-          const a = accentAlpha * 1.6 * near * life * dot.f
+          const a = accentAlpha * 1.2 * near * near * life * dot.f
           ctx.fillStyle = `rgba(${accent}, ${Math.min(1, a)})`
           const size = 2 + 2 * near
           ctx.fillRect(dot.x - size / 2, dot.y - size / 2, size, size)
