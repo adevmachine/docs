@@ -1,0 +1,21 @@
+src/components/Hero.astro
+  s_a0cbf6c120c4f8::t_a9fe03e09747b9 83-102,847-864
+src/pages/index.astro
+  s_a0cbf6c120c4f8::t_86be67ee249a99 253-255,258,287,299-300,305,312,317-332,375
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "cc1c064f03e5f874433483c0647dd9c98e6ef3ea",
+  "prompts": {},
+  "sessions": {
+    "s_a0cbf6c120c4f8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f7d54e1b-857f-44e4-a7a9-0ca76ea55bb2",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Djalma Araújo <djalma@nossomos.cc>"
+    }
+  }
+}
