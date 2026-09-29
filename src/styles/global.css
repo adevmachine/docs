@@ -1046,6 +1046,21 @@ button:focus-visible {
   color: var(--muted);
 }
 
+.app-shot {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--dark-line, #2a2a2a);
+  border-radius: 10px;
+  background: #14171b;
+  box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.5);
+}
+
+.app-shot-tile {
+  aspect-ratio: 16 / 10;
+  object-fit: contain;
+}
+
 /* FAQ */
 
 .faq-item {

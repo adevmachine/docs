@@ -67,6 +67,17 @@ const jsonLd = [
     downloadUrl: 'https://github.com/mydevmachine/app-releases/releases/latest/download/Devmachine.dmg',
   },
 ]
+const shots = [
+  { file: '01-sessions.webp', width: 1600, height: 1000, caption: 'Every session of a workspace, side by side.', alt: 'Four sessions of the acme workspace in a grid: Claude Code, Codex, tests and a dev server.' },
+  { file: '02-session-claude.webp', width: 1600, height: 1000, caption: 'The context panel: todo, pull requests and links of the session.', alt: 'A Claude Code session with the context panel open, showing its todo list, pull requests and links.' },
+  { file: '03-pull-requests.webp', width: 1552, height: 1280, caption: 'Your open pull requests and their checks, from the menu bar.', alt: 'The menu bar window listing four pull requests with their check status.' },
+  { file: '04-subdomains-sites.webp', width: 1600, height: 1000, caption: 'Every published site, with its workspace and port.', alt: 'The subdomains page listing three sites, their workspace, port and status.' },
+  { file: '05-subdomains-dns-cloudflare.webp', width: 1600, height: 1000, caption: 'The DNS records of each provider.', alt: 'The Cloudflare tab of the subdomains page listing DNS records.' },
+  { file: '10-publish-port.webp', width: 720, height: 662, caption: 'Publish a port in a few clicks.', alt: 'The Add subdomain dialog with a workspace, a label and a local port.' },
+  { file: '06-stats.webp', width: 1600, height: 1000, caption: 'Memory, disk and containers of every machine.', alt: 'The stats page with two machines, memory and disk bars, containers and RAM by user.' },
+  { file: '08-custom-commands.webp', width: 1600, height: 1000, caption: 'Your own commands, one shortcut away.', alt: 'The custom commands page with two commands and their shortcuts.' },
+  { file: '09-onboarding.webp', width: 1600, height: 758, caption: 'Set up from the app, or let your agent do it.', alt: 'The onboarding screen with two choices: set it up here, or let your agent do it.' },
+];
 ---
 
 <BaseLayout title="Devmachine for Mac — devmachine" description={description} current="docs" jsonLd={jsonLd}>
@@ -141,16 +152,24 @@ const jsonLd = [
 
   <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-16 pb-20">
     <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-4">Screenshots</p>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div class="screenshot-frame">
-        <span>Screenshot coming soon</span>
-      </div>
-      <div class="screenshot-frame">
-        <span>Screenshot coming soon</span>
-      </div>
-      <div class="screenshot-frame">
-        <span>Screenshot coming soon</span>
-      </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {
+        shots.map((shot) => (
+          <figure>
+            <a href={`${base}app/${shot.file}`} target="_blank" rel="noopener">
+              <img
+                src={`${base}app/${shot.file}`}
+                alt={shot.alt}
+                width={shot.width}
+                height={shot.height}
+                loading="lazy"
+                class="app-shot app-shot-tile"
+              />
+            </a>
+            <figcaption class="text-sm text-[var(--muted)] mt-2">{shot.caption}</figcaption>
+          </figure>
+        ))
+      }
     </div>
   </section>
 
