@@ -250,11 +250,12 @@ const commands = [
   </section>
 
 
-  <section id="measure-your-needs" class="max-w-6xl mx-auto px-4 sm:px-6 pt-28 pb-32">
-    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">05 / Requirements</p>
+  <section id="measure-your-needs" class="dark-section">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-28 pb-32">
+    <p class="text-xs font-mono uppercase tracking-widest text-[#9a9a9a] mb-3">05 / Requirements</p>
     <div class="grid grid-cols-1 gap-6 min-[900px]:grid-cols-2 min-[900px]:gap-12 mb-10">
       <h2 class="text-3xl sm:text-4xl font-light tracking-tight">Measure your needs.</h2>
-      <p class="text-[var(--muted)] max-w-2xl">
+      <p class="text-[#9a9a9a] max-w-2xl">
         Rent what you need, not more. Count how many apps and coding agents you will run at the
         same time, pick the size below, and move up later if it gets slow. A computer you
         already have works too, if it runs Debian or Ubuntu.
@@ -283,7 +284,7 @@ const commands = [
                 i === 0 && 'text-left',
                 i === 1 && 'text-center',
                 i === 2 && 'text-right',
-                i === recommendedTier ? 'text-[#5aa9e6]' : 'text-[var(--muted)]',
+                i === recommendedTier ? 'text-[#5aa9e6]' : 'text-[#9a9a9a]',
               ]}
             >
               {tier.label}
@@ -295,24 +296,40 @@ const commands = [
         tiers.map((tier, i) => (
           <div data-tier-panel={i} hidden={i !== recommendedTier} class="mt-6" aria-live="polite">
             <p class="text-2xl sm:text-3xl font-light tracking-tight mb-1">{tier.ram}</p>
-            <p class="text-sm font-mono text-[var(--muted)] mb-3">{tier.cpu} · {tier.disk} · Debian or Ubuntu</p>
-            <p class="text-sm text-[var(--muted)] leading-relaxed">{tier.body}</p>
+            <p class="text-sm font-mono text-[#9a9a9a] mb-3">{tier.cpu} · {tier.disk} · Debian or Ubuntu</p>
+            <p class="text-sm text-[#9a9a9a] leading-relaxed">{tier.body}</p>
           </div>
         ))
       }
     </div>
-    <p class="text-xs text-[var(--muted)]">
+    <p class="text-xs text-[#9a9a9a]">
       Any Debian or Ubuntu VPS works.
       No VPS yet?
       <a
         href="https://www.hostinger.com/br?REFERRALCODE=MYDEVMACHINE"
         target="_blank"
         rel="noopener sponsored"
-        class="underline underline-offset-2 hover:text-[var(--ink)]"
+        class="underline underline-offset-2 hover:text-white"
       >
         See the Hostinger deals →
       </a>
     </p>
+    </div>
+  </section>
+
+  <section id="read-the-docs" class="max-w-6xl mx-auto px-4 sm:px-6 pt-28 pb-32 text-center">
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">06 / Documentation</p>
+    <h2 class="text-3xl sm:text-5xl font-light tracking-tight mb-5">Everything is written down.</h2>
+    <p class="text-[var(--muted)] max-w-xl mx-auto mb-10">
+      How each command works, why it works that way, and what to do when something fails.
+      Plain words, real examples.
+    </p>
+    <a
+      href={`${base}getting-started/`}
+      class="inline-block border border-[var(--ink)] px-10 py-4 text-base font-mono uppercase tracking-wide hover:bg-[var(--ink)] hover:text-[var(--bg)] transition-colors"
+    >
+      Read the documentation →
+    </a>
   </section>
 
   <script is:inline>
@@ -355,7 +372,7 @@ const commands = [
         range.setAttribute('aria-valuetext', labels[index]?.textContent.trim() ?? '')
         labels.forEach((label, i) => {
           label.classList.toggle('text-[#5aa9e6]', i === index)
-          label.classList.toggle('text-[var(--muted)]', i !== index)
+          label.classList.toggle('text-[#9a9a9a]', i !== index)
         })
         panels.forEach((panel, i) => {
           panel.hidden = i !== index
