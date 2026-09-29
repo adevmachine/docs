@@ -1027,3 +1027,9 @@ button:focus-visible {
   font-size: 0.85em;
   color: var(--ink);
 }
+
+.pkg-included {
+  color: #5aa9e6;
+  border-color: #5aa9e6;
+  white-space: nowrap;
+}

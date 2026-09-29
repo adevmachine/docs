@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
 import data from '../data/packages.json'
+import cli from '../data/cli.json'
 
 const base = import.meta.env.BASE_URL
 const { packages } = data as {
@@ -34,6 +35,23 @@ const CATEGORY_ORDER = [
 const categoryCounts = new Map<string, number>()
 for (const pkg of packages) {
   categoryCounts.set(pkg.category, (categoryCounts.get(pkg.category) ?? 0) + 1)
+}
+
+const byName = new Map(data.packages.map((p) => [p.name, p]))
+function withNeeds(names: string[], into = new Set<string>()) {
+  for (const name of names) {
+    if (into.has(name)) continue
+    into.add(name)
+    withNeeds(byName.get(name)?.needs ?? [], into)
+  }
+  return into
+}
+const withSetup = byName.has('essentials') ? withNeeds(['essentials']) : new Set<string>()
+const inEveryWorkspace = withNeeds(['workspace', ...(cli.workspaceDefaults ?? [])].filter((n) => byName.has(n)))
+function includedBy(name: string) {
+  if (withSetup.has(name)) return 'Comes with setup'
+  if (inEveryWorkspace.has(name)) return 'In every workspace'
+  return null
 }
 
 const categories = [...categoryCounts.keys()].sort((a, b) => {
@@ -84,6 +102,13 @@ const jsonLd = [
       Each package adds one thing to a machine or a workspace. Add one with
       <code class="font-mono text-[var(--ink)]">devmachine packages add &lt;name&gt;</code>,
       then <code class="font-mono text-[var(--ink)]">devmachine sync</code>.
+    </p>
+    <p class="text-sm text-[var(--muted)] leading-relaxed max-w-2xl mt-3">
+      <span class="pkg-included text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 border">Comes with setup</span>
+      is on every new machine, through <code class="font-mono text-[var(--ink)]">essentials</code>
+      (<code class="font-mono text-[var(--ink)]">setup --no-essentials</code> skips it).
+      <span class="pkg-included text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 border">In every workspace</span>
+      is on every new workspace.
     </p>
   </section>
 
@@ -153,6 +178,11 @@ const jsonLd = [
             >
               <div class="flex items-start justify-between gap-3 mb-3">
                 <h3 class="font-mono text-base break-all">{pkg.name}</h3>
+                {includedBy(pkg.name) && (
+                  <span class="pkg-included shrink-0 text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 border">
+                    {includedBy(pkg.name)}
+                  </span>
+                )}
               </div>
 
               <div class="flex flex-wrap gap-x-3 gap-y-1 text-xs font-mono uppercase tracking-wide text-[var(--muted)] mb-3">

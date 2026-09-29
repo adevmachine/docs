@@ -179,7 +179,23 @@ function latestTag(dir) {
 const dataDir = join(root, 'src', 'data')
 mkdirSync(dataDir, { recursive: true })
 const cliVersion = latestTag(sourceDir)
-writeFileSync(join(dataDir, 'cli.json'), JSON.stringify({ version: cliVersion }, null, 2))
+
+// What `setup` seeds every new workspace with, read from the CLI's own source so
+// the packages page can never disagree with it.
+function workspaceDefaults(cliRoot) {
+  try {
+    const source = readFileSync(join(cliRoot, 'internal', 'config', 'config.go'), 'utf8')
+    const match = source.match(/DefaultWorkspacePackages = \[\]string\{([^}]*)\}/)
+    return match ? [...match[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]) : []
+  } catch {
+    return []
+  }
+}
+
+writeFileSync(
+  join(dataDir, 'cli.json'),
+  JSON.stringify({ version: cliVersion, workspaceDefaults: workspaceDefaults(dirname(sourceDir)) }, null, 2),
+)
 console.log(`fetch-docs: CLI version ${cliVersion ?? 'unknown'}`)
 
 console.log(`fetch-docs: wrote ${pages.length} pages from ${sourceDir} to ${relative(root, outDir)}`)
