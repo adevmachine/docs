@@ -11,8 +11,14 @@ page stays in `mydevmachine/devmachine`'s `docs/` directory.
 
 ## How content is fetched
 
+Two scripts pull content at build time, both from each source repository's
+`main` branch. Their output is gitignored: this repository never keeps its
+own copy of the CLI docs or the packages data.
+
+### CLI docs
+
 `scripts/fetch-docs.mjs` copies Markdown from a devmachine CLI checkout into
-`src/content/docs/` (gitignored, rebuilt on every `dev` or `build`). It:
+`src/content/docs/` (rebuilt on every `dev` or `build`). It:
 
 - reads from `$DEVMACHINE_CLI_DOCS` (default `../devmachine-cli/docs`);
 - rewrites relative `.md` links, anchors included, to site URLs at the site root;
@@ -20,23 +26,48 @@ page stays in `mydevmachine/devmachine`'s `docs/` directory.
   "Contributing" link at GitHub instead;
 - reads each page's first `# Heading` as its title;
 - derives sidebar order from `docs/index.md`'s link order, grouped into
-  Getting started, Concepts, How it works, Reference, Troubleshooting.
+  Getting started, Real examples, Concepts, How it works, CLI Reference, and
+  Troubleshooting (the mapping lives in `SECTION_BY_PREFIX` and `sectionFor()`
+  in `scripts/fetch-docs.mjs` — see "Adding a new CLI doc page" below);
+- reads the CLI checkout's latest git tag and the workspace default packages
+  (parsed out of the CLI's own `internal/config/config.go`) and writes both
+  to `src/data/cli.json`, so the packages page and the CLI version shown on
+  the site can never disagree with the CLI's source.
 
 A new page in the CLI's `docs/` shows up here without any change to this
 repository.
 
+### Packages metadata
+
+`scripts/fetch-packages.mjs` reads every `package.yml` from a
+`mydevmachine/packages` checkout and writes a flat list to
+`src/data/packages.json`. It:
+
+- reads from `$DEVMACHINE_PACKAGES` (default `../packages`);
+- reads the packages checkout's latest git tag as `release`, used for the
+  site footer;
+- for each package directory with a `package.yml`, records its name, scope,
+  category, kind, summary, variables, credentials, and dependencies
+  (`needs`), plus a link to its source on GitHub.
+
 ## Run locally
 
-Needs a checkout of `mydevmachine/devmachine` next to this repository (or set
-`DEVMACHINE_CLI_DOCS` to point at its `docs/` directory).
+Needs sibling checkouts of `mydevmachine/devmachine` and `mydevmachine/packages`
+next to this repository:
+
+```
+../devmachine-cli   # or set DEVMACHINE_CLI_DOCS to its docs/ directory
+../packages          # or set DEVMACHINE_PACKAGES to its checkout root
+```
 
 ```
 npm install
 npm run dev
 ```
 
-`npm run dev` fetches the docs, then starts the Astro dev server. Search does
-not work in dev — Pagefind only indexes a production build.
+`npm run dev` runs `fetch-docs` and `fetch-packages`, then starts the Astro
+dev server. Search does not work in dev — Pagefind only indexes a production
+build.
 
 ## Build
 
@@ -44,8 +75,9 @@ not work in dev — Pagefind only indexes a production build.
 npm run build
 ```
 
-Fetches the docs, builds the static site into `dist/`, then indexes it with
-Pagefind (`postbuild`). Check internal links with:
+Runs `fetch-docs` and `fetch-packages`, builds the static site into `dist/`,
+then indexes it with Pagefind (the `postbuild` script runs
+`pagefind --site dist`). Check internal links with:
 
 ```
 node scripts/check-links.mjs
@@ -54,11 +86,27 @@ node scripts/check-links.mjs
 ## Deploy
 
 `.github/workflows/deploy.yml` runs on push to `main`, on `workflow_dispatch`,
-and every 6 hours. It checks out this repository and `mydevmachine/devmachine`,
-builds against the CLI's live docs, and deploys to GitHub Pages. Because the
-schedule pulls fresh docs on its own, a doc change in the CLI repository
-reaches the site within six hours without touching this one — or immediately,
-by triggering `workflow_dispatch`.
+and every 6 hours (`cron: '0 */6 * * *'`). It checks out this repository,
+`mydevmachine/devmachine`, and `mydevmachine/packages`, builds against their
+live `main` branches, indexes with Pagefind, checks links, and deploys to
+GitHub Pages. Because the schedule pulls fresh content on its own, a doc or
+package change in either source repository reaches the site within six hours
+without touching this one — or immediately, by running:
+
+```
+gh workflow run deploy.yml -R mydevmachine/docs
+```
+
+## Custom domain
+
+The site is served from GitHub Pages at the custom domain in the `CNAME`
+file, `mydevmachine.sh`. This is a GitHub Pages setting, not Cloudflare — the
+repository has no Cloudflare or Wrangler config. If the custom domain setting
+is ever lost (for example after a Pages environment reset), restore it with:
+
+```
+gh api -X PUT repos/mydevmachine/docs/pages -f cname=mydevmachine.sh
+```
 
 ## llms.txt
 
@@ -66,6 +114,22 @@ by triggering `workflow_dispatch`.
 content collection: a link index with one-line summaries, and every page's
 full Markdown concatenated in sidebar order. `llms.txt` links point at each
 page's raw-Markdown URL (see below).
+
+## Adding a new CLI doc page to a sidebar section
+
+A page's sidebar section comes from its path in the CLI repo's `docs/`
+directory, mapped in `scripts/fetch-docs.mjs`:
+
+- `SECTION_BY_PREFIX` maps a path prefix to a section name: `examples/` to
+  Real examples, `concepts/` to Concepts, `how-it-works/` to How it works,
+  `reference/` to CLI Reference.
+- `sectionFor()` checks that list first, then a few top-level files
+  (`getting-started.md`, `agent-setup.md`, `day-to-day.md`, `upgrade.md`) go
+  to Getting started, and `troubleshooting.md` goes to Troubleshooting.
+
+A new page under one of those prefixes picks up its section automatically. A
+new top-level page needs a line added to `sectionFor()` in this repository,
+or it is left out of the sidebar (`sectionFor()` returns `null`).
 
 ## Every page as Markdown
 
