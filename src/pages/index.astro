@@ -70,7 +70,7 @@ const tiers = [
 const recommendedTier = 1
 
 const installLines = [
-  { cmd: 'brew install mydevmachine/tap/devmachine', comment: '' },
+  { cmd: 'curl -fsSL https://mydevmachine.sh/install.sh | sh', comment: '' },
   { cmd: 'devmachine setup', comment: '# connect your server' },
   { cmd: 'devmachine skills add', comment: '# interact from any LLM session with your machine(s)' },
 ]
@@ -296,6 +296,9 @@ const jsonLd = [
           <a href={`${base}getting-started/`} class="underline underline-offset-2 hover:text-[var(--ink)]">
             Getting started →
           </a>
+        </p>
+        <p class="text-sm mt-2 text-[var(--muted)]">
+          Or with Homebrew: <code class="font-mono text-[var(--ink)]">brew install mydevmachine/tap/devmachine</code>.
         </p>
       </div>
 
@@ -813,7 +816,7 @@ const jsonLd = [
     document.getElementById('install-copy')?.addEventListener('click', (e) => {
       const btn = e.currentTarget
       navigator.clipboard?.writeText(
-        'brew install mydevmachine/tap/devmachine\ndevmachine setup\ndevmachine skills add',
+        'curl -fsSL https://mydevmachine.sh/install.sh | sh\ndevmachine setup\ndevmachine skills add',
       )
       btn.textContent = 'Copied'
       setTimeout(() => {

@@ -26,7 +26,7 @@ const { eyebrow, headline, subline } = Astro.props
         <p class="text-xs uppercase tracking-widest text-[var(--muted)] mb-2">Install and set up</p>
         <div class="flex flex-wrap items-start justify-between gap-4">
           <code id="pipes-install-cmd" class="min-w-0 break-all leading-relaxed"
-            >brew install mydevmachine/tap/devmachine<br />devmachine setup</code
+            >curl -fsSL https://mydevmachine.sh/install.sh | sh<br />devmachine setup</code
           >
           <button
             id="pipes-install-copy"
@@ -36,6 +36,9 @@ const { eyebrow, headline, subline } = Astro.props
             Copy
           </button>
         </div>
+        <p class="text-xs text-[var(--muted)] mt-2">
+          Or with Homebrew: <code class="font-mono">brew install mydevmachine/tap/devmachine</code>
+        </p>
       </div>
     </div>
 
@@ -302,7 +305,7 @@ const { eyebrow, headline, subline } = Astro.props
 
   document.getElementById('pipes-install-copy')?.addEventListener('click', (e) => {
     const btn = e.currentTarget
-    navigator.clipboard?.writeText('brew install mydevmachine/tap/devmachine\ndevmachine setup')
+    navigator.clipboard?.writeText('curl -fsSL https://mydevmachine.sh/install.sh | sh\ndevmachine setup')
     btn.textContent = 'Copied'
     setTimeout(() => {
       btn.textContent = 'Copy'

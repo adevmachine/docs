@@ -110,6 +110,16 @@ environment reset), restore it with:
 gh api -X PUT repos/mydevmachine/docs/pages -f cname=mydevmachine.sh
 ```
 
+## install.sh
+
+`public/install.sh` is the one-line installer at
+`https://mydevmachine.sh/install.sh` (`curl -fsSL https://mydevmachine.sh/install.sh | sh`).
+It is a static file, copied as-is into the build like the rest of `public/`.
+On macOS with Homebrew it installs through the tap; otherwise it downloads
+the matching release archive from `mydevmachine/devmachine`, checks its
+SHA-256 against the release's `checksums.txt`, and installs the binary to
+`$DEVMACHINE_INSTALL_DIR` or `~/.local/bin`.
+
 ## llms.txt
 
 `/llms.txt` and `/llms-full.txt` are generated at build time from the same
