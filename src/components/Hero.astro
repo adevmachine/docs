@@ -735,6 +735,8 @@ const windows: Win[] = [
     }
 
     function draw(now) {
+      const size = hero.getBoundingClientRect()
+      if (size.width !== w || size.height !== h) resize()
       if (!base) return
       ctx.setTransform(1, 0, 0, 1, 0, 0)
       ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -787,9 +789,12 @@ const windows: Win[] = [
 
     if (resize()) start()
 
-    window.addEventListener('resize', () => {
+    // Not window resize: a scrollbar appearing after load narrows the hero
+    // without one, and a canvas left at the old width stretches out of line
+    // with the windows it clears.
+    new ResizeObserver(() => {
       if (resize()) start()
-    })
+    }).observe(hero)
     new MutationObserver(() => {
       if (resize()) start()
     }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
