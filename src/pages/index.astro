@@ -704,16 +704,17 @@ const jsonLd = [
     </div>
   </section>
 
-  <section id="devmachine-for-mac" class="max-w-6xl mx-auto px-4 sm:px-6 pt-20 pb-20">
-    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">09 / macOS app</p>
+  <section id="devmachine-for-mac" class="dark-section">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-24">
+    <p class="text-xs font-mono uppercase tracking-widest text-[#9a9a9a] mb-3">09 / macOS app</p>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
       <div>
         <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-4">Devmachine for Mac.</h2>
-        <p class="text-[var(--muted)] max-w-lg mb-6">
+        <p class="text-[#9a9a9a] max-w-lg mb-6">
           A native app for the machine devmachine sets up: every workspace, its terminals, and what your agent
           touched, in one window.
         </p>
-        <ul class="text-sm text-[var(--muted)] space-y-2 mb-8">
+        <ul class="text-sm text-[#9a9a9a] space-y-2 mb-8">
           <li>Terminals for every workspace, stacked into a grid</li>
           <li>A context panel: pull requests, files and git, next to the session</li>
           <li>Subdomains, machine stats, and Claude Code / Codex usage</li>
@@ -721,7 +722,7 @@ const jsonLd = [
         </ul>
         <a
           href={`${base}app/`}
-          class="inline-block border border-[var(--ink)] px-8 py-3 text-sm font-mono uppercase tracking-wide hover:bg-[var(--ink)] hover:text-[var(--bg)] transition-colors"
+          class="inline-block border border-white px-8 py-3 text-sm font-mono uppercase tracking-wide hover:bg-white hover:text-black transition-colors"
         >
           See the app →
         </a>
@@ -730,11 +731,9 @@ const jsonLd = [
         <span>Screenshot coming soon</span>
       </div>
     </div>
+    </div>
   </section>
 
-  <div class="relative border-t hairline" aria-hidden="true">
-    <span class="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-[#5aa9e6]"></span>
-  </div>
 
   <section id="read-the-docs" class="max-w-6xl mx-auto px-4 sm:px-6 pt-28 pb-32 text-center">
     <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">10 / Documentation</p>

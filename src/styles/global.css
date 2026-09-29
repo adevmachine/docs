@@ -1029,6 +1029,15 @@ button:focus-visible {
   background: var(--card);
 }
 
+.dark-section .screenshot-frame {
+  border-color: var(--dark-line);
+  background: #0f0f0f;
+}
+
+.dark-section .screenshot-frame span {
+  color: #9a9a9a;
+}
+
 .screenshot-frame span {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 0.7rem;
