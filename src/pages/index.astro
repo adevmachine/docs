@@ -37,7 +37,28 @@ const principles = [
   },
   {
     title: 'Your machines, your data',
-    body: 'Local or online, up to you: a VPS you rent, or a virtual machine on your own computer.',
+    body: 'A VPS you rent, a computer you already have, or a virtual machine on your own. Up to you.',
+  },
+]
+
+const machines = [
+  {
+    title: 'A VPS',
+    body: 'Rent a server with Debian or Ubuntu that you can reach as root over SSH. It is always on, so you can code from anywhere.',
+    href: `${base}getting-started/`,
+    link: 'Connect your server',
+  },
+  {
+    title: 'A computer you already have',
+    body: 'An old laptop, a Linux box sitting idle, a Mac at the office running a Linux virtual machine. Join it to a private network with Tailscale or another VPN, and devmachine reaches it like any server.',
+    href: `${base}concepts/reaching-your-server/`,
+    link: 'Reach it over a private network',
+  },
+  {
+    title: 'Your own computer, to try',
+    body: 'No machine yet? devmachine can make a virtual machine on your computer and set it up exactly like a VPS. Throw it away when you are done.',
+    href: `${base}examples/a-local-vm-with-lima/`,
+    link: 'Try it on your own computer first',
   },
 ]
 
@@ -82,103 +103,26 @@ const commands = [
 
   <section id="before-you-start" class="max-w-6xl mx-auto px-4 sm:px-6 pt-4 pb-20">
     <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">01 / Before you start</p>
-    <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-10">First, a machine.</h2>
+    <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-4">First, a machine.</h2>
+    <p class="text-[var(--muted)] max-w-2xl mb-10">
+      devmachine needs one machine to set up. Pick whichever you have. Your computer reaches it
+      through the devmachine CLI, over the internet or over a private network like Tailscale.
+    </p>
 
-    <div class="grid-cards grid-cols-1 sm:grid-cols-2 mb-8">
-      <div class="p-6">
-        <p class="text-xs font-mono text-[var(--muted)] mb-10">01</p>
-        <h3 class="text-2xl font-light tracking-tight mb-3">A VPS</h3>
-        <p class="text-sm text-[var(--muted)] leading-relaxed mb-4">
-          Rent a server: Debian or Ubuntu, reachable as root over SSH.
-        </p>
-        <p class="text-xs uppercase tracking-widest text-[var(--muted)] mb-2">Run from your local computer</p>
-        <div class="border hairline bg-[var(--card)] p-3 font-mono text-sm mb-4">
-          <code>devmachine setup</code>
-        </div>
-        <p class="text-sm">
-          <a
-            href={`${base}getting-started/`}
-            class="underline underline-offset-2 hover:text-[var(--ink)]"
-          >
-            Connect your server →
-          </a>
-        </p>
-      </div>
-      <div class="p-6">
-        <p class="text-xs font-mono text-[var(--muted)] mb-10">02</p>
-        <h3 class="text-2xl font-light tracking-tight mb-3">Your own computer</h3>
-        <p class="text-sm text-[var(--muted)] leading-relaxed mb-4">
-          No server yet? devmachine can make a virtual machine on your computer with Lima and
-          set it up exactly like a VPS: a full workspace, locally, still useful for development.
-        </p>
-        <div class="border hairline bg-[var(--card)] p-3 font-mono text-sm mb-4">
-          <code>devmachine machines create-local sandbox</code>
-        </div>
-        <p class="text-sm">
-          <a
-            href={`${base}examples/a-local-vm-with-lima/`}
-            class="underline underline-offset-2 hover:text-[var(--ink)]"
-          >
-            Try it on your own computer first →
-          </a>
-        </p>
-      </div>
-    </div>
-
-    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">Requirements</p>
-    <div id="sizing" class="border hairline p-6 mb-4">
-      <label for="sizing-range" class="sr-only">How much will you run on the server?</label>
-      <input
-        id="sizing-range"
-        type="range"
-        min="0"
-        max={tiers.length - 1}
-        step="1"
-        value={recommendedTier}
-        aria-valuetext={tiers[recommendedTier].label}
-        class="w-full accent-[#5aa9e6] cursor-pointer"
-      />
-      <div class="grid grid-cols-3 text-xs font-mono uppercase tracking-wide mt-2">
-        {
-          tiers.map((tier, i) => (
-            <button
-              type="button"
-              data-tier={i}
-              class:list={[
-                'sizing-label py-1',
-                i === 0 && 'text-left',
-                i === 1 && 'text-center',
-                i === 2 && 'text-right',
-                i === recommendedTier ? 'text-[#5aa9e6]' : 'text-[var(--muted)]',
-              ]}
-            >
-              {tier.label}
-            </button>
-          ))
-        }
-      </div>
+    <div class="grid-cards grid-cols-1 sm:grid-cols-3">
       {
-        tiers.map((tier, i) => (
-          <div data-tier-panel={i} hidden={i !== recommendedTier} class="mt-6" aria-live="polite">
-            <p class="text-2xl sm:text-3xl font-light tracking-tight mb-1">{tier.ram}</p>
-            <p class="text-sm font-mono text-[var(--muted)] mb-3">{tier.cpu} · {tier.disk} · Debian or Ubuntu</p>
-            <p class="text-sm text-[var(--muted)] leading-relaxed">{tier.body}</p>
+        machines.map((m, i) => (
+          <div class="p-6 flex flex-col">
+            <p class="text-xs font-mono text-[var(--muted)] mb-10">{String(i + 1).padStart(2, '0')}</p>
+            <h3 class="text-2xl font-light tracking-tight mb-3">{m.title}</h3>
+            <p class="text-sm text-[var(--muted)] leading-relaxed mb-4">{m.body}</p>
+            <p class="text-sm mt-auto">
+              <a href={m.href} class="underline underline-offset-2 hover:text-[var(--ink)]">{m.link} →</a>
+            </p>
           </div>
         ))
       }
     </div>
-    <p class="text-xs text-[var(--muted)]">
-      Any Debian or Ubuntu VPS works.
-      No VPS yet?
-      <a
-        href="https://www.hostinger.com/br?REFERRALCODE=MYDEVMACHINE"
-        target="_blank"
-        rel="noopener sponsored"
-        class="underline underline-offset-2 hover:text-[var(--ink)]"
-      >
-        See the Hostinger deals →
-      </a>
-    </p>
   </section>
 
   <section id="get-started" class="max-w-6xl mx-auto px-4 sm:px-6 pt-4 pb-20">
@@ -303,6 +247,72 @@ const commands = [
         ))
       }
     </div>
+  </section>
+
+
+  <section id="measure-your-needs" class="max-w-6xl mx-auto px-4 sm:px-6 pt-28 pb-32">
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">05 / Requirements</p>
+    <div class="grid grid-cols-1 gap-6 min-[900px]:grid-cols-2 min-[900px]:gap-12 mb-10">
+      <h2 class="text-3xl sm:text-4xl font-light tracking-tight">Measure your needs.</h2>
+      <p class="text-[var(--muted)] max-w-2xl">
+        Rent what you need, not more. Count how many apps and coding agents you will run at the
+        same time, pick the size below, and move up later if it gets slow. A computer you
+        already have works too, if it runs Debian or Ubuntu.
+      </p>
+    </div>
+    <div id="sizing" class="border hairline p-6 mb-4">
+      <label for="sizing-range" class="sr-only">How much will you run on the server?</label>
+      <input
+        id="sizing-range"
+        type="range"
+        min="0"
+        max={tiers.length - 1}
+        step="1"
+        value={recommendedTier}
+        aria-valuetext={tiers[recommendedTier].label}
+        class="w-full accent-[#5aa9e6] cursor-pointer"
+      />
+      <div class="grid grid-cols-3 text-xs font-mono uppercase tracking-wide mt-2">
+        {
+          tiers.map((tier, i) => (
+            <button
+              type="button"
+              data-tier={i}
+              class:list={[
+                'sizing-label py-1',
+                i === 0 && 'text-left',
+                i === 1 && 'text-center',
+                i === 2 && 'text-right',
+                i === recommendedTier ? 'text-[#5aa9e6]' : 'text-[var(--muted)]',
+              ]}
+            >
+              {tier.label}
+            </button>
+          ))
+        }
+      </div>
+      {
+        tiers.map((tier, i) => (
+          <div data-tier-panel={i} hidden={i !== recommendedTier} class="mt-6" aria-live="polite">
+            <p class="text-2xl sm:text-3xl font-light tracking-tight mb-1">{tier.ram}</p>
+            <p class="text-sm font-mono text-[var(--muted)] mb-3">{tier.cpu} · {tier.disk} · Debian or Ubuntu</p>
+            <p class="text-sm text-[var(--muted)] leading-relaxed">{tier.body}</p>
+          </div>
+        ))
+      }
+    </div>
+    <p class="text-xs text-[var(--muted)]">
+      Any Debian or Ubuntu VPS works.
+      No VPS yet?
+      <a
+        href="https://www.hostinger.com/br?REFERRALCODE=MYDEVMACHINE"
+        target="_blank"
+        rel="noopener sponsored"
+        class="underline underline-offset-2 hover:text-[var(--ink)]"
+      >
+        See the Hostinger deals →
+      </a>
+    </p>
   </section>
 
   <script is:inline>
