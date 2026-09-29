@@ -460,9 +460,152 @@ const jsonLd = [
     </div>
   </section>
 
+  <section id="skills-everywhere" class="max-w-6xl mx-auto px-4 sm:px-6 pt-16 pb-20">
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">06 / Agent skills</p>
+    <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-4">One set of skills, every workspace.</h2>
+    <p class="text-[var(--muted)] max-w-2xl mb-10">
+      Write an agent skill once, in a package's <code class="font-mono text-[var(--ink)]">skills/</code> folder —
+      the official <code class="font-mono text-[var(--ink)]">devmachine-skills</code>, or your own.
+      <code class="font-mono text-[var(--ink)]">devmachine sync</code> puts it in every workspace that uses the
+      package, so Claude Code or Codex knows the same skills in <code class="font-mono text-[var(--ink)]">acme</code>,
+      <code class="font-mono text-[var(--ink)]">globex</code> and any new workspace. Change one skill, sync, and it
+      is updated everywhere. Your own computer gets the set with
+      <code class="font-mono text-[var(--ink)]">devmachine skills add --package &lt;name&gt;</code>.
+    </p>
+
+    <div class="skills-diagram">
+      <div class="skills-source">
+        <p class="skills-source-path font-mono text-xs">packages/team-skills/skills/</p>
+        <ul class="skills-list" id="skills-list">
+          <li data-skill="deploy">deploy</li>
+          <li data-skill="review">review</li>
+          <li data-skill="write-tests">write-tests</li>
+        </ul>
+      </div>
+
+      <div class="skills-sync" id="skills-sync">
+        <span class="skills-sync-line"></span>
+        <span class="skills-sync-label font-mono">devmachine sync</span>
+        <span class="skills-sync-line"></span>
+      </div>
+
+      <div class="skills-workspaces">
+        <div class="skills-workspace" data-workspace="acme">
+          <p class="font-mono text-xs">acme</p>
+          <p class="skills-workspace-skill" data-slot>deploy</p>
+        </div>
+        <div class="skills-workspace" data-workspace="globex">
+          <p class="font-mono text-xs">globex</p>
+          <p class="skills-workspace-skill" data-slot>deploy</p>
+        </div>
+        <div class="skills-workspace skills-workspace-new" data-workspace="new" id="skills-workspace-new" hidden>
+          <p class="font-mono text-xs">new workspace</p>
+          <p class="skills-workspace-skill" data-slot>deploy</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6 flex flex-wrap items-center gap-4">
+      <button type="button" id="skills-edit-btn" class="text-xs uppercase tracking-wide px-3 py-1 border hairline">
+        Edit a skill
+      </button>
+      <p id="skills-status" class="text-xs text-[var(--muted)] font-mono" aria-live="polite"></p>
+    </div>
+
+    <p class="text-sm mt-8">
+      <a
+        href={`${base}concepts/agent-skills/`}
+        class="underline underline-offset-2 text-[var(--muted)] hover:text-[var(--ink)]"
+      >
+        Read about agent skills →
+      </a>
+    </p>
+  </section>
+
+  <script is:inline>
+    ;(() => {
+      const list = document.getElementById('skills-list')
+      const sync = document.getElementById('skills-sync')
+      const btn = document.getElementById('skills-edit-btn')
+      const status = document.getElementById('skills-status')
+      const newWorkspace = document.getElementById('skills-workspace-new')
+      if (!list || !sync || !btn || !status || !newWorkspace) return
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      const skillItem = list.querySelector('[data-skill="deploy"]')
+      const slots = Array.from(document.querySelectorAll('.skills-workspace-skill'))
+      let editing = false
+
+      function wait(ms) {
+        return new Promise((resolve) => setTimeout(resolve, reduceMotion ? 0 : ms))
+      }
+
+      function revealNewWorkspace() {
+        newWorkspace.hidden = false
+        if (reduceMotion) {
+          newWorkspace.classList.add('is-visible')
+          return
+        }
+        requestAnimationFrame(() => requestAnimationFrame(() => newWorkspace.classList.add('is-visible')))
+      }
+
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              revealNewWorkspace()
+              observer.disconnect()
+            }
+          }
+        })
+        observer.observe(newWorkspace.closest('.skills-diagram') ?? newWorkspace)
+      } else {
+        revealNewWorkspace()
+      }
+
+      btn.addEventListener('click', async () => {
+        if (btn.disabled) return
+        btn.disabled = true
+
+        if (!editing) {
+          editing = true
+          skillItem?.classList.add('is-editing')
+          status.textContent = 'Editing deploy in packages/team-skills/skills/deploy/SKILL.md…'
+          btn.textContent = 'Sync now'
+          btn.disabled = false
+          return
+        }
+
+        status.textContent = 'Running devmachine sync…'
+        sync.classList.add('is-active')
+        await wait(500)
+
+        for (const slot of slots) {
+          slot.classList.add('is-updated')
+          slot.textContent = 'deploy (updated)'
+        }
+        await wait(700)
+
+        sync.classList.remove('is-active')
+        skillItem?.classList.remove('is-editing')
+        status.textContent = 'Every workspace has the new skill.'
+        await wait(1200)
+
+        for (const slot of slots) {
+          slot.classList.remove('is-updated')
+          slot.textContent = 'deploy'
+        }
+        status.textContent = ''
+        editing = false
+        btn.textContent = 'Edit a skill'
+        btn.disabled = false
+      })
+    })()
+  </script>
+
   <section id="measure-your-needs" class="dark-section">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-28 pb-32">
-    <p class="text-xs font-mono uppercase tracking-widest text-[#9a9a9a] mb-3">06 / Requirements</p>
+    <p class="text-xs font-mono uppercase tracking-widest text-[#9a9a9a] mb-3">07 / Requirements</p>
     <div class="grid grid-cols-1 gap-6 min-[900px]:grid-cols-2 min-[900px]:gap-12 mb-10">
       <h2 class="text-3xl sm:text-4xl font-light tracking-tight">Measure your needs.</h2>
       <p class="text-[#9a9a9a] max-w-2xl">
@@ -530,7 +673,7 @@ const jsonLd = [
   <section id="faq" class="max-w-6xl mx-auto px-4 sm:px-6 pt-20 pb-20">
     <div class="grid grid-cols-1 min-[900px]:grid-cols-[minmax(0,20rem)_1fr] gap-10 min-[900px]:gap-16">
       <div class="min-[900px]:sticky min-[900px]:top-24 min-[900px]:self-start">
-        <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">07 / FAQ</p>
+        <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">08 / FAQ</p>
         <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-4">Questions, answered.</h2>
         <p class="text-[var(--muted)] max-w-sm mb-4">
           Short answers to what people ask before they start.
@@ -566,7 +709,7 @@ const jsonLd = [
   </div>
 
   <section id="read-the-docs" class="max-w-6xl mx-auto px-4 sm:px-6 pt-28 pb-32 text-center">
-    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">08 / Documentation</p>
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">09 / Documentation</p>
     <h2 class="text-3xl sm:text-5xl font-light tracking-tight mb-5">Everything is written down.</h2>
     <p class="text-[var(--muted)] max-w-xl mx-auto mb-10">
       How each command works, why it works that way, and what to do when something fails.

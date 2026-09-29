@@ -891,6 +891,135 @@ button:focus-visible {
   padding: 0.5rem 1rem;
 }
 
+/* Skills everywhere diagram */
+
+.skills-diagram {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .skills-diagram {
+    grid-template-columns: 1.1fr 0.6fr 1.3fr;
+    gap: 1.25rem;
+  }
+}
+
+.skills-source {
+  border: 1px solid var(--line);
+  background: var(--card);
+  padding: 1rem;
+}
+
+.skills-source-path {
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+  word-break: break-all;
+}
+
+.skills-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.skills-list li {
+  border: 1px solid var(--line);
+  padding: 0.5rem 0.65rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+  transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+.skills-list li.is-editing {
+  border-color: #5aa9e6;
+  color: #5aa9e6;
+}
+
+.skills-sync {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  padding: 0.5rem 0;
+}
+
+@media (min-width: 900px) {
+  .skills-sync {
+    flex-direction: column;
+    height: 100%;
+  }
+}
+
+.skills-sync-line {
+  flex: 1;
+  height: 1px;
+  width: 100%;
+  background: var(--line);
+  transition: background 0.3s ease;
+}
+
+@media (min-width: 900px) {
+  .skills-sync-line {
+    width: 1px;
+    height: auto;
+  }
+}
+
+.skills-sync.is-active .skills-sync-line {
+  background: #5aa9e6;
+}
+
+.skills-sync-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+.skills-sync.is-active .skills-sync-label {
+  color: #5aa9e6;
+}
+
+.skills-workspaces {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.skills-workspace {
+  border: 1px solid var(--line);
+  background: var(--card);
+  padding: 0.85rem;
+  min-height: 6.5rem;
+  transition: opacity 0.4s ease, border-color 0.3s ease;
+}
+
+.skills-workspace-new {
+  opacity: 0;
+}
+
+.skills-workspace-new.is-visible {
+  opacity: 1;
+}
+
+.skills-workspace-skill {
+  margin-top: 0.6rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.7rem;
+  color: var(--muted);
+  transition: color 0.3s ease;
+}
+
+.skills-workspace-skill.is-updated {
+  color: #5aa9e6;
+}
+
 /* FAQ */
 
 .faq-item {
