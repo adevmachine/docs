@@ -1,0 +1,99 @@
+src/pages/index.astro
+  s_a0cbf6c120c4f8::t_5ec97ab57d2816 339-424
+  s_a0cbf6c120c4f8::t_565433c8dfed01 72-78
+  s_a0cbf6c120c4f8::t_d9505385654495 152,514-518
+  s_a0cbf6c120c4f8::t_c2d958035cf710 85-129
+  s_a0cbf6c120c4f8::t_ea36945380b14d 151,160,493-513,519-525
+  s_a0cbf6c120c4f8::t_3bac6935fe1041 595-596
+  s_a0cbf6c120c4f8::t_ecca2743f4bbc6 150,528,614-787
+  s_a0cbf6c120c4f8::t_eccfee349104e6 130-149,153-159,161-164,168,247,258,425,428,526,597,788
+src/styles/global.css
+  s_a0cbf6c120c4f8::t_f15ace9de5f6ee 626,633-634,639,645,651,656,661,667,676,684,693,700,704,708,716,720,731,735,741,744,748-749,751,754-755,763,771,777,791-792,797,800,803,812,814,823,830,834,843,851,857,864,869,876,882,892,898,902,911,915,923,930,938,946,954,962,967,969-995,1004
+  s_a0cbf6c120c4f8::t_b8b85049ba5753 623-625
+  s_a0cbf6c120c4f8::t_0bc468b852bcbf 627-632
+  s_a0cbf6c120c4f8::t_a7a21456908b41 635-638
+  s_a0cbf6c120c4f8::t_4e84198e6fd41b 640-644
+  s_a0cbf6c120c4f8::t_dd3d9142dc2cdb 646-650
+  s_a0cbf6c120c4f8::t_dae82ccd3f93d3 652-655
+  s_a0cbf6c120c4f8::t_5274091b6d5e30 657-660
+  s_a0cbf6c120c4f8::t_60a961dd08fd5d 662-666
+  s_a0cbf6c120c4f8::t_bcd44690e44e7f 668-670,673-675
+  s_a0cbf6c120c4f8::t_3acf4bd91a9850 677-679,681-683
+  s_a0cbf6c120c4f8::t_f1d39aaaa8fe06 685-687,690-692
+  s_a0cbf6c120c4f8::t_922c35f195be38 694-699
+  s_a0cbf6c120c4f8::t_1d6a7a95c2749a 701-703
+  s_a0cbf6c120c4f8::t_b8c75c35519063 705-707
+  s_a0cbf6c120c4f8::t_96a23f6778eae8 709-711,713-715
+  s_a0cbf6c120c4f8::t_d6e4f7318febc4 717-719
+  s_a0cbf6c120c4f8::t_798786bd6d1e2f 721-723,728-730
+  s_a0cbf6c120c4f8::t_4bf53841f2f422 732-734
+  s_a0cbf6c120c4f8::t_2bc4cc1124b5b1 736-740
+  s_a0cbf6c120c4f8::t_13f0e2c5f12a93 742-743
+  s_a0cbf6c120c4f8::t_d8e3342e02adbe 745-747
+  s_a0cbf6c120c4f8::t_88905819361fc3 750
+  s_a0cbf6c120c4f8::t_c8a664ca55b54f 752-753
+  s_a0cbf6c120c4f8::t_be92d1cc07f435 756-758,760-762
+  s_a0cbf6c120c4f8::t_6064363707fe70 764-766,768-770
+  s_a0cbf6c120c4f8::t_9440db68b4c301 772-776
+  s_a0cbf6c120c4f8::t_cf2edbf476d2a0 778-780,788-790
+  s_a0cbf6c120c4f8::t_818255d65211f0 793-796
+  s_a0cbf6c120c4f8::t_baf0004d4f8365 798-799
+  s_a0cbf6c120c4f8::t_b7620d878040e9 801-802
+  s_a0cbf6c120c4f8::t_3890aad7791718 804-806,809-811
+  s_a0cbf6c120c4f8::t_1fec1f6834cc53 813
+  s_a0cbf6c120c4f8::t_9e8220c1fd1d80 815-817,820-822
+  s_a0cbf6c120c4f8::t_ef82379e7c2b28 824-829
+  s_a0cbf6c120c4f8::t_3ccd1482a4d44a 831-833
+  s_a0cbf6c120c4f8::t_391b6c43049de0 835-837,840-842
+  s_a0cbf6c120c4f8::t_2af7ede3779cc4 844-846,848-850
+  s_a0cbf6c120c4f8::t_a83055ece3f635 852-856
+  s_a0cbf6c120c4f8::t_f8dd4554664216 858-863
+  s_a0cbf6c120c4f8::t_01c985a083e02d 865-868
+  s_a0cbf6c120c4f8::t_6c4a102143af66 870-875
+  s_a0cbf6c120c4f8::t_5095808ae0194a 877-881
+  s_a0cbf6c120c4f8::t_0e85147c7be4a0 883-885,889-891
+  s_a0cbf6c120c4f8::t_81419820353724 893-897
+  s_a0cbf6c120c4f8::t_698b26e0d46f6a 899-901
+  s_a0cbf6c120c4f8::t_a2d4569dd9ee76 903-905,908-910
+  s_a0cbf6c120c4f8::t_2c60bddc0b5a21 912-914
+  s_a0cbf6c120c4f8::t_d0e0e1b37402b1 916-918,920-922
+  s_a0cbf6c120c4f8::t_869aa4dad6147c 924-929
+  s_a0cbf6c120c4f8::t_666f398657c0e9 931-933,935-937
+  s_a0cbf6c120c4f8::t_5f713d1ad64a3d 939-941,943-945
+  s_a0cbf6c120c4f8::t_d18db041cf16da 947-949,951-953
+  s_a0cbf6c120c4f8::t_5671a62f934158 955-957,959-961
+  s_a0cbf6c120c4f8::t_226ccb66b9ff7e 963-966
+  s_a0cbf6c120c4f8::t_49cedc9bfea463 968
+  s_a0cbf6c120c4f8::t_8f5937ad0f5612 996-998,1001-1003
+  s_7357808fcab4bb::t_a05356a69b2e56 619-622,671-672,680,688-689,712,724-727,759,767,781-787,807-808,818-819,838-839,847,886-888,906-907,919,934,942,950,958,999-1000
+scripts/fetch-docs.mjs
+  s_a0cbf6c120c4f8::t_d888571f3aff2a 37
+src/layouts/BaseLayout.astro
+  s_a0cbf6c120c4f8::t_20f8115510ae3c 9-10,13-20,22-23,35-49
+src/layouts/DocLayout.astro
+  s_a0cbf6c120c4f8::t_f957c8c61c3b23 18-28,36-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "da61ec047697730ed1ce3578e4d516ffa4d299f2",
+  "prompts": {},
+  "sessions": {
+    "s_7357808fcab4bb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-aef89cf66af869d6d",
+        "model": "unknown"
+      },
+      "human_author": "Djalma Araújo <djalma@nossomos.cc>"
+    },
+    "s_a0cbf6c120c4f8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f7d54e1b-857f-44e4-a7a9-0ca76ea55bb2",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Djalma Araújo <djalma@nossomos.cc>"
+    }
+  }
+}
