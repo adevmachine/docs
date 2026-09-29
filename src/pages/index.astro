@@ -85,46 +85,78 @@ const commands = [
 
 const description =
   'devmachine turns a Debian or Ubuntu server into your own coding machine, with one workspace per project. Free and open source.'
+const doc = (path: string, label: string) =>
+  `<a class="faq-link" href="${base}${path}">${label} →</a>`
 const faq = [
   {
-    q: 'Do I need to know Ansible?',
-    a: 'No. devmachine uses it underneath. You only use commands. You write Ansible only if you write a package of your own.',
+    q: 'Does it log in as root with a password?',
+    a: `Only once. <code>setup</code> uses the root password your provider gave you to install a key that only you have, checks that the key works, and then turns password logins off. From then on the server only accepts that key. It also checks the server's fingerprint first, so you know you reached your own server.`,
+    link: doc('how-it-works/trust-bootstrap/', 'How setup locks the server'),
   },
   {
-    q: 'What does it cost?',
-    a: 'devmachine is free and open source (MIT). You pay only for your server.',
+    q: 'What is a workspace, and why use one?',
+    a: `A workspace is one account on the server for one project, with its own tools, logins and coding agent. Projects do not see each other's files or tokens, one project breaking does not touch the others, and you open any of them by name: <code>devmachine ssh alice</code>.`,
+    link: doc('concepts/machines-and-workspaces/', 'Machines and workspaces'),
   },
   {
-    q: 'Does anything run on my server between commands?',
-    a: 'No. There is no agent or background service. devmachine connects over SSH when you run a command, then leaves.',
+    q: 'Is it free?',
+    a: `Yes. devmachine is free and open source, under the MIT licence. You pay only for the server you rent, or nothing if you use a computer you already have.`,
+    link: `<a class="faq-link" href="https://github.com/mydevmachine/devmachine">The code on GitHub →</a>`,
   },
   {
-    q: 'What happens if I stop using it?',
-    a: 'Your server keeps working. Underneath it is plain Linux, SSH and git.',
+    q: 'Does it only work with Linux?',
+    a: `The machines it sets up run Debian or Ubuntu. The CLI itself runs on your computer, macOS or Linux. Your Mac can also be a machine of its own, for the packages made for it.`,
+    link: doc('how-it-works/your-computer-as-a-machine/', 'Your computer as a machine'),
   },
   {
-    q: 'Which servers work?',
-    a: 'Any Debian or Ubuntu server you can reach as root over SSH: a VPS, a computer you already have, or a virtual machine on your own computer.',
+    q: 'How do I configure my machine?',
+    a: `Ask your coding agent. After <code>devmachine skills add</code>, any Claude Code or Codex session can add packages, workspaces and sites for you. For bigger changes, like writing your own package, open a session in the configuration folder: it holds your whole setup, and a <code>CLAUDE.md</code> there can tell the agent your own rules.`,
+    link: doc('day-to-day/', 'Day to day'),
+  },
+  {
+    q: 'Can I use my old laptop?',
+    a: `Yes, if it runs Debian or Ubuntu and you can reach it as root over SSH. Set it up from your computer on the same network with <code>devmachine machines add</code>, then add the <code>tailscale</code> package and sign it in with <code>devmachine login tailscale</code>. Put <code>tailscale:&lt;name&gt;</code> first in its addresses, and you reach it from anywhere, even from outside your home.`,
+    link: doc('concepts/reaching-your-server/', 'Reaching your server'),
+  },
+  {
+    q: 'Can I use more than one machine?',
+    a: `Yes. Add as many as you like with <code>devmachine machines add</code>. Each workspace belongs to one machine, so <code>devmachine ssh alice</code> finds the right one. A command that acts on a whole machine asks you to name it with <code>--machine</code>: it never guesses.`,
+    link: doc('how-it-works/choosing-a-target/', 'Choosing a target'),
   },
   {
     q: 'Do I need a domain?',
-    a: 'No. You need one only to show an app at a public URL. Without one, <code>devmachine tunnel alice 3000</code> opens the app on your own computer.',
+    a: `No. You need one only to show an app at a public URL with HTTPS. Without one, <code>devmachine tunnel alice 3000</code> opens the app on your own computer, and nothing is published.`,
+    link: doc('concepts/publishing/', 'Publishing an app'),
   },
   {
-    q: 'Is my server safe?',
-    a: '<code>setup</code> checks the server\'s fingerprint, installs a key only you have, and turns off password logins. The <code>firewall</code> and <code>fail2ban</code> packages close unused ports and block repeated guesses.',
-  },
-  {
-    q: 'Which coding agents work?',
-    a: 'Claude Code installs as the <code>claude-code</code> package. <code>devmachine skills add</code> teaches Claude Code, Codex, Pi and OpenCode how to use devmachine.',
-  },
-  {
-    q: 'Can several projects share one server?',
-    a: 'Yes. Each workspace is its own account on the server, with its own tools and logins.',
+    q: 'What is Ansible?',
+    a: `Ansible is a well-known open source tool that installs and configures software on a server from a written description. devmachine uses it underneath, so you never need to learn it. You write Ansible only if you write a package of your own.`,
+    link: doc('concepts/packages/', 'Packages'),
   },
   {
     q: 'Where is my configuration?',
-    a: 'In a folder on your computer, <code>~/.config/devmachine</code>. <code>devmachine config path</code> prints it. Keep it in git with <code>devmachine setup git</code>.',
+    a: `In a folder on your computer, <code>~/.config/devmachine</code>. <code>devmachine config path</code> prints where it is. It holds your machines, workspaces, packages and settings, and nothing personal ever goes into devmachine itself.`,
+    link: doc('concepts/configuration/', 'Configuration'),
+  },
+  {
+    q: 'How should I save my configuration?',
+    a: `In git. <code>devmachine setup git</code> turns the folder into a repository, and every change the CLI makes becomes a commit. Push it to a private remote to keep a backup and see what changed. Private keys and secrets are never committed.`,
+    link: doc('how-it-works/versioning-your-configuration/', 'Versioning your configuration'),
+  },
+  {
+    q: 'What is Tailscale? Does it work with Headscale?',
+    a: `Tailscale puts your computer and your servers on a private network of your own, so a server is reachable even when its public address is not. The <code>tailscale</code> package signs in to Tailscale's own service. With Headscale, run <code>tailscale up --login-server</code> on the machine yourself; devmachine only needs the address. Any other VPN works the same way.`,
+    link: doc('concepts/reaching-your-server/', 'Reaching your server'),
+  },
+  {
+    q: 'How do I add more packages?',
+    a: `<code>devmachine packages list</code> shows what exists. <code>devmachine packages add docker</code> adds one to a machine, <code>--workspace alice</code> adds it to a workspace, and <code>devmachine sync</code> installs it. To make your own, start with <code>devmachine packages new</code>.`,
+    link: doc('concepts/packages/', 'Packages'),
+  },
+  {
+    q: 'What happens if I stop using it?',
+    a: `Your servers keep working. Underneath it is plain Linux, SSH and git: each workspace is an ordinary account you can still log in to with <code>ssh</code>, and nothing of devmachine runs on the server between commands.`,
+    link: doc('concepts/machines-and-workspaces/#the-linux-account', 'The Linux account behind a workspace'),
   },
 ]
 
@@ -158,7 +190,7 @@ const jsonLd = [
     mainEntity: faq.map((item) => ({
       '@type': 'Question',
       name: item.q,
-      acceptedAnswer: { '@type': 'Answer', text: item.a.replace(/<[^>]+>/g, '') },
+      acceptedAnswer: { '@type': 'Answer', text: item.a.replace(/<[^>]+>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>') },
     })),
   },
 ]
@@ -514,7 +546,7 @@ const jsonLd = [
               </summary>
               <div class="faq-answer-wrap">
                 <div class="faq-answer-inner">
-                  <p class="faq-answer" set:html={item.a} />
+                  <div class="faq-answer"><p set:html={item.a} /><p class="faq-more" set:html={item.link} /></div>
                 </div>
               </div>
             </details>

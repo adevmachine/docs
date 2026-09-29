@@ -994,6 +994,24 @@ button:focus-visible {
   }
 }
 
+.faq-more {
+  margin-top: 0.6rem;
+}
+
+.faq-link {
+  color: #5aa9e6;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.faq-link:hover {
+  color: var(--ink);
+}
+
 .faq-answer code {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   background: var(--card);
