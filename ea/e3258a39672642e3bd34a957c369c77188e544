@@ -1,0 +1,29 @@
+src/pages/index.astro
+  s_a0cbf6c120c4f8::t_4b85adcdb6b6b7 300-302
+  s_a0cbf6c120c4f8::t_0e373df572491d 73
+  s_a0cbf6c120c4f8::t_961b05b1e816ea 819
+public/install.sh
+  s_a0cbf6c120c4f8::t_341722944ebb98 1-131,133-137
+  s_a0cbf6c120c4f8::t_a764ed885d34d1 132
+src/components/HeroPipes.astro
+  s_a0cbf6c120c4f8::t_29918c32690ed8 308
+  s_a0cbf6c120c4f8::t_73adbcfd18ba2f 29,39-41
+README.md
+  s_a0cbf6c120c4f8::t_c8be1dd51036b5 113-122
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "eae3258a39672642e3bd34a957c369c77188e544",
+  "prompts": {},
+  "sessions": {
+    "s_a0cbf6c120c4f8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f7d54e1b-857f-44e4-a7a9-0ca76ea55bb2",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Djalma Araújo <djalma@nossomos.cc>"
+    }
+  }
+}
