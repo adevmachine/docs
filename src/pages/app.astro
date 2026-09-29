@@ -62,7 +62,9 @@ const jsonLd = [
     description,
     url: `${site}app/`,
     applicationCategory: 'DeveloperApplication',
-    operatingSystem: 'macOS',
+    operatingSystem: 'macOS 14 or later',
+    softwareVersion: '0.1.0',
+    downloadUrl: 'https://github.com/mydevmachine/app-releases/releases/latest',
   },
 ]
 ---
@@ -78,18 +80,27 @@ const jsonLd = [
 
     <div class="border hairline p-4 sm:p-5 mt-8 max-w-2xl">
       <div class="flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          disabled
-          class="inline-block border border-[var(--ink)] px-6 py-3 text-sm font-mono uppercase tracking-wide opacity-40 cursor-not-allowed"
+        <a
+          href="https://github.com/mydevmachine/app-releases/releases/latest"
+          class="inline-block border border-[var(--ink)] px-6 py-3 text-sm font-mono uppercase tracking-wide hover:bg-[var(--ink)] hover:text-[var(--bg)] transition-colors"
         >
-          Download for macOS — coming soon
-        </button>
+          Download for macOS
+        </a>
         <span class="text-xs font-mono uppercase tracking-widest text-[var(--muted)]">macOS 14 or later</span>
       </div>
+      <p class="text-sm text-[var(--muted)] leading-relaxed mt-3">Or with Homebrew:</p>
+      <div class="border hairline bg-[var(--card)] px-3 py-2 mt-2 flex items-center justify-between gap-2">
+        <code id="app-brew" class="font-mono text-xs min-w-0 break-all">brew install --cask mydevmachine/tap/devmachine-app</code>
+        <button
+          type="button"
+          class="app-copy text-xs uppercase tracking-wide px-2 py-1 border hairline shrink-0"
+          data-copy="brew install --cask mydevmachine/tap/devmachine-app"
+        >
+          Copy
+        </button>
+      </div>
       <p class="text-sm text-[var(--muted)] leading-relaxed mt-3">
-        Not released yet. It will ship as a signed release, installed with a script — no App Store, no
-        unsigned-app warnings.
+        Signed and notarized by Apple, so it opens without warnings. Not on the App Store.
       </p>
     </div>
 
@@ -148,6 +159,15 @@ const jsonLd = [
       Set up devmachine first →
     </a>
   </section>
+  <script is:inline>
+    document.querySelectorAll('.app-copy').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        navigator.clipboard?.writeText(btn.dataset.copy || '')
+        btn.textContent = 'Copied'
+        setTimeout(() => (btn.textContent = 'Copy'), 1500)
+      })
+    })
+  </script>
 </BaseLayout>
 
 <style>
