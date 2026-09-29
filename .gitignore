@@ -3,6 +3,7 @@ dist/
 .astro/
 src/content/docs/
 src/data/packages.json
+src/data/cli.json
 .screenshots/
 .DS_Store
 npm-debug.log*

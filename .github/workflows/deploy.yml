@@ -28,6 +28,7 @@ jobs:
         with:
           repository: mydevmachine/devmachine
           path: cli
+          fetch-depth: 0
 
       - name: Checkout devmachine packages
         uses: actions/checkout@v4

@@ -7,6 +7,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, statSync, rmSync } from 'node:fs'
 import { join, dirname, relative, resolve, posix } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { execFileSync } from 'node:child_process'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = join(__dirname, '..')
@@ -161,5 +162,24 @@ for (const relPath of keptFiles) {
 }
 
 writeFileSync(join(outDir, '_manifest.json'), JSON.stringify(pages, null, 2))
+
+function latestTag(dir) {
+  try {
+    return execFileSync('git', ['describe', '--tags', '--abbrev=0'], {
+      cwd: dir,
+      stdio: ['ignore', 'pipe', 'ignore'],
+    })
+      .toString()
+      .trim()
+  } catch {
+    return null
+  }
+}
+
+const dataDir = join(root, 'src', 'data')
+mkdirSync(dataDir, { recursive: true })
+const cliVersion = latestTag(sourceDir)
+writeFileSync(join(dataDir, 'cli.json'), JSON.stringify({ version: cliVersion }, null, 2))
+console.log(`fetch-docs: CLI version ${cliVersion ?? 'unknown'}`)
 
 console.log(`fetch-docs: wrote ${pages.length} pages from ${sourceDir} to ${relative(root, outDir)}`)

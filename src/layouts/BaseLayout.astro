@@ -1,5 +1,7 @@
 ---
 import '../styles/global.css'
+import cli from '../data/cli.json'
+import packagesData from '../data/packages.json'
 
 interface Props {
   title: string
@@ -119,6 +121,30 @@ const frame = current === 'docs' ? 'max-w-7xl' : 'max-w-6xl'
           <a href="https://github.com/mydevmachine/devmachine/blob/main/LICENSE" target="_blank" rel="noreferrer">License</a>
           <a href={`${base}llms.txt`}>llms.txt</a>
           <a href={`${base}llms-full.txt`}>llms-full.txt</a>
+          {
+            cli.version && (
+              <a
+                href={`https://github.com/mydevmachine/devmachine/releases/tag/${cli.version}`}
+                target="_blank"
+                rel="noreferrer"
+                class="font-mono"
+              >
+                CLI {cli.version}
+              </a>
+            )
+          }
+          {
+            packagesData.release && (
+              <a
+                href={`https://github.com/mydevmachine/packages/releases/tag/${packagesData.release}`}
+                target="_blank"
+                rel="noreferrer"
+                class="font-mono"
+              >
+                packages {packagesData.release}
+              </a>
+            )
+          }
         </div>
         <button
           id="theme-toggle"
