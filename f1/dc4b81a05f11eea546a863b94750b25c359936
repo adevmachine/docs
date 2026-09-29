@@ -1,0 +1,27 @@
+src/styles/global.css
+  s_a0cbf6c120c4f8::t_a20eab2f4d7ff2 1023-1039
+src/layouts/BaseLayout.astro
+  s_a0cbf6c120c4f8::t_733877665f21da 123
+  s_a0cbf6c120c4f8::t_8b2d711e1bc769 136
+  s_a0cbf6c120c4f8::t_a421dd8380a325 101
+src/pages/app.astro
+  s_a0cbf6c120c4f8::t_c055a875165174 1-157
+src/pages/index.astro
+  s_a0cbf6c120c4f8::t_3af7bd72cbfa3c 707-734,740
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "f1dc4b81a05f11eea546a863b94750b25c359936",
+  "prompts": {},
+  "sessions": {
+    "s_a0cbf6c120c4f8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f7d54e1b-857f-44e4-a7a9-0ca76ea55bb2",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Djalma Araújo <djalma@nossomos.cc>"
+    }
+  }
+}
