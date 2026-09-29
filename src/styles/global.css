@@ -331,9 +331,15 @@ body {
 
 .term-window {
   position: absolute;
+  --window-shadow: 0 22px 56px -20px rgb(0 0 0 / 0.38), 0 8px 18px -10px rgb(0 0 0 / 0.22);
   transition:
     opacity 0.3s ease,
     transform 0.3s ease;
+}
+
+.term-window .terminal {
+  border: none;
+  box-shadow: var(--window-shadow);
 }
 
 .term-window.term-alice {
@@ -364,7 +370,7 @@ body {
   opacity: 1;
   scale: 1.02;
   transform-origin: bottom left;
-  box-shadow: 0 24px 60px -20px rgb(0 0 0 / 0.45);
+  --window-shadow: 0 30px 70px -18px rgb(0 0 0 / 0.5), 0 10px 24px -10px rgb(0 0 0 / 0.3);
 }
 
 .term-window.term-agent {
