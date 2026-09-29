@@ -149,6 +149,11 @@ const faq = [
     link: doc('concepts/reaching-your-server/', 'Reaching your server'),
   },
   {
+    q: 'How can I install my agents?',
+    a: `Look in the <a href="${base}packages/">official packages</a> first: Claude Code, its plugins and Remote Control are there, ready to add. For anything else, like another agent or a tool of your own, ask your coding agent to write a package for it. It can save anything in your configuration folder, and <code>devmachine sync</code> installs it like any other package.`,
+    link: doc('packages/', 'Browse the packages'),
+  },
+  {
     q: 'How do I add more packages?',
     a: `<code>devmachine packages list</code> shows what exists. <code>devmachine packages add docker</code> adds one to a machine, <code>--workspace alice</code> adds it to a workspace, and <code>devmachine sync</code> installs it. To make your own, start with <code>devmachine packages new</code>.`,
     link: doc('concepts/packages/', 'Packages'),

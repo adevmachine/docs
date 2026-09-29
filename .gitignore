@@ -2,6 +2,7 @@ node_modules/
 dist/
 .astro/
 src/content/docs/
+src/data/packages.json
 .screenshots/
 .DS_Store
 npm-debug.log*

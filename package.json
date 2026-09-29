@@ -4,15 +4,17 @@
   "type": "module",
   "scripts": {
     "fetch-docs": "node scripts/fetch-docs.mjs",
-    "dev": "npm run fetch-docs && astro dev",
-    "build": "npm run fetch-docs && astro build",
+    "fetch-packages": "node scripts/fetch-packages.mjs",
+    "dev": "npm run fetch-docs && npm run fetch-packages && astro dev",
+    "build": "npm run fetch-docs && npm run fetch-packages && astro build",
     "postbuild": "pagefind --site dist",
     "preview": "astro preview"
   },
   "dependencies": {
-    "astro": "^5.1.1",
     "@tailwindcss/vite": "^4.0.0",
-    "tailwindcss": "^4.0.0"
+    "astro": "^5.1.1",
+    "tailwindcss": "^4.0.0",
+    "yaml": "^2.9.1"
   },
   "devDependencies": {
     "pagefind": "^1.1.1"

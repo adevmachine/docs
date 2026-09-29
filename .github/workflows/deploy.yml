@@ -29,6 +29,13 @@ jobs:
           repository: mydevmachine/devmachine
           path: cli
 
+      - name: Checkout devmachine packages
+        uses: actions/checkout@v4
+        with:
+          repository: mydevmachine/packages
+          path: packages-src
+          fetch-depth: 0
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -42,6 +49,11 @@ jobs:
         run: npm run fetch-docs
         env:
           DEVMACHINE_CLI_DOCS: cli/docs
+
+      - name: Fetch packages
+        run: npm run fetch-packages
+        env:
+          DEVMACHINE_PACKAGES: packages-src
 
       - name: Build
         run: npx astro build

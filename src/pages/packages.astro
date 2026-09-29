@@ -1,0 +1,362 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import data from '../data/packages.json'
+
+const base = import.meta.env.BASE_URL
+const { packages } = data as {
+  release: string | null
+  packages: {
+    name: string
+    scope: string | null
+    category: string
+    kind: string | null
+    summary: string
+    variables: { name: string; summary: string; default: unknown }[]
+    credentials: string[]
+    needs: string[]
+    source: string
+  }[]
+}
+
+const CATEGORY_ORDER = [
+  'Foundation',
+  'Coding agents',
+  'Security',
+  'Network',
+  'Web',
+  'DNS',
+  'Containers',
+  'Developer tools',
+  'macOS',
+  'Other',
+]
+
+const categoryCounts = new Map<string, number>()
+for (const pkg of packages) {
+  categoryCounts.set(pkg.category, (categoryCounts.get(pkg.category) ?? 0) + 1)
+}
+
+const categories = [...categoryCounts.keys()].sort((a, b) => {
+  const ai = CATEGORY_ORDER.indexOf(a)
+  const bi = CATEGORY_ORDER.indexOf(b)
+  return (ai === -1 ? CATEGORY_ORDER.length : ai) - (bi === -1 ? CATEGORY_ORDER.length : bi)
+})
+
+const description =
+  'Every official devmachine package: what it adds, the settings it takes, and the logins it needs. Add one with devmachine packages add.'
+
+const site = Astro.site?.href ?? 'https://mydevmachine.sh/'
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'devmachine packages',
+    description,
+    url: `${site}packages/`,
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: packages.map((pkg, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        item: {
+          '@type': 'SoftwareApplication',
+          name: pkg.name,
+          description: pkg.summary.replaceAll('`', ''),
+          url: pkg.source,
+          applicationCategory: pkg.category,
+        },
+      })),
+    },
+  },
+]
+---
+
+<BaseLayout
+  title="Packages — devmachine"
+  description={description}
+  current="docs"
+  jsonLd={jsonLd}
+>
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-16 pb-10">
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">Packages</p>
+    <h1 class="text-4xl sm:text-6xl font-light tracking-tight mb-5">Packages.</h1>
+    <p class="text-[var(--muted)] max-w-2xl">
+      Each package adds one thing to a machine or a workspace. Add one with
+      <code class="font-mono text-[var(--ink)]">devmachine packages add &lt;name&gt;</code>,
+      then <code class="font-mono text-[var(--ink)]">devmachine sync</code>.
+    </p>
+  </section>
+
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 pb-6">
+    <div class="border hairline p-4 sm:p-5 mb-4">
+      <label for="pkg-search" class="sr-only">Search packages</label>
+      <input
+        id="pkg-search"
+        type="search"
+        placeholder="Search by name, summary, category or setting…"
+        class="w-full border hairline bg-[var(--bg)] px-3 py-2 text-sm font-mono outline-none focus-visible:border-[#5aa9e6]"
+        autocomplete="off"
+      />
+
+      <div class="flex flex-wrap gap-2 mt-4">
+        <button type="button" class="filter-chip" data-category-chip="" data-category="">
+          All <span class="filter-chip-count">({packages.length})</span>
+        </button>
+        {
+          categories.map((c) => (
+            <button type="button" class="filter-chip" data-category-chip="" data-category={c}>
+              {c} <span class="filter-chip-count">({categoryCounts.get(c)})</span>
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="flex flex-wrap gap-2 mt-3">
+        <button type="button" class="filter-chip" data-scope-chip="" data-scope="">All scopes</button>
+        <button type="button" class="filter-chip" data-scope-chip="" data-scope="machine">Machine</button>
+        <button type="button" class="filter-chip" data-scope-chip="" data-scope="workspace">Workspace</button>
+      </div>
+    </div>
+
+    <p id="pkg-count" class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-4">
+      {packages.length} packages
+    </p>
+
+    <div id="pkg-empty" class="border hairline p-10 text-center text-sm text-[var(--muted)]" hidden>
+      No package matches that search.
+    </div>
+
+    <div id="pkg-grid" class="grid-cards grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        packages.map((pkg) => {
+          const installCmd =
+            pkg.scope === 'workspace'
+              ? `devmachine packages add ${pkg.name} --workspace alice`
+              : `devmachine packages add ${pkg.name}`
+          const searchText = [
+            pkg.name,
+            pkg.summary,
+            pkg.category,
+            pkg.kind ?? '',
+            ...pkg.variables.map((v) => v.name),
+          ]
+            .join(' ')
+            .toLowerCase()
+
+          return (
+            <div
+              class="pkg-card p-5 flex flex-col"
+              data-pkg=""
+              data-category={pkg.category}
+              data-scope={pkg.scope ?? ''}
+              data-search={searchText}
+            >
+              <div class="flex items-start justify-between gap-3 mb-3">
+                <h3 class="font-mono text-base break-all">{pkg.name}</h3>
+              </div>
+
+              <div class="flex flex-wrap gap-x-3 gap-y-1 text-xs font-mono uppercase tracking-wide text-[var(--muted)] mb-3">
+                <span>{pkg.category}</span>
+                <span>·</span>
+                <span>{pkg.scope ?? 'unscoped'}</span>
+                {pkg.kind && (
+                  <>
+                    <span>·</span>
+                    <span>{pkg.kind}</span>
+                  </>
+                )}
+              </div>
+
+              <p class="text-sm text-[var(--muted)] leading-relaxed mb-4">
+                {pkg.summary.split('`').map((part, i) => (i % 2 ? <code class="font-mono text-[var(--ink)]">{part}</code> : part))}
+              </p>
+
+              <div class="border hairline bg-[var(--bg)] px-3 py-2 flex items-center justify-between gap-2 mb-3">
+                <code class="font-mono text-xs min-w-0 break-all">{installCmd}</code>
+                <button
+                  type="button"
+                  class="pkg-copy text-xs uppercase tracking-wide px-2 py-1 border hairline shrink-0"
+                  data-copy={installCmd}
+                >
+                  Copy
+                </button>
+              </div>
+
+              {(pkg.variables.length > 0 || pkg.credentials.length > 0) && (
+                <div class="text-xs text-[var(--muted)] leading-relaxed mb-4 space-y-1">
+                  {pkg.variables.length > 0 && (
+                    <p>
+                      <span class="font-mono uppercase tracking-wide">Settings:</span>{' '}
+                      {pkg.variables.map((v) => v.name).join(', ')}
+                    </p>
+                  )}
+                  {pkg.credentials.length > 0 && (
+                    <p>
+                      <span class="font-mono uppercase tracking-wide">Needs login:</span>{' '}
+                      {pkg.credentials.join(', ')}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              <a
+                href={pkg.source}
+                target="_blank"
+                rel="noreferrer"
+                class="text-sm mt-auto underline underline-offset-2 hover:text-[var(--ink)]"
+              >
+                Source →
+              </a>
+            </div>
+          )
+        })
+      }
+    </div>
+  </section>
+
+  <section id="write-your-own" class="max-w-6xl mx-auto px-4 sm:px-6 pt-28 pb-32 text-center">
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">Contribute</p>
+    <h2 class="text-3xl sm:text-5xl font-light tracking-tight mb-5">Write your own.</h2>
+    <p class="text-[var(--muted)] max-w-xl mx-auto mb-10">
+      A package is an Ansible role plus a <code class="font-mono text-[var(--ink)]">package.yml</code>.
+      Start with <code class="font-mono text-[var(--ink)]">devmachine packages new &lt;name&gt;</code>,
+      then share it by opening a pull request on
+      <code class="font-mono text-[var(--ink)]">mydevmachine/packages</code>.
+    </p>
+    <a
+      href={`${base}reference/package-format/`}
+      class="inline-block border border-[var(--ink)] px-10 py-4 text-base font-mono uppercase tracking-wide hover:bg-[var(--ink)] hover:text-[var(--bg)] transition-colors"
+    >
+      How to write a package →
+    </a>
+    <p class="text-sm mt-6">
+      <a
+        href="https://github.com/mydevmachine/packages"
+        target="_blank"
+        rel="noreferrer"
+        class="underline underline-offset-2 text-[var(--muted)] hover:text-[var(--ink)]"
+      >
+        mydevmachine/packages on GitHub →
+      </a>
+    </p>
+  </section>
+
+  <script is:inline>
+    ;(() => {
+      const search = document.getElementById('pkg-search')
+      const grid = document.getElementById('pkg-grid')
+      const empty = document.getElementById('pkg-empty')
+      const count = document.getElementById('pkg-count')
+      if (!(search instanceof HTMLInputElement) || !grid || !empty || !count) return
+
+      const cards = Array.from(grid.querySelectorAll('[data-pkg]'))
+      const categoryChips = Array.from(document.querySelectorAll('[data-category-chip]'))
+      const scopeChips = Array.from(document.querySelectorAll('[data-scope-chip]'))
+
+      const params = new URLSearchParams(window.location.search)
+      const state = {
+        q: params.get('q') ?? '',
+        category: params.get('category') ?? '',
+        scope: params.get('scope') ?? '',
+      }
+      search.value = state.q
+
+      function setActiveChip(chips, attr, value) {
+        for (const chip of chips) {
+          chip.classList.toggle('is-active', (chip.getAttribute(attr) ?? '') === value)
+        }
+      }
+
+      function apply() {
+        const q = state.q.trim().toLowerCase()
+        let visible = 0
+        for (const card of cards) {
+          const matchesQuery = !q || card.getAttribute('data-search').includes(q)
+          const matchesCategory = !state.category || card.getAttribute('data-category') === state.category
+          const matchesScope = !state.scope || card.getAttribute('data-scope') === state.scope
+          const show = matchesQuery && matchesCategory && matchesScope
+          card.hidden = !show
+          if (show) visible++
+        }
+        count.textContent = `${visible} package${visible === 1 ? '' : 's'}`
+        empty.hidden = visible !== 0
+        grid.hidden = visible === 0
+
+        setActiveChip(categoryChips, 'data-category', state.category)
+        setActiveChip(scopeChips, 'data-scope', state.scope)
+
+        const next = new URLSearchParams()
+        if (state.q) next.set('q', state.q)
+        if (state.category) next.set('category', state.category)
+        if (state.scope) next.set('scope', state.scope)
+        const qs = next.toString()
+        const url = qs ? `${window.location.pathname}?${qs}` : window.location.pathname
+        window.history.replaceState(null, '', url)
+      }
+
+      search.addEventListener('input', () => {
+        state.q = search.value
+        apply()
+      })
+
+      for (const chip of categoryChips) {
+        chip.addEventListener('click', () => {
+          state.category = chip.getAttribute('data-category') ?? ''
+          apply()
+        })
+      }
+
+      for (const chip of scopeChips) {
+        chip.addEventListener('click', () => {
+          state.scope = chip.getAttribute('data-scope') ?? ''
+          apply()
+        })
+      }
+
+      grid.addEventListener('click', (e) => {
+        const btn = e.target.closest('.pkg-copy')
+        if (!btn) return
+        const text = btn.getAttribute('data-copy') ?? ''
+        navigator.clipboard?.writeText(text)
+        const original = btn.textContent
+        btn.textContent = 'Copied'
+        setTimeout(() => {
+          btn.textContent = original
+        }, 1500)
+      })
+
+      apply()
+    })()
+  </script>
+</BaseLayout>
+
+<style>
+  .filter-chip {
+    border: 1px solid var(--line);
+    padding: 0.35rem 0.75rem;
+    font-size: 0.7rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .filter-chip:hover {
+    color: var(--ink);
+  }
+
+  .filter-chip.is-active {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+
+  .filter-chip-count {
+    opacity: 0.7;
+  }
+
+  .pkg-card {
+    background: var(--card);
+  }
+</style>

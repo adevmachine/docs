@@ -1008,6 +1008,13 @@ button:focus-visible {
   text-underline-offset: 3px;
 }
 
+.faq-answer a:not(.faq-link) {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: #5aa9e6;
+  text-underline-offset: 3px;
+}
+
 .faq-link:hover {
   color: var(--ink);
 }
