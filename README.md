@@ -100,9 +100,11 @@ gh workflow run deploy.yml -R mydevmachine/docs
 ## Custom domain
 
 The site is served from GitHub Pages at the custom domain in the `CNAME`
-file, `mydevmachine.sh`. This is a GitHub Pages setting, not Cloudflare — the
-repository has no Cloudflare or Wrangler config. If the custom domain setting
-is ever lost (for example after a Pages environment reset), restore it with:
+file, `mydevmachine.sh`, which sits behind Cloudflare. That proxying is a DNS
+setting outside this repository — there is no Cloudflare or Wrangler config
+here. GitHub still needs its own `cname` setting on the repository for Pages
+to serve that domain. If that setting is ever lost (for example after a Pages
+environment reset), restore it with:
 
 ```
 gh api -X PUT repos/mydevmachine/docs/pages -f cname=mydevmachine.sh
