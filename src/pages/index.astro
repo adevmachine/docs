@@ -69,16 +69,103 @@ const tiers = [
 ]
 const recommendedTier = 1
 
+const installLines = [
+  { cmd: 'brew install mydevmachine/tap/devmachine', comment: '' },
+  { cmd: 'devmachine setup', comment: '# connect your server' },
+  { cmd: 'devmachine skills add', comment: '# interact from any LLM session with your machine(s)' },
+]
+const installCmdWidth = Math.max(...installLines.filter((l) => l.comment).map((l) => l.cmd.length)) + 2
+
 const commands = [
   { cmd: 'devmachine setup', desc: 'connect your server and make it safe' },
   { cmd: 'devmachine workspaces new alice', desc: 'add your first workspace' },
   { cmd: 'devmachine sync', desc: 'build it on your server' },
   { cmd: 'devmachine ssh alice', desc: 'open it and start working' },
 ]
+
+const description =
+  'devmachine turns a Debian or Ubuntu server into your own coding machine, with one workspace per project. Free and open source.'
+const faq = [
+  {
+    q: 'Do I need to know Ansible?',
+    a: 'No. devmachine uses it underneath. You only use commands. You write Ansible only if you write a package of your own.',
+  },
+  {
+    q: 'What does it cost?',
+    a: 'devmachine is free and open source (MIT). You pay only for your server.',
+  },
+  {
+    q: 'Does anything run on my server between commands?',
+    a: 'No. There is no agent or background service. devmachine connects over SSH when you run a command, then leaves.',
+  },
+  {
+    q: 'What happens if I stop using it?',
+    a: 'Your server keeps working. Underneath it is plain Linux, SSH and git.',
+  },
+  {
+    q: 'Which servers work?',
+    a: 'Any Debian or Ubuntu server you can reach as root over SSH: a VPS, a computer you already have, or a virtual machine on your own computer.',
+  },
+  {
+    q: 'Do I need a domain?',
+    a: 'No. You need one only to show an app at a public URL. Without one, <code>devmachine tunnel alice 3000</code> opens the app on your own computer.',
+  },
+  {
+    q: 'Is my server safe?',
+    a: '<code>setup</code> checks the server\'s fingerprint, installs a key only you have, and turns off password logins. The <code>firewall</code> and <code>fail2ban</code> packages close unused ports and block repeated guesses.',
+  },
+  {
+    q: 'Which coding agents work?',
+    a: 'Claude Code installs as the <code>claude-code</code> package. <code>devmachine skills add</code> teaches Claude Code, Codex, Pi and OpenCode how to use devmachine.',
+  },
+  {
+    q: 'Can several projects share one server?',
+    a: 'Yes. Each workspace is its own account on the server, with its own tools and logins.',
+  },
+  {
+    q: 'Where is my configuration?',
+    a: 'In a folder on your computer, <code>~/.config/devmachine</code>. <code>devmachine config path</code> prints it. Keep it in git with <code>devmachine setup git</code>.',
+  },
+]
+
+const site = Astro.site?.href ?? 'https://mydevmachine.sh/'
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'devmachine',
+    url: site,
+    description,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'devmachine',
+    description,
+    url: site,
+    applicationCategory: 'DeveloperApplication',
+    operatingSystem: 'macOS, Linux',
+    license: 'https://github.com/mydevmachine/devmachine/blob/main/LICENSE',
+    downloadUrl: 'https://github.com/mydevmachine/devmachine/releases',
+    softwareHelp: `${site}getting-started/`,
+    image: `${site}og.png`,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    sameAs: ['https://github.com/mydevmachine/devmachine'],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: { '@type': 'Answer', text: item.a.replace(/<[^>]+>/g, '') },
+    })),
+  },
+]
 ---
 
 
-<BaseLayout title="devmachine - Code from anywhere." current="home">
+<BaseLayout title="devmachine - Code from anywhere." description={description} current="home" jsonLd={jsonLd}>
   <Hero
     eyebrow="Your server, as workspaces"
     headline="Code from anywhere."
@@ -157,7 +244,7 @@ const commands = [
         <p class="text-xs uppercase tracking-widest text-[var(--muted)] mb-2">From your computer, run</p>
         <div class="border hairline bg-[var(--card)] p-4 sm:p-5 relative font-mono text-sm">
           <div class="flex flex-wrap items-start justify-between gap-4">
-            <code id="install-cmd" class="min-w-0 break-all leading-relaxed">brew install mydevmachine/tap/devmachine<br />devmachine setup</code>
+            <code id="install-cmd" class="min-w-0 whitespace-pre-wrap break-words leading-relaxed">{installLines.map((l) => (<span class="block">{l.cmd}{l.comment && ' '.repeat(installCmdWidth - l.cmd.length)}{l.comment && <span class="text-[var(--muted)]">{l.comment}</span>}</span>))}</code>
             <button
               id="install-copy"
               type="button"
@@ -168,8 +255,7 @@ const commands = [
           </div>
         </div>
         <p class="text-sm mt-3 text-[var(--muted)]">
-          Then <code class="font-mono text-[var(--ink)]">devmachine workspaces new alice && devmachine sync</code>,
-          and <code class="font-mono text-[var(--ink)]">devmachine ssh alice</code>.
+          Then make a workspace: <code class="font-mono text-[var(--ink)]">devmachine workspaces new alice && devmachine sync</code>.
           <a href={`${base}getting-started/`} class="underline underline-offset-2 hover:text-[var(--ink)]">
             Getting started →
           </a>
@@ -250,9 +336,96 @@ const commands = [
   </section>
 
 
+  <section id="see-it-work" class="max-w-6xl mx-auto px-4 sm:px-6 pt-16 pb-20">
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">05 / See it work</p>
+    <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-4">Ask. It is live.</h2>
+    <p class="text-[var(--muted)] max-w-2xl mb-10">
+      Tell your coding agent what you want. It runs the commands, and your app is online with HTTPS.
+    </p>
+
+    <div class="demo-grid">
+      <div class="demo-col">
+        <div class="terminal">
+          <div class="terminal-titlebar">
+            <span class="terminal-dot" />
+            <span class="terminal-dot" />
+            <span class="terminal-dot" />
+            <span class="terminal-title font-mono">claude — ~/app</span>
+          </div>
+          <div class="terminal-body font-mono demo-terminal-body" id="demo-term-body"></div>
+        </div>
+      </div>
+
+      <div class="demo-col demo-chain-col">
+        <div class="demo-chain" id="demo-chain">
+          <div class="demo-node" data-node="dns">
+            <div class="demo-node-dot"></div>
+            <p class="demo-node-label">DNS</p>
+            <p class="demo-node-value">A&nbsp; app.example.com &rarr; 203.0.113.10</p>
+          </div>
+          <div class="demo-link" data-link="dns-caddy"><span class="demo-packet"></span></div>
+          <div class="demo-node" data-node="caddy">
+            <div class="demo-node-dot"></div>
+            <p class="demo-node-label">Caddy</p>
+            <p class="demo-node-value">app.example.com &rarr; localhost:3000 &middot; HTTPS</p>
+          </div>
+          <div class="demo-link" data-link="caddy-ws"><span class="demo-packet"></span></div>
+          <div class="demo-node" data-node="workspace">
+            <div class="demo-node-dot"></div>
+            <p class="demo-node-label">Workspace alice</p>
+            <p class="demo-node-value">:3000</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-col">
+        <div class="demo-browser">
+          <div class="demo-browser-bar">
+            <span class="demo-browser-dot"></span>
+            <span class="demo-browser-dot"></span>
+            <span class="demo-browser-dot"></span>
+            <div class="demo-browser-address">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <rect x="5" y="11" width="14" height="9" rx="1.5" />
+                <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+              </svg>
+              <span>https://app.example.com</span>
+            </div>
+          </div>
+          <div class="demo-browser-viewport">
+            <p class="demo-browser-empty" id="demo-browser-empty">Waiting for it to publish&hellip;</p>
+            <div class="demo-browser-site" id="demo-browser-site">
+              <div class="acme-site">
+                <div class="acme-nav">
+                  <span class="acme-logo">Acme</span>
+                  <div class="acme-nav-links">
+                    <span>Product</span>
+                    <span>Pricing</span>
+                    <span>Sign in</span>
+                  </div>
+                </div>
+                <div class="acme-hero">
+                  <h1>Acme handles the busywork.</h1>
+                  <p>Your team, minus the spreadsheets.</p>
+                  <span class="acme-cta">Get started</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8 flex justify-center">
+      <button type="button" id="demo-replay" class="text-xs uppercase tracking-wide px-3 py-1 border hairline" hidden>
+        Replay
+      </button>
+    </div>
+  </section>
+
   <section id="measure-your-needs" class="dark-section">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-28 pb-32">
-    <p class="text-xs font-mono uppercase tracking-widest text-[#9a9a9a] mb-3">05 / Requirements</p>
+    <p class="text-xs font-mono uppercase tracking-widest text-[#9a9a9a] mb-3">06 / Requirements</p>
     <div class="grid grid-cols-1 gap-6 min-[900px]:grid-cols-2 min-[900px]:gap-12 mb-10">
       <h2 class="text-3xl sm:text-4xl font-light tracking-tight">Measure your needs.</h2>
       <p class="text-[#9a9a9a] max-w-2xl">
@@ -317,8 +490,42 @@ const commands = [
     </div>
   </section>
 
+  <section id="faq" class="max-w-6xl mx-auto px-4 sm:px-6 pt-20 pb-20">
+    <div class="grid grid-cols-1 min-[900px]:grid-cols-[minmax(0,20rem)_1fr] gap-10 min-[900px]:gap-16">
+      <div class="min-[900px]:sticky min-[900px]:top-24 min-[900px]:self-start">
+        <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">07 / FAQ</p>
+        <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-4">Questions, answered.</h2>
+        <p class="text-[var(--muted)] max-w-sm mb-4">
+          Short answers to what people ask before they start.
+        </p>
+        <a href={`${base}troubleshooting/`} class="text-sm underline underline-offset-2 hover:text-[var(--ink)]">
+          More in the troubleshooting guide &rarr;
+        </a>
+      </div>
+
+      <div>
+        {
+          faq.map((item, i) => (
+            <details class="faq-item" name="faq">
+              <summary class="faq-summary">
+                <span class="faq-num">{String(i + 1).padStart(2, '0')}</span>
+                <span class="faq-question">{item.q}</span>
+                <span class="faq-icon" aria-hidden="true" />
+              </summary>
+              <div class="faq-answer-wrap">
+                <div class="faq-answer-inner">
+                  <p class="faq-answer" set:html={item.a} />
+                </div>
+              </div>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
   <section id="read-the-docs" class="max-w-6xl mx-auto px-4 sm:px-6 pt-28 pb-32 text-center">
-    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">06 / Documentation</p>
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">08 / Documentation</p>
     <h2 class="text-3xl sm:text-5xl font-light tracking-tight mb-5">Everything is written down.</h2>
     <p class="text-[var(--muted)] max-w-xl mx-auto mb-10">
       How each command works, why it works that way, and what to do when something fails.
@@ -385,7 +592,9 @@ const commands = [
 
     document.getElementById('install-copy')?.addEventListener('click', (e) => {
       const btn = e.currentTarget
-      navigator.clipboard?.writeText('brew install mydevmachine/tap/devmachine\ndevmachine setup')
+      navigator.clipboard?.writeText(
+        'brew install mydevmachine/tap/devmachine\ndevmachine setup\ndevmachine skills add',
+      )
       btn.textContent = 'Copied'
       setTimeout(() => {
         btn.textContent = 'Copy'
@@ -402,5 +611,180 @@ const commands = [
         btn.textContent = 'Copy'
       }, 1500)
     })
+
+    ;(() => {
+      const section = document.getElementById('see-it-work')
+      const body = document.getElementById('demo-term-body')
+      const emptyState = document.getElementById('demo-browser-empty')
+      const site = document.getElementById('demo-browser-site')
+      const replayBtn = document.getElementById('demo-replay')
+      if (!section || !body || !replayBtn) return
+
+      const nodes = {
+        dns: document.querySelector('[data-node="dns"]'),
+        caddy: document.querySelector('[data-node="caddy"]'),
+        workspace: document.querySelector('[data-node="workspace"]'),
+      }
+      const links = {
+        dnsToCaddy: document.querySelector('[data-link="dns-caddy"]'),
+        caddyToWs: document.querySelector('[data-link="caddy-ws"]'),
+      }
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+      function line(cls, text) {
+        const el = document.createElement('div')
+        el.className = `term-line ${cls}`
+        el.textContent = text
+        return el
+      }
+
+      function bulletLine(cls, text) {
+        const el = document.createElement('div')
+        el.className = `term-line ${cls}`
+        const marker = document.createElement('span')
+        marker.className = 'term-agent-marker'
+        marker.textContent = '● '
+        el.append(marker, document.createTextNode(text))
+        return el
+      }
+
+      function promptLine(text) {
+        const el = document.createElement('div')
+        el.className = 'term-line term-agent-prompt'
+        el.textContent = text
+        return el
+      }
+
+      const steps = [
+        { append: () => promptLine('> publish port 3000 of alice at app.example.com'), delay: 700 },
+        { append: () => bulletLine('term-agent-reply', "I'll publish it with the devmachine CLI."), delay: 500 },
+        {
+          append: () => bulletLine('term-agent-tool', 'Bash(devmachine expose add alice 3000 --host app.example.com --publish)'),
+          delay: 600,
+        },
+        {
+          append: () =>
+            line(
+              'term-out',
+              "recorded https://app.example.com -> alice:3000 in the configuration. Run devmachine sync to publish it on main.",
+            ),
+          delay: 500,
+          after: () => setActive(nodes.dns),
+        },
+        { append: () => bulletLine('term-agent-tool', 'Bash(devmachine sync --yes)'), delay: 600 },
+        { append: () => line('term-out', 'TASK [routes from the configuration]'), delay: 300 },
+        {
+          append: () => line('term-out', 'changed: [main]'),
+          delay: 400,
+          after: () => setActive(nodes.caddy, links.dnsToCaddy),
+        },
+        { append: () => line('term-out', 'TASK [reload caddy for the routes]'), delay: 300 },
+        { append: () => line('term-out', 'changed: [main]'), delay: 400 },
+        { append: () => line('term-out', 'main: ok=42 changed=2 failed=0'), delay: 600 },
+        {
+          append: () => bulletLine('term-agent-result', 'Done. https://app.example.com is live, with HTTPS.'),
+          delay: 0,
+          after: () => {
+            setActive(nodes.workspace, links.caddyToWs)
+            showSite()
+          },
+        },
+      ]
+
+      function setActive(node, link) {
+        if (link) link.classList.add('is-active')
+        if (node) node.classList.add('is-active')
+      }
+
+      function showSite() {
+        if (emptyState) emptyState.style.opacity = '0'
+        if (site) site.classList.add('is-visible')
+      }
+
+      function reset() {
+        body.innerHTML = ''
+        Object.values(nodes).forEach((n) => n?.classList.remove('is-active'))
+        Object.values(links).forEach((l) => l?.classList.remove('is-active'))
+        if (emptyState) emptyState.style.opacity = '1'
+        if (site) site.classList.remove('is-visible')
+        replayBtn.hidden = true
+      }
+
+      let pending = null
+
+      function schedule(fn, delay) {
+        const start = Date.now()
+        pending = { fn, delay, start }
+        pending.id = setTimeout(() => {
+          pending = null
+          fn()
+        }, delay)
+      }
+
+      document.addEventListener('visibilitychange', () => {
+        if (!pending) return
+        if (document.hidden) {
+          clearTimeout(pending.id)
+          pending.remaining = pending.delay - (Date.now() - pending.start)
+        } else if (pending.remaining !== undefined) {
+          const { fn, remaining } = pending
+          pending.start = Date.now()
+          pending.delay = Math.max(remaining, 0)
+          pending.id = setTimeout(() => {
+            pending = null
+            fn()
+          }, pending.delay)
+        }
+      })
+
+      function playFinalState() {
+        reset()
+        for (const step of steps) body.appendChild(step.append())
+        setActive(nodes.dns)
+        setActive(nodes.caddy, links.dnsToCaddy)
+        setActive(nodes.workspace, links.caddyToWs)
+        showSite()
+        replayBtn.hidden = false
+      }
+
+      function playSequence(i) {
+        if (i >= steps.length) {
+          replayBtn.hidden = false
+          return
+        }
+        const step = steps[i]
+        body.appendChild(step.append())
+        body.scrollTop = body.scrollHeight
+        step.after?.()
+        schedule(() => playSequence(i + 1), step.delay)
+      }
+
+      function play() {
+        reset()
+        if (reduceMotion) {
+          playFinalState()
+          return
+        }
+        playSequence(0)
+      }
+
+      replayBtn.addEventListener('click', play)
+
+      let played = false
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting && !played) {
+              played = true
+              play()
+              observer.disconnect()
+            }
+          }
+        },
+        { threshold: 0.35 },
+      )
+      observer.observe(section)
+    })()
   </script>
 </BaseLayout>

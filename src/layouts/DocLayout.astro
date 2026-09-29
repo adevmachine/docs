@@ -15,6 +15,17 @@ const { prev, next } = await getPrevNext(entry.id)
 const currentUrl = urlFor(entry)
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3)
 const editUrl = `https://github.com/mydevmachine/devmachine/blob/main/${entry.data.sourcePath}`
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: entry.data.title,
+    description: entry.data.summary,
+    url: new URL(currentUrl, Astro.site).href,
+    isPartOf: { '@type': 'WebSite', name: 'devmachine', url: Astro.site?.href },
+    about: { '@type': 'SoftwareApplication', name: 'devmachine' },
+  },
+]
 ---
 
 <BaseLayout
@@ -22,6 +33,8 @@ const editUrl = `https://github.com/mydevmachine/devmachine/blob/main/${entry.da
   description={entry.data.summary}
   current="docs"
   markdownUrl={markdownUrlFor(entry)}
+  ogType="article"
+  jsonLd={jsonLd}
 >
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:grid lg:grid-cols-[220px_minmax(0,1fr)_200px] lg:gap-10">
     <aside class="hidden lg:block py-10">
