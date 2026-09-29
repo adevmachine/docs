@@ -1020,6 +1020,23 @@ button:focus-visible {
   color: #5aa9e6;
 }
 
+.screenshot-frame {
+  border: 1px dashed var(--line);
+  aspect-ratio: 16 / 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card);
+}
+
+.screenshot-frame span {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
 /* FAQ */
 
 .faq-item {

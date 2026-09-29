@@ -1,0 +1,157 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+
+const base = import.meta.env.BASE_URL
+
+const features = [
+  {
+    title: 'A sidebar of workspaces',
+    body: 'Every workspace on the machine, and every open session inside it, in one list. Open a new session by name.',
+  },
+  {
+    title: 'Real terminals',
+    body: 'Each session is a live tmux session over mosh (falling back to ssh), so a dropped connection never drops the session.',
+  },
+  {
+    title: 'Stack grids',
+    body: 'Arrange several sessions from one workspace into a grid, to watch more than one agent at once.',
+  },
+  {
+    title: 'A context panel',
+    body: 'Next to the terminal: the pull requests, issues and links the session touched, plus its files and git status.',
+  },
+  {
+    title: 'Pull requests',
+    body: 'Every open PR across your repos, read through the GitHub CLI, with a favorite owner pinned to the top.',
+  },
+  {
+    title: 'Subdomains',
+    body: 'See and add the machine’s Caddy subdomains — what is published, and where it points.',
+  },
+  {
+    title: 'Machine stats',
+    body: 'CPU, memory and disk for the machine, at a glance.',
+  },
+  {
+    title: 'Harness usage',
+    body: 'Claude Code and Codex usage cards, on the home screen and in the menu bar, read without spending a token.',
+  },
+  {
+    title: 'Paste an image in',
+    body: 'Copy a screenshot, paste it into a remote session, and the file lands on the machine — no upload step.',
+  },
+  {
+    title: 'A files view',
+    body: 'Browse and preview a workspace’s files without opening a session for it.',
+  },
+  {
+    title: 'A wallpaper',
+    body: 'Because the terminal is the whole app, it gets to have a wallpaper behind it.',
+  },
+]
+
+const description =
+  'Devmachine for Mac: a native macOS app for the workspaces devmachine sets up — terminals, pull requests, subdomains, stats and coding-harness usage in one window.'
+
+const site = Astro.site?.href ?? 'https://mydevmachine.sh/'
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'Devmachine for Mac',
+    description,
+    url: `${site}app/`,
+    applicationCategory: 'DeveloperApplication',
+    operatingSystem: 'macOS',
+  },
+]
+---
+
+<BaseLayout title="Devmachine for Mac — devmachine" description={description} current="docs" jsonLd={jsonLd}>
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-16 pb-10">
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">macOS app</p>
+    <h1 class="text-4xl sm:text-6xl font-light tracking-tight mb-5">Devmachine for Mac.</h1>
+    <p class="text-[var(--muted)] max-w-2xl">
+      The desktop companion to devmachine: one window for every workspace on your machine — terminals, pull
+      requests, subdomains, stats and coding-harness usage, without a browser tab or a plain ssh session.
+    </p>
+
+    <div class="border hairline p-4 sm:p-5 mt-8 max-w-2xl">
+      <div class="flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          disabled
+          class="inline-block border border-[var(--ink)] px-6 py-3 text-sm font-mono uppercase tracking-wide opacity-40 cursor-not-allowed"
+        >
+          Download for macOS — coming soon
+        </button>
+        <span class="text-xs font-mono uppercase tracking-widest text-[var(--muted)]">macOS 14 or later</span>
+      </div>
+      <p class="text-sm text-[var(--muted)] leading-relaxed mt-3">
+        Not released yet. It will ship as a signed release, installed with a script — no App Store, no
+        unsigned-app warnings.
+      </p>
+    </div>
+
+    <div class="text-sm text-[var(--muted)] leading-relaxed max-w-2xl mt-6 space-y-1">
+      <p>It needs:</p>
+      <ul class="list-disc list-inside space-y-1">
+        <li>
+          The <code class="font-mono text-[var(--ink)]">devmachine</code> CLI, and a machine set up with
+          <code class="font-mono text-[var(--ink)]">devmachine setup</code>.
+        </li>
+        <li>
+          The <code class="font-mono text-[var(--ink)]">devmachine-app</code> package, added to a workspace, for
+          its context panel.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 pb-6">
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-4">What it does</p>
+    <div class="grid-cards grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        features.map((f) => (
+          <div class="pkg-card p-5">
+            <h3 class="text-base mb-2">{f.title}</h3>
+            <p class="text-sm text-[var(--muted)] leading-relaxed">{f.body}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-16 pb-20">
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-4">Screenshots</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="screenshot-frame">
+        <span>Screenshot coming soon</span>
+      </div>
+      <div class="screenshot-frame">
+        <span>Screenshot coming soon</span>
+      </div>
+      <div class="screenshot-frame">
+        <span>Screenshot coming soon</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="write-your-own" class="max-w-6xl mx-auto px-4 sm:px-6 pt-4 pb-32 text-center">
+    <p class="text-[var(--muted)] max-w-xl mx-auto mb-6">
+      The app only operates a machine devmachine already set up. Nothing to install or trust beyond that.
+    </p>
+    <a
+      href={`${base}getting-started/`}
+      class="inline-block border border-[var(--ink)] px-10 py-4 text-base font-mono uppercase tracking-wide hover:bg-[var(--ink)] hover:text-[var(--bg)] transition-colors"
+    >
+      Set up devmachine first →
+    </a>
+  </section>
+</BaseLayout>
+
+<style>
+  .pkg-card {
+    background: var(--card);
+  }
+</style>
