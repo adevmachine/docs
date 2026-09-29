@@ -60,12 +60,26 @@ const frame = current === 'docs' ? 'max-w-7xl' : 'max-w-6xl'
       rel="stylesheet"
     />
     <script is:inline>
-      try {
-        const saved = localStorage.getItem('devmachine-theme')
+      ;(() => {
+        let saved = null
+        try {
+          saved = localStorage.getItem('devmachine-theme')
+        } catch {}
         if (saved === 'dark' || saved === 'light') {
           document.documentElement.setAttribute('data-theme', saved)
+          return
         }
-      } catch {}
+        const system = window.matchMedia('(prefers-color-scheme: dark)')
+        const follow = () => document.documentElement.setAttribute('data-theme', system.matches ? 'dark' : 'light')
+        follow()
+        system.addEventListener('change', () => {
+          let chosen = null
+          try {
+            chosen = localStorage.getItem('devmachine-theme')
+          } catch {}
+          if (!chosen) follow()
+        })
+      })()
     </script>
   </head>
   <body class="min-h-screen flex flex-col">
