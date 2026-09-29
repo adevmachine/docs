@@ -156,7 +156,7 @@ const jsonLd = [
         packages.map((pkg) => {
           const installCmd =
             pkg.scope === 'workspace'
-              ? `devmachine packages add ${pkg.name} --workspace alice`
+              ? `devmachine packages add ${pkg.name} --workspace acme`
               : `devmachine packages add ${pkg.name}`
           const included = includedBy(pkg.name)
           const everyWorkspaceNote =

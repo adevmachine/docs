@@ -342,7 +342,7 @@ body {
   box-shadow: var(--window-shadow);
 }
 
-.term-window.term-alice {
+.term-window.term-acme {
   z-index: 2;
   top: 40px;
   left: 3%;
@@ -398,7 +398,7 @@ body {
     display: none;
   }
 
-  .term-window.term-alice {
+  .term-window.term-acme {
     z-index: 1;
     top: 0;
     left: 2%;
@@ -426,7 +426,7 @@ body {
     height: 20rem;
   }
 
-  .term-window.term-alice {
+  .term-window.term-acme {
     left: 1%;
     width: min(20rem, 82vw);
   }

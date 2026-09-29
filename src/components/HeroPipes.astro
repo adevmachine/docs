@@ -56,19 +56,19 @@ const { eyebrow, headline, subline } = Astro.props
 
         <g class="pipe-lines" fill="none" stroke-width="2">
           <path id="pipe-computer-server" class="pipe-line" d="M 120 120 H 170 V 210 H 260"></path>
-          <path id="pipe-server-alice" class="pipe-line" d="M 330 250 H 300 V 280 H 330"></path>
+          <path id="pipe-server-acme" class="pipe-line" d="M 330 250 H 300 V 280 H 330"></path>
           <path id="pipe-server-bob" class="pipe-line" d="M 330 330 H 300 V 360 H 330"></path>
           <path id="pipe-server-agent" class="pipe-line" d="M 330 410 H 300 V 440 H 330"></path>
-          <path id="pipe-phone-alice" class="pipe-line" d="M 520 300 H 570 V 200 H 610"></path>
+          <path id="pipe-phone-acme" class="pipe-line" d="M 520 300 H 570 V 200 H 610"></path>
         </g>
 
         <g class="pipe-flow" fill="none" stroke-width="2">
           <path id="flow-computer-server" class="pipe-flow-path" d="M 120 120 H 170 V 210 H 260"></path>
-          <path id="flow-phone-alice" class="pipe-flow-path" d="M 520 300 H 570 V 200 H 610"></path>
+          <path id="flow-phone-acme" class="pipe-flow-path" d="M 520 300 H 570 V 200 H 610"></path>
         </g>
 
         <rect id="packet-computer-server" class="pipe-packet" width="7" height="7" x="-4" y="-4"></rect>
-        <rect id="packet-phone-alice" class="pipe-packet" width="7" height="7" x="-4" y="-4"></rect>
+        <rect id="packet-phone-acme" class="pipe-packet" width="7" height="7" x="-4" y="-4"></rect>
 
         <g id="win-computer" class="pipes-window" transform="translate(10,40)">
           <rect class="win-frame" width="220" height="90" x="0" y="0"></rect>
@@ -104,16 +104,16 @@ const { eyebrow, headline, subline } = Astro.props
             <line x1="173" y1="22" x2="173" y2="340"></line>
           </g>
 
-          <g id="win-alice" class="pipes-window pipes-window-inner" transform="translate(30,40)">
+          <g id="win-acme" class="pipes-window pipes-window-inner" transform="translate(30,40)">
             <rect class="win-frame" width="200" height="50" x="0" y="0"></rect>
             <g class="win-titlebar">
               <rect width="200" height="18" x="0" y="0"></rect>
               <circle class="win-dot win-dot-sm" cx="10" cy="9" r="2"></circle>
               <circle class="win-dot win-dot-sm" cx="18" cy="9" r="2"></circle>
               <circle class="win-dot win-dot-sm" cx="26" cy="9" r="2"></circle>
-              <text class="win-label win-label-sm" x="100" y="12.5" text-anchor="middle">alice</text>
+              <text class="win-label win-label-sm" x="100" y="12.5" text-anchor="middle">acme</text>
             </g>
-            <text id="alice-line" class="win-mono win-mono-sm" x="10" y="38">~/app $ npm run dev</text>
+            <text id="acme-line" class="win-mono win-mono-sm" x="10" y="38">~/app $ npm run dev</text>
           </g>
 
           <g id="win-bob" class="pipes-window pipes-window-inner" transform="translate(30,120)">
@@ -154,7 +154,7 @@ const { eyebrow, headline, subline } = Astro.props
             <line x1="0" y1="130" x2="70" y2="130"></line>
           </g>
           <rect class="phone-card" x="8" y="55" width="54" height="60" rx="0"></rect>
-          <text class="win-mono-sm phone-card-text" x="12" y="75">alice ·</text>
+          <text class="win-mono-sm phone-card-text" x="12" y="75">acme ·</text>
           <text class="win-mono-sm phone-card-text" x="12" y="87">Claude Code</text>
           <text id="phone-status" class="win-mono-sm phone-status" x="12" y="103">online</text>
         </g>
@@ -174,24 +174,24 @@ const { eyebrow, headline, subline } = Astro.props
     const flowPaths = Array.from(document.querySelectorAll('.pipe-flow-path'))
     const packets = {
       'computer-server': document.getElementById('packet-computer-server'),
-      'phone-alice': document.getElementById('packet-phone-alice'),
+      'phone-acme': document.getElementById('packet-phone-acme'),
     }
     const flowPathEls = {
       'computer-server': document.getElementById('flow-computer-server'),
-      'phone-alice': document.getElementById('flow-phone-alice'),
+      'phone-acme': document.getElementById('flow-phone-acme'),
     }
     const workspaceWindows = {
-      alice: document.getElementById('win-alice'),
+      acme: document.getElementById('win-acme'),
       bob: document.getElementById('win-bob'),
       agent: document.getElementById('win-agent'),
     }
     const workspaceLines = {
-      alice: document.getElementById('alice-line'),
+      acme: document.getElementById('acme-line'),
       bob: document.getElementById('bob-line'),
       agent: document.getElementById('agent-line'),
     }
     const commandFlavors = {
-      alice: '~/app $ npm run dev',
+      acme: '~/app $ npm run dev',
       bob: 'docker ps',
       agent: 'openclaw running',
     }
@@ -212,7 +212,7 @@ const { eyebrow, headline, subline } = Astro.props
 
     const lengths = {
       'computer-server': pathLength(flowPathEls['computer-server']),
-      'phone-alice': pathLength(flowPathEls['phone-alice']),
+      'phone-acme': pathLength(flowPathEls['phone-acme']),
     }
 
     function placePacket(key, t) {
@@ -233,7 +233,7 @@ const { eyebrow, headline, subline } = Astro.props
       const tComputer = (time * speed) % 1
       const tPhone = (time * speed * 0.8) % 1
       placePacket('computer-server', tComputer)
-      placePacket('phone-alice', tPhone)
+      placePacket('phone-acme', tPhone)
       rafId = requestAnimationFrame(tick)
     }
 
@@ -256,7 +256,7 @@ const { eyebrow, headline, subline } = Astro.props
       if (!win || !line) return
       win.classList.add('pipes-pulse')
       const original = commandFlavors[key]
-      line.textContent = key === 'alice' ? '~/app $ npm run build' : key === 'bob' ? 'docker ps -a' : 'openclaw: task done'
+      line.textContent = key === 'acme' ? '~/app $ npm run build' : key === 'bob' ? 'docker ps -a' : 'openclaw: task done'
       setTimeout(() => {
         win.classList.remove('pipes-pulse')
         line.textContent = original

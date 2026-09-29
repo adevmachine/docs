@@ -78,9 +78,9 @@ const installCmdWidth = Math.max(...installLines.filter((l) => l.comment).map((l
 
 const commands = [
   { cmd: 'devmachine setup', desc: 'connect your server and make it safe' },
-  { cmd: 'devmachine workspaces new alice', desc: 'add your first workspace' },
+  { cmd: 'devmachine workspaces new acme', desc: 'add your first workspace' },
   { cmd: 'devmachine sync', desc: 'build it on your server' },
-  { cmd: 'devmachine ssh alice', desc: 'open it and start working' },
+  { cmd: 'devmachine ssh acme', desc: 'open it and start working' },
 ]
 
 const description =
@@ -95,7 +95,7 @@ const faq = [
   },
   {
     q: 'What is a workspace, and why use one?',
-    a: `A workspace is one account on the server for one project, with its own tools, logins and coding agent. Projects do not see each other's files or tokens, one project breaking does not touch the others, and you open any of them by name: <code>devmachine ssh alice</code>.`,
+    a: `A workspace is one account on the server for one project, with its own tools, logins and coding agent. Projects do not see each other's files or tokens, one project breaking does not touch the others, and you open any of them by name: <code>devmachine ssh acme</code>.`,
     link: doc('concepts/machines-and-workspaces/', 'Machines and workspaces'),
   },
   {
@@ -120,12 +120,12 @@ const faq = [
   },
   {
     q: 'Can I use more than one machine?',
-    a: `Yes. Add as many as you like with <code>devmachine machines add</code>. Each workspace belongs to one machine, so <code>devmachine ssh alice</code> finds the right one. A command that acts on a whole machine asks you to name it with <code>--machine</code>: it never guesses.`,
+    a: `Yes. Add as many as you like with <code>devmachine machines add</code>. Each workspace belongs to one machine, so <code>devmachine ssh acme</code> finds the right one. A command that acts on a whole machine asks you to name it with <code>--machine</code>: it never guesses.`,
     link: doc('how-it-works/choosing-a-target/', 'Choosing a target'),
   },
   {
     q: 'Do I need a domain?',
-    a: `No. You need one only to show an app at a public URL with HTTPS. Without one, <code>devmachine tunnel alice 3000</code> opens the app on your own computer, and nothing is published.`,
+    a: `No. You need one only to show an app at a public URL with HTTPS. Without one, <code>devmachine tunnel acme 3000</code> opens the app on your own computer, and nothing is published.`,
     link: doc('concepts/publishing/', 'Publishing an app'),
   },
   {
@@ -155,7 +155,7 @@ const faq = [
   },
   {
     q: 'How do I add more packages?',
-    a: `<code>devmachine packages list</code> shows what exists. <code>devmachine packages add docker</code> adds one to a machine, <code>--workspace alice</code> adds it to a workspace, and <code>devmachine sync</code> installs it. To make your own, start with <code>devmachine packages new</code>.`,
+    a: `<code>devmachine packages list</code> shows what exists. <code>devmachine packages add docker</code> adds one to a machine, <code>--workspace acme</code> adds it to a workspace, and <code>devmachine sync</code> installs it. To make your own, start with <code>devmachine packages new</code>.`,
     link: doc('concepts/packages/', 'Packages'),
   },
   {
@@ -292,7 +292,7 @@ const jsonLd = [
           </div>
         </div>
         <p class="text-sm mt-3 text-[var(--muted)]">
-          Then make a workspace: <code class="font-mono text-[var(--ink)]">devmachine workspaces new alice && devmachine sync</code>.
+          Then make a workspace: <code class="font-mono text-[var(--ink)]">devmachine workspaces new acme && devmachine sync</code>.
           <a href={`${base}getting-started/`} class="underline underline-offset-2 hover:text-[var(--ink)]">
             Getting started →
           </a>
@@ -409,7 +409,7 @@ const jsonLd = [
           <div class="demo-link" data-link="caddy-ws"><span class="demo-packet"></span></div>
           <div class="demo-node" data-node="workspace">
             <div class="demo-node-dot"></div>
-            <p class="demo-node-label">Workspace alice</p>
+            <p class="demo-node-label">Workspace acme</p>
             <p class="demo-node-value">:3000</p>
           </div>
         </div>
@@ -869,17 +869,17 @@ const jsonLd = [
       }
 
       const steps = [
-        { append: () => promptLine('> publish port 3000 of alice at app.example.com'), delay: 700 },
+        { append: () => promptLine('> publish port 3000 of acme at app.example.com'), delay: 700 },
         { append: () => bulletLine('term-agent-reply', "I'll publish it with the devmachine CLI."), delay: 500 },
         {
-          append: () => bulletLine('term-agent-tool', 'Bash(devmachine expose add alice 3000 --host app.example.com --publish)'),
+          append: () => bulletLine('term-agent-tool', 'Bash(devmachine expose add acme 3000 --host app.example.com --publish)'),
           delay: 600,
         },
         {
           append: () =>
             line(
               'term-out',
-              "recorded https://app.example.com -> alice:3000 in the configuration. Run devmachine sync to publish it on main.",
+              "recorded https://app.example.com -> acme:3000 in the configuration. Run devmachine sync to publish it on main.",
             ),
           delay: 500,
           after: () => setActive(nodes.dns),

@@ -27,8 +27,8 @@ const windows: Win[] = [
     steps: [{ cmd: 'docker compose up', out: ['Container web  Started', 'Container db   Started'] }],
   },
   {
-    id: 'alice',
-    title: 'alice@main',
+    id: 'acme',
+    title: 'acme@main',
     typeMs: 40,
     steps: [{ cmd: 'npm run dev', out: ['Local: http://localhost:5173', 'ready in 312 ms'] }],
   },
@@ -37,7 +37,7 @@ const windows: Win[] = [
     title: 'you@laptop',
     typeMs: 28,
     steps: [
-      { cmd: 'devmachine ssh alice', out: ['alice@main:~$'] },
+      { cmd: 'devmachine ssh acme', out: ['acme@main:~$'] },
       { cmd: 'devmachine sync', out: ['main: ok=12 changed=3 failed=0'] },
     ],
   },
@@ -71,12 +71,12 @@ const windows: Win[] = [
       >
         <g class="hero-link-lines" fill="none" stroke-width="1.5">
           <path id="hero-link-you" class="hero-link-line" d="M 640 370 L 588.8 430"></path>
-          <path id="hero-link-alice" class="hero-link-line" d="M 640 370 L 588.8 310"></path>
+          <path id="hero-link-acme" class="hero-link-line" d="M 640 370 L 588.8 310"></path>
           <path id="hero-link-bob" class="hero-link-line" d="M 640 370 L 691.2 310"></path>
           <path id="hero-link-agent" class="hero-link-line" d="M 640 370 L 691.2 430"></path>
         </g>
         <circle id="hero-packet-you" class="hero-packet" r="3"></circle>
-        <circle id="hero-packet-alice" class="hero-packet" r="3"></circle>
+        <circle id="hero-packet-acme" class="hero-packet" r="3"></circle>
         <circle id="hero-packet-bob" class="hero-packet" r="3"></circle>
         <circle id="hero-packet-agent" class="hero-packet" r="3"></circle>
       </svg>
@@ -286,7 +286,7 @@ const windows: Win[] = [
     const STIFFNESS = 220
     const DAMPING = 15
 
-    const keys = ['you', 'alice', 'bob', 'agent']
+    const keys = ['you', 'acme', 'bob', 'agent']
     const links = {}
     for (const key of keys) {
       const win = stage.querySelector(`[data-window="${key}"]`)
@@ -321,7 +321,7 @@ const windows: Win[] = [
 
     const cyclePeriod = 6000
     const travelDuration = 1100
-    const phase = { you: 0, alice: 900, bob: 1800, agent: 2700 }
+    const phase = { you: 0, acme: 900, bob: 1800, agent: 2700 }
 
     function movePackets(time) {
       for (const key of keys) {
