@@ -670,6 +670,11 @@ button:focus-visible {
 }
 
 .shot-viewer {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: fit-content;
+  height: fit-content;
   max-width: min(96vw, 1800px);
   max-height: 94vh;
   padding: 0;
