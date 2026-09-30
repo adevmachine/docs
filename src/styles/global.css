@@ -339,7 +339,7 @@ body {
 .hero-stage {
   position: relative;
   width: 100%;
-  height: 740px;
+  height: 820px;
 }
 
 .term-window {
@@ -355,31 +355,39 @@ body {
   box-shadow: var(--window-shadow);
 }
 
+.term-window.term-mac {
+  z-index: 5;
+  top: 24px;
+  left: 31%;
+  width: 38%;
+  --window-shadow: 0 34px 80px -24px rgb(0 0 0 / 0.55), 0 12px 28px -12px rgb(0 0 0 / 0.35);
+}
+
 .term-window.term-acme {
   z-index: 2;
-  top: 40px;
-  left: 2%;
-  width: 39%;
-  opacity: 0.82;
-  scale: 0.93;
+  top: 235px;
+  left: 0.5%;
+  width: 28%;
+  opacity: 0.84;
+  scale: 0.96;
   transform-origin: top left;
 }
 
 .term-window.term-bob {
   z-index: 1;
-  top: 0;
-  right: 0.5%;
-  width: 40%;
-  opacity: 0.72;
-  scale: 0.97;
+  top: 210px;
+  right: 0;
+  width: 27.5%;
+  opacity: 0.74;
+  scale: 0.94;
   transform-origin: top right;
 }
 
 .term-window.term-you {
   z-index: 4;
   bottom: 0;
-  left: 0;
-  width: 42%;
+  left: 7%;
+  width: 32%;
   opacity: 1;
   scale: 1.02;
   transform-origin: bottom left;
@@ -388,21 +396,23 @@ body {
 
 .term-window.term-agent {
   z-index: 3;
-  bottom: 34px;
-  right: 2%;
-  width: 40%;
-  opacity: 0.88;
+  bottom: 24px;
+  right: 6%;
+  width: 31%;
+  opacity: 0.9;
   scale: 0.98;
   transform-origin: bottom right;
 }
 
-.term-window.term-mac {
-  z-index: 5;
-  top: 70px;
-  left: 38.5%;
-  width: 23%;
-  opacity: 0.94;
-  transform-origin: top center;
+@media (min-width: 901px) {
+  .term-window .terminal-body {
+    height: 11rem;
+  }
+
+  .term-window.term-agent .terminal-body {
+    height: 14.5rem;
+    font-size: 0.74rem;
+  }
 }
 
 @media (max-width: 900px) {

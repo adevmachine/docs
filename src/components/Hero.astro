@@ -19,6 +19,46 @@ interface Win {
   steps: Step[]
 }
 
+interface MacLine {
+  text: string
+  tone: 'cmd' | 'ok' | 'muted' | 'agent'
+  typed?: boolean
+}
+
+const macPanes: { name: string; lines: MacLine[] }[] = [
+  {
+    name: 'claude',
+    lines: [
+      { text: 'claude › fix retry loop', tone: 'agent', typed: true },
+      { text: '● Edit(api/retry.ts)', tone: 'muted' },
+      { text: '✓ 41 tests passed', tone: 'ok' },
+    ],
+  },
+  {
+    name: 'dev',
+    lines: [
+      { text: '$ npm run dev', tone: 'cmd', typed: true },
+      { text: 'vite ready in 318 ms', tone: 'ok' },
+      { text: '➜ localhost:5173', tone: 'muted' },
+    ],
+  },
+  {
+    name: 'codex',
+    lines: [
+      { text: 'codex › hero copy', tone: 'agent', typed: true },
+      { text: '● Write(index.html)', tone: 'muted' },
+    ],
+  },
+  {
+    name: 'tests',
+    lines: [
+      { text: '$ npm test --watch', tone: 'cmd', typed: true },
+      { text: 'PASS chart.test.ts', tone: 'ok' },
+      { text: 'Tests: 18 passed', tone: 'muted' },
+    ],
+  },
+]
+
 const windows: Win[] = [
   {
     id: 'bob',
@@ -139,27 +179,53 @@ const windows: Win[] = [
         </div>
       </div>
       <div class="term-window term-mac" data-window="mac">
-        <div class="terminal">
-          <div class="terminal-titlebar">
-            <span class="terminal-dot mac-dot-close" />
-            <span class="terminal-dot mac-dot-min" />
-            <span class="terminal-dot mac-dot-max" />
-            <span class="terminal-title">Devmachine for Mac</span>
-          </div>
-          <div class="mac-app">
-            <div class="mac-sidebar">
-              <p class="mac-group">Local</p>
-              <p class="mac-row">Operator</p>
-              <p class="mac-group">main</p>
-              <p class="mac-row mac-row-active">acme</p>
-              <p class="mac-row">globex</p>
+        <div class="mac-window">
+          <aside class="mac-sidebar">
+            <div class="mac-lights">
+              <span class="mac-light mac-light-close" />
+              <span class="mac-light mac-light-min" />
+              <span class="mac-light mac-light-max" />
             </div>
-            <div class="mac-grid">
-              <div class="mac-tile"><i class="mac-bar mac-bar-green" /><i class="mac-bar" /><i class="mac-bar mac-bar-short" /></div>
-              <div class="mac-tile"><i class="mac-bar mac-bar-blue" /><i class="mac-bar mac-bar-short" /><span class="mac-cursor" /></div>
-              <div class="mac-tile"><i class="mac-bar" /><i class="mac-bar mac-bar-green mac-bar-short" /></div>
-              <div class="mac-tile"><i class="mac-bar mac-bar-short" /><i class="mac-bar" /><i class="mac-bar mac-bar-blue mac-bar-short" /></div>
+            <p class="mac-section">Workspaces</p>
+            <p class="mac-ws"><span class="mac-chevron">›</span><span class="mac-ws-dot" />acme</p>
+            <p class="mac-row mac-row-active"><span class="mac-glyph">&gt;_</span><span class="mac-row-text">claude — payments refactor</span></p>
+            <p class="mac-row"><span class="mac-glyph">&gt;_</span><span class="mac-row-text">codex — landing page</span></p>
+            <p class="mac-ws"><span class="mac-chevron">›</span><span class="mac-ws-dot" />globex</p>
+            <p class="mac-row"><span class="mac-glyph">&gt;_</span><span class="mac-row-text">dashboard — tests</span></p>
+            <p class="mac-section">Local</p>
+            <p class="mac-row mac-row-operator"><span class="mac-glyph mac-glyph-operator">◆</span><span class="mac-row-text">Operator</span></p>
+          </aside>
+          <div class="mac-main">
+            <header class="mac-toolbar">
+              <span class="mac-title">Devmachine</span>
+              <span class="mac-crumb">acme · payments refactor</span>
+            </header>
+            <div class="mac-panes font-mono">
+              {
+                macPanes.map((pane, p) => (
+                  <div class={`mac-pane${p === 0 ? ' mac-pane-focus' : ''}`}>
+                    <div class="mac-pane-head">{pane.name}</div>
+                    <div class="mac-pane-body">
+                      {pane.lines.map((line, i) => (
+                        <div
+                          class={`mac-line mac-line-${line.tone}${line.typed ? ' mac-line-typed' : ''}`}
+                          style={`--delay: ${(p * 0.45 + i * 0.7).toFixed(2)}s`}
+                        >
+                          {line.text}
+                        </div>
+                      ))}
+                      <span class="mac-cursor" style={`--delay: ${(p * 0.45 + pane.lines.length * 0.7).toFixed(2)}s`} />
+                    </div>
+                  </div>
+                ))
+              }
             </div>
+            <footer class="mac-status">
+              <span>Todos</span>
+              <span class="mac-progress"><i /></span>
+              <span>3/5</span>
+              <span class="mac-status-host">acme · main</span>
+            </footer>
           </div>
         </div>
       </div>
@@ -920,125 +986,323 @@ const windows: Win[] = [
     }
   }
 
-  .mac-dot-close {
-    background: #ff5f57;
-  }
-
-  .mac-dot-min {
-    background: #febc2e;
-  }
-
-  .mac-dot-max {
-    background: #28c840;
-  }
-
-  .mac-app {
+  .mac-window {
+    container-type: inline-size;
     display: grid;
-    grid-template-columns: 34% 1fr;
-    height: 9.5rem;
-    font-size: 0.66rem;
+    grid-template-columns: 37% 1fr;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #0b0b0c;
+    box-shadow:
+      0 0 0 1px rgb(0 0 0 / 0.35),
+      inset 0 0 0 1px rgb(255 255 255 / 0.08),
+      var(--window-shadow);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+    color: #e7e7e2;
     text-align: left;
   }
 
   .mac-sidebar {
-    padding: 0.55rem 0.5rem;
-    border-right: 1px solid var(--terminal-border, #2a2a2a);
-    color: var(--terminal-ink, #e7e7e2);
+    display: flex;
+    flex-direction: column;
+    gap: 0.15em;
+    min-width: 0;
+    padding: 0.9em 0.6em;
+    background: linear-gradient(180deg, #1b1b1f, #151518);
+    border-right: 1px solid rgb(255 255 255 / 0.07);
+    font-size: clamp(7px, 2.35cqi, 11.5px);
   }
 
-  .mac-group {
-    margin: 0.35rem 0 0.15rem;
-    font-size: 0.55rem;
-    text-transform: uppercase;
+  .mac-lights {
+    display: flex;
+    gap: 0.5em;
+    margin: 0 0 1.1em 0.25em;
+  }
+
+  .mac-light {
+    width: 1.05em;
+    height: 1.05em;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 0.5px rgb(0 0 0 / 0.25);
+  }
+
+  .mac-light-close {
+    background: #ff5f57;
+  }
+
+  .mac-light-min {
+    background: #febc2e;
+  }
+
+  .mac-light-max {
+    background: #28c840;
+  }
+
+  .mac-section {
+    margin: 0.5em 0 0.2em 0.5em;
+    font-size: 0.78em;
+    font-weight: 600;
     letter-spacing: 0.08em;
-    color: var(--terminal-muted, #7a7a7a);
+    text-transform: uppercase;
+    color: #7a7a7a;
   }
 
-  .mac-group:first-child {
+  .mac-section:first-of-type {
     margin-top: 0;
   }
 
+  .mac-ws,
   .mac-row {
-    padding: 0.1rem 0.35rem;
-    line-height: 1.5;
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    min-width: 0;
+    padding: 0.28em 0.5em;
+    border-radius: 5px;
+    white-space: nowrap;
   }
 
-  .mac-row-active {
-    background: rgb(90 169 230 / 0.28);
+  .mac-ws {
+    font-weight: 600;
   }
 
-  .mac-grid {
+  .mac-chevron {
+    display: inline-block;
+    width: 0.6em;
+    rotate: 90deg;
+    color: #7a7a7a;
+  }
+
+  .mac-ws-dot {
+    width: 0.5em;
+    height: 0.5em;
+    border-radius: 50%;
+    background: #28c840;
+    box-shadow: 0 0 0.5em rgb(40 200 64 / 0.6);
+  }
+
+  .mac-row {
+    padding-left: 1.55em;
+    color: #b9b9b4;
+    transition: background 0.15s ease;
+  }
+
+  .mac-row:hover {
+    background: rgb(255 255 255 / 0.06);
+  }
+
+  .mac-row-active,
+  .mac-row-active:hover {
+    background: rgb(90 169 230 / 0.26);
+    color: #f5f5f2;
+  }
+
+  .mac-row-operator {
+    padding-left: 0.5em;
+  }
+
+  .mac-glyph {
+    flex: none;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.82em;
+    color: #5aa9e6;
+  }
+
+  .mac-glyph-operator {
+    color: #febc2e;
+  }
+
+  .mac-row-text {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mac-main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    font-size: clamp(7px, 2.35cqi, 11.5px);
+  }
+
+  .mac-toolbar {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7em;
+    padding: 0.85em 0.9em 0.7em;
+    border-bottom: 1px solid rgb(255 255 255 / 0.07);
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .mac-title {
+    font-weight: 600;
+  }
+
+  .mac-crumb {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #7a7a7a;
+  }
+
+  .mac-panes {
+    flex: 1;
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
-    gap: 0.35rem;
-    padding: 0.5rem;
+    gap: 0.45em;
+    min-height: 0;
+    padding: 0.55em;
+    font-size: 0.82em;
   }
 
-  .mac-tile {
+  .mac-pane {
     display: flex;
     flex-direction: column;
-    gap: 0.3rem;
-    padding: 0.4rem;
-    border: 1px solid var(--terminal-border, #2a2a2a);
-    background: rgb(255 255 255 / 0.03);
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 0.08);
+    border-radius: 5px;
+    background: #111113;
   }
 
-  .mac-bar {
-    display: block;
-    height: 0.22rem;
-    width: 80%;
-    background: var(--terminal-muted, #7a7a7a);
-    opacity: 0.6;
-    transform-origin: left;
-    animation: mac-type 3.2s ease-in-out infinite;
+  .mac-pane-focus {
+    border-color: rgb(90 169 230 / 0.55);
   }
 
-  .mac-tile:nth-child(2) .mac-bar {
-    animation-delay: 0.8s;
+  .mac-pane-head {
+    padding: 0.3em 0.6em;
+    border-bottom: 1px solid rgb(255 255 255 / 0.06);
+    font-size: 0.85em;
+    color: #7a7a7a;
   }
 
-  .mac-tile:nth-child(3) .mac-bar {
-    animation-delay: 1.6s;
+  .mac-pane-body {
+    padding: 0.4em 0.6em;
+    line-height: 1.55;
   }
 
-  .mac-tile:nth-child(4) .mac-bar {
-    animation-delay: 2.4s;
+  .mac-line {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: clip;
+    animation: mac-line 7s var(--delay, 0s) infinite both;
   }
 
-  .mac-bar-short {
-    width: 50%;
+  .mac-line-typed {
+    animation-name: mac-typed;
+    animation-timing-function: steps(18, end);
   }
 
-  .mac-bar-green {
-    background: #28c840;
+  .mac-line-cmd {
+    color: #e7e7e2;
   }
 
-  .mac-bar-blue {
-    background: #5aa9e6;
+  .mac-line-agent {
+    color: #5aa9e6;
+  }
+
+  .mac-line-ok {
+    color: #28c840;
+  }
+
+  .mac-line-muted {
+    color: #7a7a7a;
   }
 
   .mac-cursor {
-    display: block;
-    width: 0.3rem;
-    height: 0.5rem;
+    display: inline-block;
+    width: 0.55em;
+    height: 1.05em;
+    vertical-align: -0.2em;
     background: #28c840;
-    animation: term-blink 1s steps(1) infinite;
+    animation:
+      term-blink 1s steps(1) infinite,
+      mac-line 7s var(--delay, 0s) infinite both;
   }
 
-  @keyframes mac-type {
+  .mac-status {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    padding: 0.45em 0.9em 0.6em;
+    border-top: 1px solid rgb(255 255 255 / 0.07);
+    font-size: 0.82em;
+    color: #7a7a7a;
+    white-space: nowrap;
+  }
+
+  .mac-progress {
+    flex: 0 1 7em;
+    height: 0.45em;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.1);
+  }
+
+  .mac-progress i {
+    display: block;
+    width: 60%;
+    height: 100%;
+    border-radius: inherit;
+    background: #5aa9e6;
+    animation: mac-progress 7s ease-in-out infinite both;
+  }
+
+  .mac-status-host {
+    margin-left: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  @keyframes mac-line {
     0% {
-      transform: scaleX(0.2);
+      opacity: 0;
     }
-    45%,
+    6%,
+    86% {
+      opacity: 1;
+    }
+    94%,
     100% {
-      transform: scaleX(1);
+      opacity: 0;
+    }
+  }
+
+  @keyframes mac-typed {
+    0% {
+      opacity: 1;
+      clip-path: inset(0 100% 0 0);
+    }
+    14%,
+    86% {
+      opacity: 1;
+      clip-path: inset(0 0 0 0);
+    }
+    94%,
+    100% {
+      opacity: 0;
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  @keyframes mac-progress {
+    0%,
+    20% {
+      width: 40%;
+    }
+    60%,
+    100% {
+      width: 60%;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .mac-bar,
-    .mac-cursor {
+    .mac-line,
+    .mac-cursor,
+    .mac-progress i {
       animation: none;
     }
   }
