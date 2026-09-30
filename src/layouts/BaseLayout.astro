@@ -10,6 +10,7 @@ interface Props {
   markdownUrl?: string
   ogType?: 'website' | 'article'
   jsonLd?: Record<string, unknown>[]
+  noindex?: boolean
 }
 
 const {
@@ -19,6 +20,7 @@ const {
   markdownUrl,
   ogType = 'website',
   jsonLd = [],
+  noindex = false,
 } = Astro.props
 const base = import.meta.env.BASE_URL
 const canonical = new URL(Astro.url.pathname, Astro.site).href
@@ -32,7 +34,7 @@ const ogImage = new URL(`${base}og.png`, Astro.site).href
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content="devmachine" />
     <meta property="og:title" content={title} />
