@@ -94,6 +94,7 @@ const ogImage = new URL(`${base}og.png`, Astro.site).href
         </a>
         <div class="flex items-center gap-2">
           <nav class="hidden md:flex items-center gap-1 text-sm">
+            <a href={`${base}#get-started`} class="px-3 py-1.5">Getting started</a>
             <a href={`${base}getting-started/`} class="px-3 py-1.5">Documentation</a>
             <a href={`${base}packages/`} class="px-3 py-1.5">Packages</a>
             <a href={`${base}app/`} class="px-3 py-1.5">App</a>
@@ -108,6 +109,7 @@ const ogImage = new URL(`${base}og.png`, Astro.site).href
         </div>
       </div>
       <nav id="mobile-nav" class="hidden md:hidden border-t hairline px-4 py-3 flex flex-col gap-2 text-sm bg-[var(--bg)]">
+        <a href={`${base}#get-started`}>Getting started</a>
         <a href={`${base}getting-started/`}>Documentation</a>
         <a href={`${base}packages/`}>Packages</a>
         <a href={`${base}app/`}>App</a>
