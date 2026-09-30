@@ -10,7 +10,6 @@ export interface Guide {
   title: string
   description: string
   category: string | null
-  minutes: number | null
   level: string | null
   needs: string[]
   related: string[]
@@ -31,7 +30,6 @@ function toGuide(entry: DocEntry): Guide {
     title: entry.data.title,
     description: entry.data.summary,
     category: entry.data.category ?? null,
-    minutes: entry.data.minutes ?? null,
     level: entry.data.level ?? null,
     needs: entry.data.needs,
     related: entry.data.related,
@@ -53,6 +51,3 @@ export async function getRelatedGuides(entry: DocEntry): Promise<Guide[]> {
   return index >= 0 ? guides.slice(index + 1, index + 3) : []
 }
 
-export function minutesLabel(minutes: number | null): string | null {
-  return minutes ? `${minutes} min` : null
-}

@@ -4,7 +4,7 @@ import SidebarNav from '../components/SidebarNav.astro'
 import GuideCard from '../components/GuideCard.astro'
 import GuideIcon from '../components/GuideIcon.astro'
 import { getNavGroups, getPrevNext, urlFor, markdownUrlFor, type DocEntry } from '../lib/nav'
-import { categorySlug, getRelatedGuides, isGuide, minutesLabel } from '../lib/guides'
+import { categorySlug, getRelatedGuides, isGuide } from '../lib/guides'
 const base = import.meta.env.BASE_URL
 
 interface Props {
@@ -19,8 +19,7 @@ const currentUrl = urlFor(entry)
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3)
 const editUrl = `https://github.com/mydevmachine/devmachine/blob/main/${entry.data.sourcePath}`
 const guide = isGuide(entry)
-const { category, minutes, level, needs } = entry.data
-const time = minutesLabel(minutes ?? null)
+const { category, level, needs } = entry.data
 const related = guide ? await getRelatedGuides(entry) : []
 const guidesUrl = new URL('/guides/', Astro.site).href
 const jsonLd: Record<string, unknown>[] = [
@@ -33,7 +32,6 @@ const jsonLd: Record<string, unknown>[] = [
     isPartOf: { '@type': 'WebSite', name: 'devmachine', url: Astro.site?.href },
     about: { '@type': 'SoftwareApplication', name: 'devmachine' },
     ...(guide && category ? { articleSection: category } : {}),
-    ...(guide && minutes ? { timeRequired: `PT${minutes}M` } : {}),
     ...(guide && level ? { proficiencyLevel: level } : {}),
   },
 ]
@@ -98,16 +96,15 @@ if (guide) {
         {entry.data.title}
       </h1>
       {
-        guide && (time || level || needs.length > 0) && (
+        guide && (level || needs.length > 0) && (
           <div class="guide-meta max-w-[72ch] mb-8 border hairline bg-[var(--card)] p-4 flex flex-col sm:flex-row gap-4">
             <span class="guide-icon hidden sm:inline-flex items-center justify-center w-12 h-12 shrink-0">
               <GuideIcon category={category ?? null} size={24} />
             </span>
             <dl class="grid gap-3 text-sm min-w-0">
-              {(time || level) && (
+              {level && (
                 <div class="flex flex-wrap items-center gap-2">
-                  <dt class="sr-only">Time and level</dt>
-                  {time && <dd class="guide-chip font-mono text-xs">About {time}</dd>}
+                  <dt class="sr-only">Level</dt>
                   {level && <dd class="guide-chip font-mono text-xs">{level}</dd>}
                 </div>
               )}

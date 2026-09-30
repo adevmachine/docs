@@ -1,6 +1,6 @@
 ---
 import GuideIcon from './GuideIcon.astro'
-import { categorySlug, minutesLabel, type Guide } from '../lib/guides'
+import { categorySlug, type Guide } from '../lib/guides'
 
 interface Props {
   guide: Guide
@@ -10,7 +10,6 @@ interface Props {
 
 const { guide, headingLevel = 'h2', startHere = false } = Astro.props
 const Heading = headingLevel
-const time = minutesLabel(guide.minutes)
 ---
 
 <a
@@ -30,9 +29,8 @@ const time = minutesLabel(guide.minutes)
   </Heading>
   <p class="text-sm text-[var(--muted)] leading-relaxed mb-4">{guide.description}</p>
   {
-    (time || guide.level) && (
+    guide.level && (
       <p class="mt-auto flex flex-wrap gap-2 text-xs font-mono text-[var(--muted)]">
-        {time && <span class="guide-chip">{time}</span>}
         {guide.level && <span class="guide-chip">{guide.level}</span>}
       </p>
     )
