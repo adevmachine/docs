@@ -1,4 +1,4 @@
-<dialog id="shot-viewer" class="shot-viewer" aria-label="Screenshot">
+<dialog id="shot-viewer" class="shot-viewer" aria-label="Screenshot viewer">
   <form method="dialog" class="shot-viewer-close">
     <button type="submit" class="text-xs font-mono uppercase tracking-widest">Close</button>
   </form>
@@ -10,10 +10,13 @@
     const viewer = document.getElementById('shot-viewer')
     const img = document.getElementById('shot-viewer-img')
     if (!viewer || !img || typeof viewer.showModal !== 'function') return
+    let opener = null
     document.querySelectorAll('[data-shot-viewer]').forEach((link) => {
+      link.setAttribute('aria-haspopup', 'dialog')
       link.addEventListener('click', (e) => {
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return
         e.preventDefault()
+        opener = link
         img.src = link.getAttribute('href')
         img.alt = link.dataset.alt || ''
         viewer.showModal()
@@ -21,6 +24,10 @@
     })
     viewer.addEventListener('click', (e) => {
       if (e.target === viewer || e.target === img) viewer.close()
+    })
+    viewer.addEventListener('close', () => {
+      opener?.focus()
+      opener = null
     })
   })()
 </script>

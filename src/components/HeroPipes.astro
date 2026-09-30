@@ -12,7 +12,7 @@ const { eyebrow, headline, subline } = Astro.props
   <div class="pipes-grid frame">
     <div class="pipes-copy">
       <p class="hero-eyebrow text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-4">
-        <span class="hero-eyebrow-dot"></span>
+        <span class="hero-eyebrow-dot" aria-hidden="true"></span>
         {eyebrow}
       </p>
       <h1 class="text-5xl sm:text-6xl font-light leading-[0.95] tracking-tight" style="letter-spacing: -0.03em;">
@@ -31,6 +31,7 @@ const { eyebrow, headline, subline } = Astro.props
           <button
             id="pipes-install-copy"
             type="button"
+            aria-label="Copy the install commands"
             class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
           >
             Copy
@@ -304,16 +305,16 @@ const { eyebrow, headline, subline } = Astro.props
   })()
 
   document.getElementById('pipes-install-copy')?.addEventListener('click', (e) => {
-    const btn = e.currentTarget
-    navigator.clipboard?.writeText('curl -fsSL https://mydevmachine.sh/install.sh | sh\ndevmachine setup')
-    btn.textContent = 'Copied'
-    setTimeout(() => {
-      btn.textContent = 'Copy'
-    }, 1500)
+    window.copyWithFeedback(e.currentTarget, 'curl -fsSL https://mydevmachine.sh/install.sh | sh\ndevmachine setup')
   })
 </script>
 
 <style>
+  :global(:root:not([data-theme='dark'])) .pipes-copy > .hero-eyebrow,
+  :global(:root:not([data-theme='dark'])) .pipes-copy > .hero-subline {
+    color: #4f525a;
+  }
+
   .pipes-hero {
     position: relative;
     min-height: 100svh;

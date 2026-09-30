@@ -245,7 +245,7 @@ const jsonLd = [
         <p class="text-sm text-[var(--muted)] leading-relaxed mt-4">Or with Homebrew:</p>
         <div class="border hairline bg-[var(--card)] px-3 py-2 mt-2 flex items-center justify-between gap-2">
           <code class="font-mono text-xs min-w-0 break-all">{brew}</code>
-          <button type="button" class="app-copy text-xs uppercase tracking-wide px-2 py-1 border hairline shrink-0" data-copy={brew}>
+          <button type="button" aria-label="Copy the Homebrew command" class="app-copy text-xs uppercase tracking-wide px-2 py-1 border hairline shrink-0" data-copy={brew}>
             Copy
           </button>
         </div>
@@ -338,7 +338,7 @@ const jsonLd = [
   </section>
 
   <section class="frame pb-16">
-    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-4">In short</p>
+    <h2 class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-4">In short</h2>
     <div class="grid-cards grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
       {
         features.map((f) => (
@@ -393,9 +393,7 @@ const jsonLd = [
   <script is:inline>
     document.querySelectorAll('.app-copy').forEach((btn) => {
       btn.addEventListener('click', () => {
-        navigator.clipboard?.writeText(btn.dataset.copy || '')
-        btn.textContent = 'Copied'
-        setTimeout(() => (btn.textContent = 'Copy'), 1500)
+        window.copyWithFeedback(btn, btn.dataset.copy || '')
       })
     })
   </script>

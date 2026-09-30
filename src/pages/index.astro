@@ -220,7 +220,8 @@ const jsonLd = [
     subline="Your own server. One workspace per project. Ready in a few commands."
   />
 
-  <section id="principles" class="frame pt-4 pb-16">
+  <section id="principles" aria-labelledby="principles-title" class="frame pt-4 pb-16">
+    <h2 id="principles-title" class="sr-only">Principles</h2>
     <div class="grid-cards grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       {
         principles.map((item) => {
@@ -312,6 +313,7 @@ const jsonLd = [
                 <button
                   id="install-copy"
                   type="button"
+                  aria-label="Copy the install commands"
                   class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
                 >
                   Copy
@@ -340,6 +342,7 @@ const jsonLd = [
                 <button
                   id="agent-prompt-copy"
                   type="button"
+                  aria-label="Copy the agent prompt"
                   class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
                 >
                   Copy
@@ -487,7 +490,7 @@ const jsonLd = [
         rel="noopener sponsored"
         class="underline underline-offset-2 hover:text-[var(--ink)]"
       >
-        See the Hostinger deals →
+        See the Hostinger deals →<span class="sr-only"> (opens in a new tab)</span>
       </a>
     </p>
   </section>
@@ -510,7 +513,7 @@ const jsonLd = [
           faq.map((item, i) => (
             <details class="faq-item" name="faq">
               <summary class="faq-summary">
-                <span class="faq-num">{String(i + 1).padStart(2, '0')}</span>
+                <span class="faq-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
                 <span class="faq-question">{item.q}</span>
                 <span class="faq-icon" aria-hidden="true" />
               </summary>
@@ -563,36 +566,32 @@ const jsonLd = [
       tabs.forEach((tab, i) => {
         tab.addEventListener('click', () => selectTab(tab, false))
         tab.addEventListener('keydown', (e) => {
-          if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-            e.preventDefault()
-            const dir = e.key === 'ArrowRight' ? 1 : -1
-            const next = tabs[(i + dir + tabs.length) % tabs.length]
-            selectTab(next, true)
+          const targets = {
+            ArrowRight: tabs[(i + 1) % tabs.length],
+            ArrowLeft: tabs[(i - 1 + tabs.length) % tabs.length],
+            Home: tabs[0],
+            End: tabs[tabs.length - 1],
           }
+          const next = targets[e.key]
+          if (!next) return
+          e.preventDefault()
+          selectTab(next, true)
         })
       })
     })()
 
     document.getElementById('install-copy')?.addEventListener('click', (e) => {
-      const btn = e.currentTarget
-      navigator.clipboard?.writeText(
+      window.copyWithFeedback(
+        e.currentTarget,
         'curl -fsSL https://mydevmachine.sh/install.sh | sh\ndevmachine setup\ndevmachine skills add',
       )
-      btn.textContent = 'Copied'
-      setTimeout(() => {
-        btn.textContent = 'Copy'
-      }, 1500)
     })
 
     document.getElementById('agent-prompt-copy')?.addEventListener('click', (e) => {
-      const btn = e.currentTarget
-      navigator.clipboard?.writeText(
+      window.copyWithFeedback(
+        e.currentTarget,
         'Set up devmachine for me: read https://mydevmachine.sh/agent-setup.md and follow it.',
       )
-      btn.textContent = 'Copied'
-      setTimeout(() => {
-        btn.textContent = 'Copy'
-      }, 1500)
     })
   </script>
 </BaseLayout>

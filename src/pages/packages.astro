@@ -119,11 +119,11 @@ const jsonLd = [
         id="pkg-search"
         type="search"
         placeholder="Search by name, summary, category or setting…"
-        class="w-full border hairline bg-[var(--bg)] px-3 py-2 text-sm font-mono outline-none focus-visible:border-[#5aa9e6]"
+        class="w-full border hairline bg-[var(--bg)] px-3 py-2 text-sm font-mono"
         autocomplete="off"
       />
 
-      <div class="flex flex-wrap gap-2 mt-4">
+      <div role="group" aria-label="Category" class="flex flex-wrap gap-2 mt-4">
         <button type="button" class="filter-chip" data-category-chip="" data-category="">
           All <span class="filter-chip-count">({packages.length})</span>
         </button>
@@ -136,14 +136,15 @@ const jsonLd = [
         }
       </div>
 
-      <div class="flex flex-wrap gap-2 mt-3">
+      <div role="group" aria-label="Scope" class="flex flex-wrap gap-2 mt-3">
         <button type="button" class="filter-chip" data-scope-chip="" data-scope="">All scopes</button>
         <button type="button" class="filter-chip" data-scope-chip="" data-scope="machine">Machine</button>
         <button type="button" class="filter-chip" data-scope-chip="" data-scope="workspace">Workspace</button>
       </div>
     </div>
 
-    <p id="pkg-count" class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-4">
+    <h2 class="sr-only">Package list</h2>
+    <p id="pkg-count" role="status" class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-4">
       {packages.length} packages
     </p>
 
@@ -216,6 +217,7 @@ const jsonLd = [
                   <button
                     type="button"
                     class="pkg-copy text-xs uppercase tracking-wide px-2 py-1 border hairline shrink-0"
+                    aria-label={`Copy the command that adds ${pkg.name}`}
                     data-copy={installCmd}
                   >
                     Copy
@@ -253,7 +255,7 @@ const jsonLd = [
                 rel="noreferrer"
                 class="text-sm mt-auto underline underline-offset-2 hover:text-[var(--ink)]"
               >
-                Source →
+                Source<span class="sr-only"> of {pkg.name} (opens in a new tab)</span> →
               </a>
             </div>
           )
@@ -284,7 +286,7 @@ const jsonLd = [
         rel="noreferrer"
         class="underline underline-offset-2 text-[var(--muted)] hover:text-[var(--ink)]"
       >
-        mydevmachine/packages on GitHub →
+        mydevmachine/packages on GitHub →<span class="sr-only"> (opens in a new tab)</span>
       </a>
     </p>
   </section>
@@ -311,7 +313,9 @@ const jsonLd = [
 
       function setActiveChip(chips, attr, value) {
         for (const chip of chips) {
-          chip.classList.toggle('is-active', (chip.getAttribute(attr) ?? '') === value)
+          const active = (chip.getAttribute(attr) ?? '') === value
+          chip.classList.toggle('is-active', active)
+          chip.setAttribute('aria-pressed', String(active))
         }
       }
 
@@ -364,13 +368,7 @@ const jsonLd = [
       grid.addEventListener('click', (e) => {
         const btn = e.target.closest('.pkg-copy')
         if (!btn) return
-        const text = btn.getAttribute('data-copy') ?? ''
-        navigator.clipboard?.writeText(text)
-        const original = btn.textContent
-        btn.textContent = 'Copied'
-        setTimeout(() => {
-          btn.textContent = original
-        }, 1500)
+        window.copyWithFeedback(btn, btn.getAttribute('data-copy') ?? '')
       })
 
       apply()
@@ -400,9 +398,6 @@ const jsonLd = [
     border-color: var(--ink);
   }
 
-  .filter-chip-count {
-    opacity: 0.7;
-  }
 
   .pkg-card {
     background: var(--card);

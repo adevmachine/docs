@@ -37,22 +37,24 @@ const jsonLd = [
   jsonLd={jsonLd}
 >
   <div class="frame lg:grid lg:grid-cols-[220px_minmax(0,1fr)_200px] lg:gap-10">
-    <aside class="hidden lg:block py-10">
+    <div class="hidden lg:block py-10">
       <div class="sticky top-24">
         <SidebarNav groups={groups} currentUrl={currentUrl} />
       </div>
-    </aside>
+    </div>
 
     <button
       id="sidebar-toggle"
       type="button"
+      aria-expanded="false"
+      aria-controls="mobile-sidebar"
       class="lg:hidden mt-4 text-xs font-mono uppercase tracking-wide px-3 py-1.5 border hairline"
     >
       Browse docs
     </button>
-    <aside id="mobile-sidebar" class="hidden lg:hidden py-4 border-b hairline mb-4">
+    <div id="mobile-sidebar" class="hidden lg:hidden py-4 border-b hairline mb-4">
       <SidebarNav groups={groups} currentUrl={currentUrl} />
-    </aside>
+    </div>
 
     <article class="py-10 min-w-0">
       <div id="search" class="mb-8"></div>
@@ -66,11 +68,11 @@ const jsonLd = [
 
       <div class="mt-12 pt-6 border-t hairline flex flex-wrap items-center justify-between gap-4 text-sm">
         <a href={editUrl} target="_blank" rel="noreferrer" class="text-[var(--muted)] hover:text-[var(--ink)]">
-          Edit this page on GitHub
+          Edit this page on GitHub<span class="sr-only"> (opens in a new tab)</span>
         </a>
       </div>
 
-      <nav class="mt-6 grid sm:grid-cols-2 gap-4">
+      <nav aria-label="Previous and next page" class="mt-6 grid sm:grid-cols-2 gap-4">
         {
           prev && (
             <a href={prev.url} class="block border hairline p-4 hover:border-[var(--ink)]">
@@ -90,12 +92,12 @@ const jsonLd = [
       </nav>
     </article>
 
-    <aside class="hidden lg:block py-10">
+    <div class="hidden lg:block py-10">
       <div class="sticky top-24">
         {
           toc.length > 0 && (
-            <>
-              <p class="text-xs font-mono uppercase tracking-wide text-[var(--muted)] mb-3">On this page</p>
+            <nav aria-labelledby="toc-title">
+              <p id="toc-title" class="text-xs font-mono uppercase tracking-wide text-[var(--muted)] mb-3">On this page</p>
               <ul class="space-y-2 text-sm">
                 {toc.map((h) => (
                   <li class:list={[h.depth === 3 && 'pl-3']}>
@@ -105,18 +107,19 @@ const jsonLd = [
                   </li>
                 ))}
               </ul>
-            </>
+            </nav>
           )
         }
       </div>
-    </aside>
+    </div>
   </div>
 
   <script is:inline>
     const sidebarToggle = document.getElementById('sidebar-toggle')
     const mobileSidebar = document.getElementById('mobile-sidebar')
     sidebarToggle?.addEventListener('click', () => {
-      mobileSidebar?.classList.toggle('hidden')
+      const open = mobileSidebar?.classList.toggle('hidden') === false
+      sidebarToggle.setAttribute('aria-expanded', String(open))
     })
   </script>
 
@@ -127,6 +130,18 @@ const jsonLd = [
       const PagefindUI = mod.PagefindUI ?? window.PagefindUI
       if (PagefindUI) {
         new PagefindUI({ element: '#search', showSubResults: true, showImages: false })
+        const labelSearch = () => {
+          const input = document.querySelector('#search input')
+          if (!input) return false
+          input.setAttribute('aria-label', 'Search the documentation')
+          return true
+        }
+        if (!labelSearch()) {
+          const observer = new MutationObserver(() => {
+            if (labelSearch()) observer.disconnect()
+          })
+          observer.observe(document.getElementById('search'), { childList: true, subtree: true })
+        }
       }
     } catch {
       // Pagefind assets only exist in a production build (npm run build), not in dev.

@@ -12,7 +12,7 @@ interface Props {
 const { groups, currentUrl } = Astro.props
 ---
 
-<nav class="text-sm">
+<nav aria-label="Documentation" class="text-sm">
   {
     groups.map((group) => (
       <div class="mb-6">
@@ -22,6 +22,7 @@ const { groups, currentUrl } = Astro.props
             <li>
               <a
                 href={item.url}
+                aria-current={item.url === currentUrl ? 'page' : undefined}
                 class:list={[
                   'block py-1 px-2 -mx-2',
                   item.url === currentUrl ? 'font-semibold bg-[var(--card)] border hairline' : 'text-[var(--muted)] hover:text-[var(--ink)]',

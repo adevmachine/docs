@@ -89,7 +89,7 @@ const windows: Win[] = [
   <canvas class="hero-grid-bg" id="hero-grid-bg" aria-hidden="true"></canvas>
   <div class="hero-copy max-w-3xl mx-auto px-4 sm:px-6">
     <p class="hero-eyebrow text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-4">
-      <span class="hero-eyebrow-dot"></span>
+      <span class="hero-eyebrow-dot" aria-hidden="true"></span>
       {eyebrow}
     </p>
     <h1 class="text-5xl sm:text-7xl font-light leading-[0.95] tracking-tight" style="letter-spacing: -0.03em;">
@@ -100,7 +100,10 @@ const windows: Win[] = [
     </p>
   </div>
 
-  <div class="hero-terminal-wrap px-4 sm:px-6" id="hero-terminal">
+  <p class="sr-only">
+    Illustration: terminals for you, two workspaces and a coding agent, and the Mac app, all linked to one server.
+  </p>
+  <div class="hero-terminal-wrap px-4 sm:px-6" id="hero-terminal" aria-hidden="true">
     <div class="hero-stage">
       <svg
         class="hero-link-svg"
@@ -231,6 +234,7 @@ const windows: Win[] = [
       </div>
     </div>
   </div>
+  <button type="button" id="hero-motion" class="hero-motion-toggle font-mono">Pause animation</button>
 </section>
 
 <script is:inline define:vars={{ windows }}>
@@ -252,7 +256,7 @@ const windows: Win[] = [
     }
 
     async function waitWhilePaused(gen) {
-      while ((paused || document.hidden) && gen === generation) {
+      while ((paused || document.hidden || section.hasAttribute('data-paused')) && gen === generation) {
         await sleep(150)
       }
     }
@@ -357,6 +361,20 @@ const windows: Win[] = [
     for (const win of windows) {
       runWindowLoop(1, win)
     }
+  })()
+</script>
+
+<script is:inline>
+  ;(() => {
+    const hero = document.getElementById('hero')
+    const toggle = document.getElementById('hero-motion')
+    if (!hero || !toggle) return
+    toggle.addEventListener('click', () => {
+      const paused = !hero.hasAttribute('data-paused')
+      hero.toggleAttribute('data-paused', paused)
+      toggle.textContent = paused ? 'Play animation' : 'Pause animation'
+      hero.dispatchEvent(new Event('hero-motion'))
+    })
   })()
 </script>
 
@@ -467,7 +485,7 @@ const windows: Win[] = [
       updateLines()
       if (!reduceMotion) movePackets(time)
       const dragging = keys.some((key) => links[key]?.dragging)
-      const animating = !reduceMotion && visible && !document.hidden
+      const animating = !reduceMotion && visible && !document.hidden && !section.hasAttribute('data-paused')
       if (animating || springing || dragging) {
         rafId = requestAnimationFrame(tick)
       } else {
@@ -522,6 +540,8 @@ const windows: Win[] = [
       link.win.addEventListener('lostpointercapture', release)
     }
 
+    section.addEventListener('hero-motion', wake)
+
     const io = new IntersectionObserver(
       (entries) => {
         visible = entries[0]?.isIntersecting ?? true
@@ -565,7 +585,7 @@ const windows: Win[] = [
     }
 
     async function waitWhilePaused(gen) {
-      while ((paused || document.hidden) && gen === generation) {
+      while ((paused || document.hidden || section.hasAttribute('data-paused')) && gen === generation) {
         await sleep(150)
       }
     }
@@ -869,14 +889,14 @@ const windows: Win[] = [
 
     function loop(now) {
       frame = 0
-      if (!visible || document.hidden) return
+      if (!visible || document.hidden || hero.hasAttribute('data-paused')) return
       draw(now)
       frame = requestAnimationFrame(loop)
     }
 
     function start() {
       draw(performance.now())
-      if (reduceMotion) return
+      if (reduceMotion || hero.hasAttribute('data-paused')) return
       if (!frame) frame = requestAnimationFrame(loop)
     }
 
@@ -892,6 +912,7 @@ const windows: Win[] = [
       if (resize()) start()
     }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
     document.addEventListener('visibilitychange', start)
+    hero.addEventListener('hero-motion', start)
     new IntersectionObserver((entries) => {
       visible = entries.some((e) => e.isIntersecting)
       start()
@@ -1297,6 +1318,12 @@ const windows: Win[] = [
     100% {
       width: 60%;
     }
+  }
+
+  .hero[data-paused] .mac-line,
+  .hero[data-paused] .mac-cursor,
+  .hero[data-paused] .mac-progress i {
+    animation-play-state: paused;
   }
 
   @media (prefers-reduced-motion: reduce) {

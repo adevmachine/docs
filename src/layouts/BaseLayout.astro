@@ -81,6 +81,7 @@ const ogImage = new URL(`${base}og.png`, Astro.site).href
     </script>
   </head>
   <body class="min-h-screen flex flex-col">
+    <a href="#main" class="skip-link">Skip to content</a>
     <header
       class:list={[
         'z-40',
@@ -93,7 +94,7 @@ const ogImage = new URL(`${base}og.png`, Astro.site).href
           devmachine
         </a>
         <div class="flex items-center gap-2">
-          <nav class="hidden md:flex items-center gap-1 text-sm">
+          <nav aria-label="Main" class="hidden md:flex items-center gap-1 text-sm">
             <a href={`${base}#get-started`} class="px-3 py-1.5">Getting started</a>
             <a href={`${base}getting-started/`} class="px-3 py-1.5">Documentation</a>
             <a href={`${base}packages/`} class="px-3 py-1.5">Packages</a>
@@ -102,31 +103,33 @@ const ogImage = new URL(`${base}og.png`, Astro.site).href
           <button
             id="mobile-nav-toggle"
             type="button"
+            aria-expanded="false"
+            aria-controls="mobile-nav"
             class="md:hidden text-xs font-mono uppercase tracking-wide px-3 py-1.5 border hairline"
           >
             Menu
           </button>
         </div>
       </div>
-      <nav id="mobile-nav" class="hidden md:hidden border-t hairline px-4 py-3 flex flex-col gap-2 text-sm bg-[var(--bg)]">
+      <nav id="mobile-nav" aria-label="Main" class="hidden md:hidden border-t hairline px-4 py-3 flex flex-col gap-2 text-sm bg-[var(--bg)]">
         <a href={`${base}#get-started`}>Getting started</a>
         <a href={`${base}getting-started/`}>Documentation</a>
         <a href={`${base}packages/`}>Packages</a>
         <a href={`${base}app/`}>App</a>
       </nav>
     </header>
-    <main class="flex-1 min-w-0">
+    <main id="main" tabindex="-1" class="flex-1 min-w-0 focus:outline-none">
       <slot />
     </main>
     <footer class="border-t hairline mt-12">
       <div class="frame py-8 flex items-start justify-between gap-4">
-        <div class="flex flex-wrap gap-x-8 gap-y-2 text-sm text-[var(--muted)] min-w-0">
+        <nav aria-label="Footer" class="flex flex-wrap gap-x-8 gap-y-2 text-sm text-[var(--muted)] min-w-0">
           <a href={`${base}getting-started/`}>Documentation</a>
           <a href={`${base}packages/`}>Packages</a>
           <a href={`${base}app/`}>App</a>
           <a href={`${base}examples/`}>Real examples</a>
-          <a href="https://github.com/mydevmachine/devmachine" target="_blank" rel="noreferrer">GitHub</a>
-          <a href="https://github.com/mydevmachine/devmachine/blob/main/LICENSE" target="_blank" rel="noreferrer">License</a>
+          <a href="https://github.com/mydevmachine/devmachine" target="_blank" rel="noreferrer">GitHub<span class="sr-only"> (opens in a new tab)</span></a>
+          <a href="https://github.com/mydevmachine/devmachine/blob/main/LICENSE" target="_blank" rel="noreferrer">License<span class="sr-only"> (opens in a new tab)</span></a>
           <a href={`${base}llms.txt`}>llms.txt</a>
           <a href={`${base}llms-full.txt`}>llms-full.txt</a>
           {
@@ -137,7 +140,7 @@ const ogImage = new URL(`${base}og.png`, Astro.site).href
                 rel="noreferrer"
                 class="font-mono"
               >
-                CLI {cli.version}
+                CLI {cli.version}<span class="sr-only"> release notes (opens in a new tab)</span>
               </a>
             )
           }
@@ -149,16 +152,17 @@ const ogImage = new URL(`${base}og.png`, Astro.site).href
                 rel="noreferrer"
                 class="font-mono"
               >
-                packages {packagesData.release}
+                packages {packagesData.release}<span class="sr-only"> release notes (opens in a new tab)</span>
               </a>
             )
           }
-        </div>
+        </nav>
         <button
           id="theme-toggle"
           type="button"
           class="theme-toggle inline-flex items-center justify-center w-8 h-8 border hairline shrink-0"
-          aria-label="Switch between light and dark"
+          aria-label="Dark theme"
+          aria-pressed="false"
           title="Light / dark"
         >
           <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -166,10 +170,41 @@ const ogImage = new URL(`${base}og.png`, Astro.site).href
         </button>
       </div>
     </footer>
+    <div id="live-status" class="sr-only" role="status" aria-live="polite"></div>
     <script is:inline>
+      const liveStatus = document.getElementById('live-status')
+      window.announce = (message) => {
+        if (!liveStatus) return
+        liveStatus.textContent = ''
+        setTimeout(() => {
+          liveStatus.textContent = message
+        }, 50)
+      }
+
+      window.copyWithFeedback = (btn, text) => {
+        const original = btn.textContent
+        const done = (ok) => {
+          btn.textContent = ok ? 'Copied' : 'Copy failed'
+          window.announce(ok ? 'Copied to the clipboard' : 'Could not copy to the clipboard')
+          setTimeout(() => {
+            btn.textContent = original
+          }, 1500)
+        }
+        if (!navigator.clipboard) return done(false)
+        navigator.clipboard.writeText(text).then(
+          () => done(true),
+          () => done(false),
+        )
+      }
+
+      const root = document.documentElement
       const themeToggle = document.getElementById('theme-toggle')
+      const syncThemeToggle = () => {
+        themeToggle?.setAttribute('aria-pressed', String(root.getAttribute('data-theme') === 'dark'))
+      }
+      syncThemeToggle()
+      new MutationObserver(syncThemeToggle).observe(root, { attributes: true, attributeFilter: ['data-theme'] })
       themeToggle?.addEventListener('click', () => {
-        const root = document.documentElement
         const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'
         const next = current === 'dark' ? 'light' : 'dark'
         root.setAttribute('data-theme', next)
@@ -181,8 +216,33 @@ const ogImage = new URL(`${base}og.png`, Astro.site).href
       const mobileToggle = document.getElementById('mobile-nav-toggle')
       const mobileNav = document.getElementById('mobile-nav')
       mobileToggle?.addEventListener('click', () => {
-        mobileNav?.classList.toggle('hidden')
+        const open = mobileNav?.classList.toggle('hidden') === false
+        mobileToggle.setAttribute('aria-expanded', String(open))
       })
+      document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape' || mobileToggle?.getAttribute('aria-expanded') !== 'true') return
+        mobileNav?.classList.add('hidden')
+        mobileToggle.setAttribute('aria-expanded', 'false')
+        mobileToggle.focus()
+      })
+
+      const markScrollable = (el, label) => {
+        const update = () => {
+          const scrollable = el.scrollWidth > el.clientWidth + 1
+          if (scrollable) {
+            el.setAttribute('tabindex', '0')
+            el.setAttribute('role', 'group')
+            el.setAttribute('aria-label', label)
+          } else {
+            el.removeAttribute('tabindex')
+            el.removeAttribute('role')
+            el.removeAttribute('aria-label')
+          }
+        }
+        update()
+        new ResizeObserver(update).observe(el)
+      }
+      document.querySelectorAll('.prose-doc table').forEach((table) => markScrollable(table, 'Table, scrolls sideways'))
 
       document.querySelectorAll('pre').forEach((pre) => {
         if (pre.querySelector('.copy-btn')) return
@@ -196,15 +256,14 @@ const ogImage = new URL(`${base}og.png`, Astro.site).href
         btn.className = 'copy-btn'
         btn.type = 'button'
         btn.textContent = 'Copy'
+        btn.setAttribute('aria-label', 'Copy code')
         btn.addEventListener('click', () => {
           const code = scrollWrap.querySelector('code')?.textContent ?? scrollWrap.textContent ?? ''
-          navigator.clipboard?.writeText(code.trim())
-          btn.textContent = 'Copied'
-          setTimeout(() => {
-            btn.textContent = 'Copy'
-          }, 1500)
+          window.copyWithFeedback(btn, code.trim())
         })
         pre.appendChild(btn)
+        pre.removeAttribute('tabindex')
+        markScrollable(scrollWrap, 'Code, scrolls sideways')
       })
     </script>
   </body>
