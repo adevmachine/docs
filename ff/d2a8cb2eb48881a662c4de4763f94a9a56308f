@@ -1,0 +1,51 @@
+README.md
+  s_a0cbf6c120c4f8::t_19961434e358b7 29,40-52,148-149
+scripts/fetch-docs.mjs
+  s_a0cbf6c120c4f8::t_33315676dd79be 11,26-34,36,44,55,91,100-101,105-125,161-162,165-166,168,170-171,173,183-184,198
+src/components/GuideCard.astro
+  s_a0cbf6c120c4f8::t_43aa2287fe3221 1-40
+src/components/GuideIcon.astro
+  s_a0cbf6c120c4f8::t_03aa9c70ed6e75 1-34
+src/components/MovedPage.astro
+  s_a0cbf6c120c4f8::t_911a4a83d3ec28 1-27
+src/content.config.ts
+  s_a0cbf6c120c4f8::t_f4d529abf20e80 12-17
+src/layouts/BaseLayout.astro
+  s_a0cbf6c120c4f8::t_09c64cc3c96b0b 100,118,132
+src/layouts/DocLayout.astro
+  s_a0cbf6c120c4f8::t_2debf4666d7799 4-5,7,21-26,35-37,40-49,53,82-96,100-125,130-144
+src/lib/guides.ts
+  s_a0cbf6c120c4f8::t_e6919869387877 1-58
+src/lib/nav.ts
+  s_a0cbf6c120c4f8::t_344d0085345b75 3
+src/pages/[...slug].astro
+  s_a0cbf6c120c4f8::t_34a7a5ba0ccd03 6
+src/pages/[...slug].md.ts
+  s_a0cbf6c120c4f8::t_e4b29edb31dcd3 10,14-17
+src/pages/examples/[slug].astro
+  s_a0cbf6c120c4f8::t_d1517eaf123d55 1-16
+src/pages/examples/index.astro
+  s_a0cbf6c120c4f8::t_0d836de2f5064f 1-5
+src/pages/guides/index.astro
+  s_a0cbf6c120c4f8::t_a7c7d07447ea9d 1-111
+src/pages/index.astro
+  s_a0cbf6c120c4f8::t_b0757b6ef77ccf 333-335
+src/styles/global.css
+  s_a0cbf6c120c4f8::t_93240dc9167437 915-961
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "ffd2a8cb2eb48881a662c4de4763f94a9a56308f",
+  "prompts": {},
+  "sessions": {
+    "s_a0cbf6c120c4f8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f7d54e1b-857f-44e4-a7a9-0ca76ea55bb2",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Djalma Araújo <djalma@nossomos.cc>"
+    }
+  }
+}
