@@ -1061,6 +1061,87 @@ button:focus-visible {
   object-fit: contain;
 }
 
+.shot-link {
+  cursor: zoom-in;
+}
+
+.shot-placeholder {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.5rem 1.5rem;
+  border-style: dashed;
+  background: linear-gradient(180deg, #1a1e23 0, #1a1e23 28px, #14171b 28px);
+  box-shadow: none;
+}
+
+.shot-placeholder-dots {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  display: flex;
+  gap: 6px;
+}
+
+.shot-placeholder-dots i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3a3f46;
+}
+
+.shot-placeholder-label {
+  max-width: 28ch;
+  text-align: center;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #8a8f96;
+}
+
+.shot-viewer {
+  max-width: min(96vw, 1800px);
+  max-height: 94vh;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.shot-viewer::backdrop {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.shot-viewer img {
+  display: block;
+  max-width: min(96vw, 1800px);
+  max-height: 88vh;
+  width: auto;
+  height: auto;
+  border-radius: 10px;
+  cursor: zoom-out;
+}
+
+.shot-viewer-close {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
+}
+
+.shot-viewer-close button {
+  color: #f5f5f2;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #3a3f46;
+  background: #050505;
+}
+
+.app-row + .app-row {
+  border-top: 1px solid var(--line);
+}
+
 /* FAQ */
 
 .faq-item {

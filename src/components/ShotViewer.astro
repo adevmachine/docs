@@ -1,0 +1,26 @@
+<dialog id="shot-viewer" class="shot-viewer" aria-label="Screenshot">
+  <form method="dialog" class="shot-viewer-close">
+    <button type="submit" class="text-xs font-mono uppercase tracking-widest">Close</button>
+  </form>
+  <img id="shot-viewer-img" alt="" />
+</dialog>
+
+<script is:inline>
+  ;(() => {
+    const viewer = document.getElementById('shot-viewer')
+    const img = document.getElementById('shot-viewer-img')
+    if (!viewer || !img || typeof viewer.showModal !== 'function') return
+    document.querySelectorAll('[data-shot-viewer]').forEach((link) => {
+      link.addEventListener('click', (e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return
+        e.preventDefault()
+        img.src = link.getAttribute('href')
+        img.alt = link.dataset.alt || ''
+        viewer.showModal()
+      })
+    })
+    viewer.addEventListener('click', (e) => {
+      if (e.target === viewer || e.target === img) viewer.close()
+    })
+  })()
+</script>

@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
 import Hero from '../components/Hero.astro'
+import AppShot from '../components/AppShot.astro'
+import ShotViewer from '../components/ShotViewer.astro'
 const base = import.meta.env.BASE_URL
 
 const howItWorks = [
@@ -74,7 +76,30 @@ const installLines = [
   { cmd: 'devmachine setup', comment: '# connect your server' },
   { cmd: 'devmachine skills add', comment: '# interact from any LLM session with your machine(s)' },
 ]
-const installCmdWidth = Math.max(...installLines.filter((l) => l.comment).map((l) => l.cmd.length)) + 2
+
+const appDmg = 'https://github.com/mydevmachine/app-releases/releases/latest/download/Devmachine.dmg'
+const macStrip = [
+  {
+    name: '18-operator',
+    alt: 'The Operator session under Local, with Claude Code open in ~/.config/devmachine adding the globex workspace.',
+    caption: 'Operator: ask for any change.',
+  },
+  {
+    name: '01-sessions',
+    alt: 'Four sessions of the acme workspace side by side: Claude Code, Codex, tests and a dev server.',
+    caption: 'Sessions side by side.',
+  },
+  {
+    name: '19-home',
+    alt: 'The home screen with two machines, staging and backup, each with RAM, disk, load and container counts.',
+    caption: 'Every machine at a glance.',
+  },
+]
+const appSteps = [
+  { title: 'Download Devmachine for Mac.', body: 'Drag it to Applications and open it.' },
+  { title: 'Let it set you up.', body: 'Run each setup step in a terminal inside the app, or let Claude Code or Codex do it for you.' },
+  { title: 'Open a session.', body: 'Pick a workspace in the sidebar and start working, with Claude Code, Codex or a plain terminal.' },
+]
 
 const commands = [
   { cmd: 'devmachine setup', desc: 'connect your server and make it safe' },
@@ -251,85 +276,125 @@ const jsonLd = [
 
   <section id="get-started" class="max-w-6xl mx-auto px-4 sm:px-6 pt-4 pb-20">
     <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">02 / Get started</p>
-    <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-6">Two ways to start.</h2>
+    <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-4">Start with the app, or with the CLI.</h2>
+    <p class="text-[var(--muted)] max-w-2xl mb-10">
+      Pick one. The Mac app is optional: it runs the same CLI on the same configuration folder, so what you do
+      in one shows up in the other. Switch any time.
+    </p>
 
-    <div>
-      <div role="tablist" aria-label="Ways to get started" class="flex border hairline">
-        <button
-          role="tab"
-          id="tab-yourself"
-          aria-controls="panel-yourself"
-          aria-selected="true"
-          tabindex="0"
-          class="tab-btn flex-1 px-4 py-2 text-sm font-mono uppercase tracking-wide"
-        >
-          Yourself
-        </button>
-        <button
-          role="tab"
-          id="tab-agent"
-          aria-controls="panel-agent"
-          aria-selected="false"
-          tabindex="-1"
-          class="tab-btn flex-1 px-4 py-2 text-sm font-mono uppercase tracking-wide"
-        >
-          With your agent
-        </button>
+    <div class="grid-cards grid-cols-1 min-[900px]:grid-cols-2">
+      <div id="path-app" class="p-5 sm:p-6 flex flex-col min-w-0">
+        <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-2">Easier · macOS</p>
+        <h3 class="text-2xl font-light tracking-tight mb-5">Start with the app</h3>
+        <ol class="space-y-4 text-sm text-[var(--muted)] leading-relaxed mb-6">
+          {
+            appSteps.map((step, i) => (
+              <li class="flex gap-3">
+                <span class="font-mono text-xs text-[var(--ink)] pt-0.5">{String(i + 1).padStart(2, '0')}</span>
+                <span>
+                  <span class="text-[var(--ink)]">{step.title}</span> {step.body}
+                </span>
+              </li>
+            ))
+          }
+        </ol>
+        <div class="mt-auto">
+          <div class="flex flex-wrap items-center gap-3">
+            <a
+              href={appDmg}
+              class="inline-block border border-[var(--ink)] px-6 py-3 text-sm font-mono uppercase tracking-wide hover:bg-[var(--ink)] hover:text-[var(--bg)] transition-colors"
+            >
+              Download for macOS
+            </a>
+            <a href={`${base}app/`} class="text-sm underline underline-offset-2 text-[var(--muted)] hover:text-[var(--ink)]">
+              See the app →
+            </a>
+          </div>
+          <p class="text-xs text-[var(--muted)] mt-3">macOS 14 Sonoma or later. Or with Homebrew:</p>
+          <p class="text-xs mt-1"><code class="font-mono text-[var(--ink)] break-words">brew install --cask mydevmachine/tap/devmachine-app</code></p>
+        </div>
       </div>
 
-      <div role="tabpanel" id="panel-yourself" aria-labelledby="tab-yourself" tabindex="0" class="pt-6">
-        <p class="text-xs uppercase tracking-widest text-[var(--muted)] mb-2">From your computer, run</p>
-        <div class="border hairline bg-[var(--card)] p-4 sm:p-5 relative font-mono text-sm">
-          <div class="flex flex-wrap items-start justify-between gap-4">
-            <code id="install-cmd" class="min-w-0 whitespace-pre-wrap break-words leading-relaxed">{installLines.map((l) => (<span class="block">{l.cmd}{l.comment && ' '.repeat(installCmdWidth - l.cmd.length)}{l.comment && <span class="text-[var(--muted)]">{l.comment}</span>}</span>))}</code>
-            <button
-              id="install-copy"
-              type="button"
-              class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
-            >
-              Copy
-            </button>
-          </div>
+      <div id="path-cli" class="p-5 sm:p-6 min-w-0">
+        <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-2">macOS or Linux</p>
+        <h3 class="text-2xl font-light tracking-tight mb-5">Start with the CLI</h3>
+        <div role="tablist" aria-label="Ways to start with the CLI" class="flex border hairline">
+          <button
+            role="tab"
+            id="tab-yourself"
+            aria-controls="panel-yourself"
+            aria-selected="true"
+            tabindex="0"
+            class="tab-btn flex-1 px-4 py-2 text-sm font-mono uppercase tracking-wide"
+          >
+            Yourself
+          </button>
+          <button
+            role="tab"
+            id="tab-agent"
+            aria-controls="panel-agent"
+            aria-selected="false"
+            tabindex="-1"
+            class="tab-btn flex-1 px-4 py-2 text-sm font-mono uppercase tracking-wide"
+          >
+            With your agent
+          </button>
         </div>
-        <p class="text-sm mt-3 text-[var(--muted)]">
-          Then make a workspace: <code class="font-mono text-[var(--ink)]">devmachine workspaces new acme && devmachine sync</code>.
-          <a href={`${base}getting-started/`} class="underline underline-offset-2 hover:text-[var(--ink)]">
-            Getting started →
-          </a>
-        </p>
-        <p class="text-sm mt-2 text-[var(--muted)]">
-          Or with Homebrew: <code class="font-mono text-[var(--ink)]">brew install mydevmachine/tap/devmachine</code>.
-        </p>
-      </div>
 
-      <div role="tabpanel" id="panel-agent" aria-labelledby="tab-agent" tabindex="0" class="pt-6" hidden>
-        <p class="text-sm text-[var(--muted)] mb-3">
-          Paste this into Claude Code, Codex or Cursor. It asks what it needs and does
-          the rest; you only run <code class="font-mono text-[var(--ink)]">devmachine setup</code> yourself.
-        </p>
-        <div class="border hairline bg-[var(--card)] p-4 sm:p-5 font-mono text-sm">
-          <div class="flex flex-wrap items-center justify-between gap-4">
-            <code id="agent-prompt" class="min-w-0 break-all">Set up devmachine for me: read https://mydevmachine.sh/agent-setup.md and follow it.</code>
-            <button
-              id="agent-prompt-copy"
-              type="button"
-              class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
-            >
-              Copy
-            </button>
+        <div role="tabpanel" id="panel-yourself" aria-labelledby="tab-yourself" tabindex="0" class="pt-6">
+          <p class="text-xs uppercase tracking-widest text-[var(--muted)] mb-2">From your computer, run</p>
+          <div class="border hairline bg-[var(--card)] p-4 sm:p-5 relative font-mono text-sm">
+            <div class="flex flex-wrap items-start justify-between gap-4">
+              <code id="install-cmd" class="min-w-0 whitespace-pre-wrap break-words leading-relaxed">{installLines.map((l) => (<span class="block">{l.cmd}{l.comment && <span class="block text-[var(--muted)]">{l.comment}</span>}</span>))}</code>
+              <button
+                id="install-copy"
+                type="button"
+                class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
+              >
+                Copy
+              </button>
+            </div>
           </div>
+          <p class="text-sm mt-3 text-[var(--muted)]">
+            Then make a workspace: <code class="font-mono text-[var(--ink)]">devmachine workspaces new acme && devmachine sync</code>.
+            <a href={`${base}getting-started/`} class="underline underline-offset-2 hover:text-[var(--ink)]">
+              Getting started →
+            </a>
+          </p>
+          <p class="text-sm mt-2 text-[var(--muted)]">
+            Or with Homebrew: <code class="font-mono text-[var(--ink)]">brew install mydevmachine/tap/devmachine</code>.
+          </p>
         </div>
-        <p class="text-sm mt-3">
-          <a href={`${base}agent-setup/`} class="underline underline-offset-2 text-[var(--muted)] hover:text-[var(--ink)]">
-            Read what it will do
-          </a>
-        </p>
-        <p class="text-xs font-mono uppercase tracking-wide text-[var(--muted)] mt-3">
-          For LLMs:
-          <a href={`${base}llms.txt`} class="underline underline-offset-2 hover:text-[var(--ink)]">llms.txt</a>
-          ·
-          <a href={`${base}llms-full.txt`} class="underline underline-offset-2 hover:text-[var(--ink)]">llms-full.txt</a>
-        </p>
+
+        <div role="tabpanel" id="panel-agent" aria-labelledby="tab-agent" tabindex="0" class="pt-6" hidden>
+          <p class="text-sm text-[var(--muted)] mb-3">
+            Paste this into Claude Code, Codex or Cursor. It asks what it needs and does
+            the rest; you only run <code class="font-mono text-[var(--ink)]">devmachine setup</code> yourself.
+          </p>
+          <div class="border hairline bg-[var(--card)] p-4 sm:p-5 font-mono text-sm">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+              <code id="agent-prompt" class="min-w-0 break-all">Set up devmachine for me: read https://mydevmachine.sh/agent-setup.md and follow it.</code>
+              <button
+                id="agent-prompt-copy"
+                type="button"
+                class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
+              >
+                Copy
+              </button>
+            </div>
+          </div>
+          <p class="text-sm mt-3">
+            <a href={`${base}agent-setup/`} class="underline underline-offset-2 text-[var(--muted)] hover:text-[var(--ink)]">
+              Read what it will do
+            </a>
+          </p>
+          <p class="text-xs font-mono uppercase tracking-wide text-[var(--muted)] mt-3">
+            For LLMs:
+            <a href={`${base}llms.txt`} class="underline underline-offset-2 hover:text-[var(--ink)]">llms.txt</a>
+            ·
+            <a href={`${base}llms-full.txt`} class="underline underline-offset-2 hover:text-[var(--ink)]">llms-full.txt</a>
+          </p>
+        </div>
       </div>
     </div>
   </section>
@@ -709,45 +774,51 @@ const jsonLd = [
 
   <section id="devmachine-for-mac" class="dark-section">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-24">
-    <p class="text-xs font-mono uppercase tracking-widest text-[#9a9a9a] mb-3">09 / macOS app</p>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-      <div>
-        <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-4">Devmachine for Mac.</h2>
-        <p class="text-[#9a9a9a] max-w-lg mb-6">
-          A native app for the machine devmachine sets up: every workspace, its terminals, and what your agent
-          touched, in one window.
-        </p>
-        <ul class="text-sm text-[#9a9a9a] space-y-2 mb-8">
-          <li>Terminals for every workspace, stacked into a grid</li>
-          <li>A context panel: pull requests, files and git, next to the session</li>
-          <li>Subdomains, machine stats, and Claude Code / Codex usage</li>
-          <li>Paste an image straight into a remote session</li>
-        </ul>
-        <a
-          href={`${base}app/`}
-          class="inline-block border border-white px-8 py-3 text-sm font-mono uppercase tracking-wide hover:bg-white hover:text-black transition-colors"
-        >
-          See the app →
-        </a>
-        <a
-          href="https://github.com/mydevmachine/app-releases/releases/latest/download/Devmachine.dmg"
-          class="inline-block ml-3 mt-3 sm:mt-0 border border-white bg-white text-black px-8 py-3 text-sm font-mono uppercase tracking-wide hover:bg-transparent hover:text-white transition-colors"
-        >
-          Download for macOS
-        </a>
-        <p class="text-xs font-mono text-[#9a9a9a] mt-4">brew install --cask mydevmachine/tap/devmachine-app ·
-          <a href="https://github.com/mydevmachine/app-releases/releases" class="underline underline-offset-2 hover:text-white">All releases →</a>
-        </p>
+      <p class="text-xs font-mono uppercase tracking-widest text-[#9a9a9a] mb-3">09 / macOS app</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-start mb-12">
+        <div>
+          <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-4">Devmachine for Mac.</h2>
+          <p class="text-[#9a9a9a] max-w-lg">
+            Optional, and easier to start with. Do from one window what you would do with the CLI: set up, open
+            sessions, publish sites, check your machines. It runs the same CLI underneath.
+          </p>
+        </div>
+        <div>
+          <ul class="text-sm text-[#9a9a9a] space-y-2 mb-8">
+            <li>Setup that runs each step for you, or lets your agent do it</li>
+            <li>Operator: a session in your devmachine folder, to ask for any change</li>
+            <li>Sessions side by side, with todo, pull requests and git next to each</li>
+            <li>Every machine at a glance: RAM, disk, load, sites and health</li>
+          </ul>
+          <div class="flex flex-wrap gap-3">
+            <a
+              href={`${base}app/`}
+              class="inline-block border border-white px-8 py-3 text-sm font-mono uppercase tracking-wide hover:bg-white hover:text-black transition-colors"
+            >
+              See the app →
+            </a>
+            <a
+              href="https://github.com/mydevmachine/app-releases/releases/latest/download/Devmachine.dmg"
+              class="inline-block border border-white bg-white text-black px-8 py-3 text-sm font-mono uppercase tracking-wide hover:bg-transparent hover:text-white transition-colors"
+            >
+              Download for macOS
+            </a>
+          </div>
+          <p class="text-xs font-mono text-[#9a9a9a] mt-4 break-words">brew install --cask mydevmachine/tap/devmachine-app ·
+            <a href="https://github.com/mydevmachine/app-releases/releases" class="underline underline-offset-2 hover:text-white">All releases →</a>
+          </p>
+        </div>
       </div>
-      <img
-        src={`${base}app/01-sessions.webp`}
-        alt="Devmachine for Mac with four sessions of the acme workspace side by side: Claude Code, Codex, tests and a dev server."
-        width="1600"
-        height="1000"
-        loading="lazy"
-        class="app-shot"
-      />
-    </div>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        {
+          macStrip.map((shot) => (
+            <figure class="min-w-0">
+              <AppShot shot={shot} />
+              <figcaption class="text-sm text-[#9a9a9a] mt-2">{shot.caption}</figcaption>
+            </figure>
+          ))
+        }
+      </div>
     </div>
   </section>
 
@@ -766,6 +837,8 @@ const jsonLd = [
       Read the documentation →
     </a>
   </section>
+
+  <ShotViewer />
 
   <script is:inline>
     ;(() => {

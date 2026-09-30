@@ -1,69 +1,188 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
+import AppShot from '../components/AppShot.astro'
+import ShotViewer from '../components/ShotViewer.astro'
+import type { Shot } from '../lib/app-shots'
 
 const base = import.meta.env.BASE_URL
+const dmg = 'https://github.com/mydevmachine/app-releases/releases/latest/download/Devmachine.dmg'
+const brew = 'brew install --cask mydevmachine/tap/devmachine-app'
 
-const features = [
+interface Section {
+  id: string
+  title: string
+  body: string
+  prompts?: string[]
+  shots: Shot[]
+}
+
+const sections: Section[] = [
   {
-    title: 'A sidebar of workspaces',
-    body: 'Every workspace on the machine, and every open session inside it, in one list. Open a new session by name.',
-  },
-  {
-    title: 'Real terminals',
-    body: 'Each session is a live tmux session over mosh (falling back to ssh), so a dropped connection never drops the session.',
-  },
-  {
-    title: 'Stack grids',
-    body: 'Arrange several sessions from one workspace into a grid, to watch more than one agent at once.',
-  },
-  {
-    title: 'A context panel',
-    body: 'Next to the terminal: the todo list, pull requests, issues and links of a Claude Code, Codex or Pi session, plus its files and git status.',
-  },
-  {
-    title: 'Pull requests',
-    body: 'Every open PR across your repos, read through the GitHub CLI, with a favorite owner pinned to the top.',
-  },
-  {
-    title: 'Subdomains',
-    body: 'Every published site, and the DNS records of each provider. Publish a port in a few clicks.',
-  },
-  {
-    title: 'Machine stats',
-    body: 'Memory, disk, load and containers of every machine, with RAM by workspace.',
-  },
-  {
-    title: 'A health check',
-    body: 'The same checks as devmachine doctor, for every machine, one click away.',
-  },
-  {
-    title: 'Custom commands',
-    body: 'Your own commands, like a Claude Code session with your flags, each one a keyboard shortcut away.',
-  },
-  {
+    id: 'setup',
     title: 'Set up from the app',
-    body: 'No machine yet? Run each setup step in a terminal inside the app, or let your coding agent do it.',
+    body: 'No machine yet? The app walks you through setup. Run each step in a terminal inside the app, or hand the job to Claude Code or Codex and watch it work.',
+    shots: [
+      {
+        name: '09-onboarding',
+        alt: 'The setup screen with two choices: set it up here, step by step, or let your agent do it.',
+        caption: 'Set it up here, or let your agent do it.',
+      },
+    ],
   },
   {
-    title: 'Harness usage',
-    body: 'Claude Code and Codex usage cards, on the home screen and in the menu bar, read without spending a token.',
+    id: 'operator',
+    title: 'The Operator session',
+    body: 'Under Local, the sidebar always has a session called Operator. It opens in your devmachine folder, ~/.config/devmachine, where your whole setup lives. Start Claude Code or Codex there: it reads AGENTS.md, and you ask for changes in plain words.',
+    prompts: [
+      'Add a workspace called globex and sync it.',
+      'Add the claude-code package to acme.',
+      'Publish port 3000 of acme at app.example.com.',
+    ],
+    shots: [
+      {
+        name: '18-operator',
+        alt: 'The Operator session under Local, with Claude Code open in ~/.config/devmachine adding the globex workspace.',
+        caption: 'Operator: a session in your devmachine folder.',
+      },
+    ],
   },
   {
-    title: 'Paste an image in',
-    body: 'Copy a screenshot, paste it into a remote session, and the file lands on the machine — no upload step.',
+    id: 'sessions',
+    title: 'Sessions side by side',
+    body: 'Open several sessions of one workspace and watch them in a grid. Each one is tmux over mosh, so a closed lid or a lost Wi-Fi loses nothing.',
+    shots: [
+      {
+        name: '01-sessions',
+        alt: 'Four sessions of the acme workspace in a grid: Claude Code, Codex, tests and a dev server.',
+        caption: 'Four sessions of acme at once.',
+      },
+    ],
   },
   {
-    title: 'A files view',
-    body: 'Browse and preview a workspace’s files without opening a session for it.',
+    id: 'context',
+    title: 'Context next to each session',
+    body: 'Beside the terminal: the todo list, pull requests and links of a Claude Code, Codex or Pi session, plus its files and git status.',
+    shots: [
+      {
+        name: '02-session-claude',
+        alt: 'A Claude Code session with the context panel open, showing its todo list, pull requests and links.',
+        caption: 'The todo, pull requests and links of the session.',
+      },
+    ],
   },
   {
-    title: 'A wallpaper',
-    body: 'Because the terminal is the whole app, it gets to have a wallpaper behind it.',
+    id: 'home',
+    title: 'Every machine at a glance',
+    body: 'The home screen shows each machine with its RAM, disk, load and containers. It refreshes in the background, so the numbers are ready when you look.',
+    shots: [
+      {
+        name: '19-home',
+        alt: 'The home screen with two machines, staging and backup, each with RAM, disk, load and container counts.',
+        caption: 'Every machine, on one screen.',
+      },
+    ],
+  },
+  {
+    id: 'stats',
+    title: 'Stats per machine',
+    body: 'Pick a machine to see its memory, disk, load and containers, with RAM split by workspace.',
+    shots: [
+      {
+        name: '06-stats',
+        alt: 'The stats page of the staging machine: memory and disk bars, running containers and RAM by workspace.',
+        caption: 'Memory, disk and containers of one machine.',
+      },
+    ],
+  },
+  {
+    id: 'sites',
+    title: 'Sites and DNS',
+    body: 'See every site each machine publishes. Publish a port in a few clicks: pick a workspace, a name and a port. The DNS records of each provider are one tab away.',
+    shots: [
+      {
+        name: '04-subdomains-sites',
+        alt: 'The subdomains page listing three sites under example.com, with their workspace, port and status.',
+        caption: 'Every published site, per machine.',
+      },
+      {
+        name: '10-publish-port',
+        alt: 'The Add subdomain dialog with the acme workspace, the label acme and local port 3000.',
+        caption: 'Publish a port.',
+      },
+      {
+        name: '05-subdomains-dns-cloudflare',
+        alt: 'The Cloudflare tab of the subdomains page listing DNS records for example.com.',
+        caption: 'DNS records, per provider.',
+      },
+    ],
+  },
+  {
+    id: 'session-defaults',
+    title: 'Session defaults',
+    body: 'Choose what a new session opens, per workspace: a plain terminal, Claude Code, Codex, or a command of your own.',
+    shots: [
+      {
+        name: '08-session-defaults',
+        alt: 'The session defaults settings: acme opens Claude Code, globex opens a terminal, and a custom command is listed.',
+        caption: 'Terminal, Claude, Codex or your own command.',
+      },
+    ],
+  },
+  {
+    id: 'health',
+    title: 'Health check',
+    body: 'The same checks as devmachine doctor, for every machine, one click away.',
+    shots: [
+      {
+        name: '07-settings-health',
+        alt: 'The health check in settings, with every check passing for staging.',
+        caption: 'devmachine doctor, in the app.',
+      },
+    ],
+  },
+  {
+    id: 'menu-bar',
+    title: 'Pull requests and usage in the menu bar',
+    body: 'Your open pull requests and their checks, read through the GitHub CLI. Claude Code and Codex usage, read without spending a token.',
+    shots: [
+      {
+        name: '03-pull-requests',
+        alt: 'The menu bar window listing four pull requests with their check status.',
+        caption: 'Open pull requests and their checks.',
+      },
+      {
+        name: '20-menubar-usage',
+        alt: 'The menu bar window with Claude Code and Codex usage cards.',
+        caption: 'Claude Code and Codex usage.',
+      },
+    ],
   },
 ]
 
+const features = [
+  { title: 'Setup, guided', body: 'Run each step in the app, or let your agent do it.' },
+  { title: 'Operator', body: 'A session in your devmachine folder, always one click away.' },
+  { title: 'Real terminals', body: 'tmux over mosh (or ssh). A dropped link never drops a session.' },
+  { title: 'Grids', body: 'Several sessions of one workspace, side by side.' },
+  { title: 'A context panel', body: 'Todo, pull requests, links, files and git of each session.' },
+  { title: 'Home and stats', body: 'RAM, disk, load and containers of every machine.' },
+  { title: 'Sites and DNS', body: 'Publish a port in a few clicks. See the records of each provider.' },
+  { title: 'Session defaults', body: 'Terminal, Claude Code, Codex or your own command, per workspace.' },
+  { title: 'A health check', body: 'The checks of devmachine doctor, for every machine.' },
+  { title: 'Menu bar', body: 'Pull requests, and Claude Code and Codex usage.' },
+  { title: 'Paste an image in', body: 'Paste a screenshot into a remote session. The file lands on the machine.' },
+  { title: 'A files view', body: 'Browse and preview the files of a workspace without a session.' },
+]
+
+const cliEquivalents = [
+  { what: 'Publish a port', cmd: 'devmachine expose add acme 3000 --host app.example.com', href: `${base}reference/commands/#expose` },
+  { what: 'Add a package', cmd: 'devmachine packages add claude-code --workspace acme', href: `${base}reference/commands/#packages` },
+  { what: 'See machine stats', cmd: 'devmachine stats', href: `${base}reference/commands/#stats` },
+  { what: 'Run the health check', cmd: 'devmachine doctor', href: `${base}reference/commands/#doctor` },
+]
+
 const description =
-  'Devmachine for Mac: a native macOS app for the workspaces devmachine sets up — terminals, pull requests, subdomains, stats and coding-harness usage in one window.'
+  'Devmachine for Mac: an optional macOS app for devmachine. Set up, open sessions, publish sites and check your machines from one window, on the same CLI and config.'
 
 const site = Astro.site?.href ?? 'https://mydevmachine.sh/'
 const jsonLd = [
@@ -75,86 +194,138 @@ const jsonLd = [
     url: `${site}app/`,
     applicationCategory: 'DeveloperApplication',
     operatingSystem: 'macOS 14 or later',
-    softwareVersion: '0.1.0',
-    downloadUrl: 'https://github.com/mydevmachine/app-releases/releases/latest/download/Devmachine.dmg',
+    softwareVersion: '0.1.2',
+    downloadUrl: dmg,
   },
 ]
-const shots = [
-  { file: '01-sessions.webp', width: 1600, height: 1000, caption: 'Every session of a workspace, side by side.', alt: 'Four sessions of the acme workspace in a grid: Claude Code, Codex, tests and a dev server.' },
-  { file: '02-session-claude.webp', width: 1600, height: 1000, caption: 'The context panel: todo, pull requests and links of the session.', alt: 'A Claude Code session with the context panel open, showing its todo list, pull requests and links.' },
-  { file: '03-pull-requests.webp', width: 1552, height: 1280, caption: 'Your open pull requests and their checks, from the menu bar.', alt: 'The menu bar window listing four pull requests with their check status.' },
-  { file: '04-subdomains-sites.webp', width: 1600, height: 1000, caption: 'Every published site, with its workspace and port.', alt: 'The subdomains page listing three sites, their workspace, port and status.' },
-  { file: '05-subdomains-dns-cloudflare.webp', width: 1600, height: 1000, caption: 'The DNS records of each provider.', alt: 'The Cloudflare tab of the subdomains page listing DNS records.' },
-  { file: '10-publish-port.webp', width: 720, height: 662, caption: 'Publish a port in a few clicks.', alt: 'The Add subdomain dialog with a workspace, a label and a local port.' },
-  { file: '06-stats.webp', width: 1600, height: 1000, caption: 'Memory, disk and containers of every machine.', alt: 'The stats page with two machines, memory and disk bars, containers and RAM by user.' },
-  { file: '08-custom-commands.webp', width: 1600, height: 1000, caption: 'Your own commands, one shortcut away.', alt: 'The custom commands page with two commands and their shortcuts.' },
-  { file: '09-onboarding.webp', width: 1600, height: 758, caption: 'Set up from the app, or let your agent do it.', alt: 'The onboarding screen with two choices: set it up here, or let your agent do it.' },
-];
 ---
 
 <BaseLayout title="Devmachine for Mac — devmachine" description={description} current="docs" jsonLd={jsonLd}>
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-16 pb-10">
-    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">macOS app</p>
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 pt-16 pb-12">
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">macOS app · optional</p>
     <h1 class="text-4xl sm:text-6xl font-light tracking-tight mb-5">Devmachine for Mac.</h1>
     <p class="text-[var(--muted)] max-w-2xl">
-      The desktop companion to devmachine: one window for every workspace on your machine — terminals, pull
-      requests, subdomains, stats and coding-harness usage, without a browser tab or a plain ssh session.
+      Do from one window what you would do with the devmachine CLI: set up a machine, open sessions, publish
+      sites, check health.
+    </p>
+    <p class="text-[var(--muted)] max-w-2xl mt-3">
+      You do not need it. The app runs the same CLI on the same configuration folder, so anything you do in one
+      shows up in the other. Start here or in the terminal, and switch any time.
     </p>
 
-    <div class="border hairline p-4 sm:p-5 mt-8 max-w-2xl">
-      <div class="flex flex-wrap items-center gap-3">
-        <a
-          href="https://github.com/mydevmachine/app-releases/releases/latest/download/Devmachine.dmg"
-          class="inline-block border border-[var(--ink)] px-6 py-3 text-sm font-mono uppercase tracking-wide hover:bg-[var(--ink)] hover:text-[var(--bg)] transition-colors"
-        >
-          Download for macOS
-        </a>
-        <span class="text-xs font-mono uppercase tracking-widest text-[var(--muted)]">macOS 14 or later</span>
-        <a
-          href="https://github.com/mydevmachine/app-releases/releases"
-          class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] underline underline-offset-2 hover:text-[var(--ink)]"
-        >
-          All releases →
-        </a>
+    <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] gap-10 items-start mt-10">
+      <div class="border hairline p-4 sm:p-5">
+        <div class="flex flex-wrap items-center gap-3">
+          <a
+            href={dmg}
+            class="inline-block border border-[var(--ink)] px-6 py-3 text-sm font-mono uppercase tracking-wide hover:bg-[var(--ink)] hover:text-[var(--bg)] transition-colors"
+          >
+            Download for macOS
+          </a>
+          <span class="text-xs font-mono uppercase tracking-widest text-[var(--muted)]">macOS 14 Sonoma or later</span>
+        </div>
+        <p class="text-sm text-[var(--muted)] leading-relaxed mt-4">Or with Homebrew:</p>
+        <div class="border hairline bg-[var(--card)] px-3 py-2 mt-2 flex items-center justify-between gap-2">
+          <code class="font-mono text-xs min-w-0 break-all">{brew}</code>
+          <button type="button" class="app-copy text-xs uppercase tracking-wide px-2 py-1 border hairline shrink-0" data-copy={brew}>
+            Copy
+          </button>
+        </div>
+        <p class="text-xs text-[var(--muted)] leading-relaxed mt-2">
+          On Homebrew 7, trust the tap first:
+          <code class="font-mono text-[var(--ink)]">brew trust mydevmachine/tap</code>.
+        </p>
+        <p class="text-sm text-[var(--muted)] leading-relaxed mt-4">
+          Signed and notarized by Apple, so it opens without warnings. Not on the App Store.
+          <a href="https://github.com/mydevmachine/app-releases/releases" class="underline underline-offset-2 hover:text-[var(--ink)] whitespace-nowrap">All releases →</a>
+        </p>
+        <div class="text-sm text-[var(--muted)] leading-relaxed mt-4 pt-4 border-t hairline space-y-1">
+          <p>It uses:</p>
+          <ul class="list-disc list-inside space-y-1">
+            <li>The <code class="font-mono text-[var(--ink)]">devmachine</code> CLI on your Mac. No machine yet? The app's setup walks you through it.</li>
+            <li>The <code class="font-mono text-[var(--ink)]">devmachine-app</code> package on a machine, for the context panel and stats.</li>
+          </ul>
+        </div>
       </div>
-      <p class="text-sm text-[var(--muted)] leading-relaxed mt-3">Or with Homebrew:</p>
-      <div class="border hairline bg-[var(--card)] px-3 py-2 mt-2 flex items-center justify-between gap-2">
-        <code id="app-brew" class="font-mono text-xs min-w-0 break-all">brew install --cask mydevmachine/tap/devmachine-app</code>
-        <button
-          type="button"
-          class="app-copy text-xs uppercase tracking-wide px-2 py-1 border hairline shrink-0"
-          data-copy="brew install --cask mydevmachine/tap/devmachine-app"
-        >
-          Copy
-        </button>
-      </div>
-      <p class="text-sm text-[var(--muted)] leading-relaxed mt-3">
-        Signed and notarized by Apple, so it opens without warnings. Not on the App Store.
-      </p>
-    </div>
-
-    <div class="text-sm text-[var(--muted)] leading-relaxed max-w-2xl mt-6 space-y-1">
-      <p>It needs:</p>
-      <ul class="list-disc list-inside space-y-1">
-        <li>
-          The <code class="font-mono text-[var(--ink)]">devmachine</code> CLI, and a machine set up with
-          <code class="font-mono text-[var(--ink)]">devmachine setup</code>.
-        </li>
-        <li>
-          The <code class="font-mono text-[var(--ink)]">devmachine-app</code> package, added to a workspace, for
-          its context panel.
-        </li>
-      </ul>
+      <AppShot shot={sections[2].shots[0]} eager />
     </div>
   </section>
 
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 pb-6">
-    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-4">What it does</p>
+  <section id="do-it-from-the-app" class="max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-12">
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">Do it from the app</p>
+    <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-10">What you can do here.</h2>
+
+    {
+      sections.map((section, i) => {
+        const [main, ...extra] = section.shots
+        const flip = i % 2 === 1
+        return (
+          <article id={section.id} class="app-row grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10 items-center py-12">
+            <div class:list={['md:col-span-5', flip && 'md:order-2']}>
+              <p class="text-xs font-mono text-[var(--muted)] mb-4">{String(i + 1).padStart(2, '0')}</p>
+              <h3 class="text-2xl sm:text-3xl font-light tracking-tight mb-3">{section.title}</h3>
+              <p class="text-[var(--muted)] leading-relaxed">{section.body}</p>
+              {section.prompts && (
+                <ul class="mt-5 space-y-2">
+                  {section.prompts.map((p) => (
+                    <li class="border hairline bg-[var(--card)] px-3 py-2 font-mono text-xs break-words">
+                      <span class="text-[var(--muted)]">&gt; </span>
+                      {p}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {section.id === 'operator' && (
+                <p class="text-sm mt-4">
+                  <a
+                    href={`${base}day-to-day/#open-a-session-in-the-configuration-folder-to-change-devmachine-itself`}
+                    class="underline underline-offset-2 text-[var(--muted)] hover:text-[var(--ink)]"
+                  >
+                    Why a session in the configuration folder →
+                  </a>
+                </p>
+              )}
+            </div>
+            <figure class:list={['md:col-span-7 min-w-0', flip && 'md:order-1']}>
+              {section.shots.length === 2 ? (
+                <div class="grid grid-cols-2 gap-4 items-start">
+                  {section.shots.map((shot) => (
+                    <div class="min-w-0">
+                      <AppShot shot={shot} />
+                      {shot.caption && <p class="text-sm text-[var(--muted)] mt-2">{shot.caption}</p>}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <>
+                  <AppShot shot={main} />
+                  {main.caption && <figcaption class="text-sm text-[var(--muted)] mt-2">{main.caption}</figcaption>}
+                </>
+              )}
+              {extra.length > 1 && (
+                <div class="grid grid-cols-2 gap-4 mt-6">
+                  {extra.map((shot) => (
+                    <div class="min-w-0">
+                      <AppShot shot={shot} />
+                      {shot.caption && <p class="text-sm text-[var(--muted)] mt-2">{shot.caption}</p>}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </figure>
+          </article>
+        )
+      })
+    }
+  </section>
+
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-4">In short</p>
     <div class="grid-cards grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
       {
         features.map((f) => (
           <div class="pkg-card p-5">
-            <h3 class="text-base mb-2">{f.title}</h3>
+            <h3 class="text-base mb-1">{f.title}</h3>
             <p class="text-sm text-[var(--muted)] leading-relaxed">{f.body}</p>
           </div>
         ))
@@ -162,40 +333,45 @@ const shots = [
     </div>
   </section>
 
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-16 pb-20">
-    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-4">Screenshots</p>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {
-        shots.map((shot) => (
-          <figure>
-            <a href={`${base}app/${shot.file}`} target="_blank" rel="noopener">
-              <img
-                src={`${base}app/${shot.file}`}
-                alt={shot.alt}
-                width={shot.width}
-                height={shot.height}
-                loading="lazy"
-                class="app-shot app-shot-tile"
-              />
+  <section id="also-a-cli-command" class="dark-section">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-20">
+      <p class="text-xs font-mono uppercase tracking-widest text-[#9a9a9a] mb-3">Same tool underneath</p>
+      <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-4">Everything here is also a CLI command.</h2>
+      <p class="text-[#9a9a9a] max-w-2xl mb-10">
+        The app works through the devmachine CLI. Prefer the terminal? Each of these has a command.
+      </p>
+      <div class="grid-cards grid-cols-1 md:grid-cols-2">
+        {
+          cliEquivalents.map((c) => (
+            <a href={c.href} class="block p-5 hover:bg-white/5 min-w-0">
+              <p class="text-sm text-[#9a9a9a] mb-2">{c.what}</p>
+              <code class="font-mono text-sm break-words">{c.cmd}</code>
             </a>
-            <figcaption class="text-sm text-[var(--muted)] mt-2">{shot.caption}</figcaption>
-          </figure>
-        ))
-      }
+          ))
+        }
+      </div>
+      <p class="text-sm mt-6">
+        <a href={`${base}reference/commands/`} class="underline underline-offset-2 text-[#9a9a9a] hover:text-white">
+          Every command →
+        </a>
+      </p>
     </div>
   </section>
 
-  <section id="write-your-own" class="max-w-6xl mx-auto px-4 sm:px-6 pt-4 pb-32 text-center">
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-32 text-center">
     <p class="text-[var(--muted)] max-w-xl mx-auto mb-6">
-      The app only operates a machine devmachine already set up. Nothing to install or trust beyond that.
+      Rather start in the terminal? The CLI is all you need. You can add the app later.
     </p>
     <a
       href={`${base}getting-started/`}
       class="inline-block border border-[var(--ink)] px-10 py-4 text-base font-mono uppercase tracking-wide hover:bg-[var(--ink)] hover:text-[var(--bg)] transition-colors"
     >
-      Set up devmachine first →
+      Start with the CLI →
     </a>
   </section>
+
+  <ShotViewer />
+
   <script is:inline>
     document.querySelectorAll('.app-copy').forEach((btn) => {
       btn.addEventListener('click', () => {

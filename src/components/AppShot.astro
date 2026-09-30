@@ -1,0 +1,44 @@
+---
+import { resolveShot, type Shot } from '../lib/app-shots'
+
+interface Props {
+  shot: Shot
+  eager?: boolean
+  class?: string
+}
+
+const { shot, eager = false, class: className } = Astro.props
+const s = resolveShot(shot, import.meta.env.BASE_URL)
+const label = s.caption ?? s.alt
+---
+
+{
+  s.exists ? (
+    <a href={s.src} class:list={['shot-link block', className]} data-shot-viewer data-alt={s.alt}>
+      <img
+        src={s.src}
+        alt={s.alt}
+        width={s.width}
+        height={s.height}
+        loading={eager ? 'eager' : 'lazy'}
+        decoding="async"
+        class="app-shot"
+      />
+    </a>
+  ) : (
+    <div
+      class:list={['app-shot shot-placeholder', className]}
+      style={`aspect-ratio: ${s.width} / ${s.height}`}
+      role="img"
+      aria-label={s.alt}
+      data-shot={s.name}
+    >
+      <span class="shot-placeholder-dots" aria-hidden="true">
+        <i />
+        <i />
+        <i />
+      </span>
+      <span class="shot-placeholder-label">{label}</span>
+    </div>
+  )
+}
