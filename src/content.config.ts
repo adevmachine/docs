@@ -9,6 +9,12 @@ const docs = defineCollection({
     order: z.number(),
     sourcePath: z.string(),
     summary: z.string(),
+    description: z.string().nullable().optional(),
+    category: z.string().nullable().optional(),
+    minutes: z.number().nullable().optional(),
+    level: z.string().nullable().optional(),
+    needs: z.array(z.string()).default([]),
+    related: z.array(z.string()).default([]),
   }),
 })
 

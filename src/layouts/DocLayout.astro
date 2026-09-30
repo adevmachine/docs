@@ -1,7 +1,10 @@
 ---
 import BaseLayout from './BaseLayout.astro'
 import SidebarNav from '../components/SidebarNav.astro'
+import GuideCard from '../components/GuideCard.astro'
+import GuideIcon from '../components/GuideIcon.astro'
 import { getNavGroups, getPrevNext, urlFor, markdownUrlFor, type DocEntry } from '../lib/nav'
+import { categorySlug, getRelatedGuides, isGuide, minutesLabel } from '../lib/guides'
 const base = import.meta.env.BASE_URL
 
 interface Props {
@@ -15,7 +18,12 @@ const { prev, next } = await getPrevNext(entry.id)
 const currentUrl = urlFor(entry)
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3)
 const editUrl = `https://github.com/mydevmachine/devmachine/blob/main/${entry.data.sourcePath}`
-const jsonLd = [
+const guide = isGuide(entry)
+const { category, minutes, level, needs } = entry.data
+const time = minutesLabel(minutes ?? null)
+const related = guide ? await getRelatedGuides(entry) : []
+const guidesUrl = new URL('/guides/', Astro.site).href
+const jsonLd: Record<string, unknown>[] = [
   {
     '@context': 'https://schema.org',
     '@type': 'TechArticle',
@@ -24,12 +32,25 @@ const jsonLd = [
     url: new URL(currentUrl, Astro.site).href,
     isPartOf: { '@type': 'WebSite', name: 'devmachine', url: Astro.site?.href },
     about: { '@type': 'SoftwareApplication', name: 'devmachine' },
+    ...(guide && category ? { articleSection: category } : {}),
+    ...(guide && minutes ? { timeRequired: `PT${minutes}M` } : {}),
+    ...(guide && level ? { proficiencyLevel: level } : {}),
   },
 ]
+if (guide) {
+  jsonLd.push({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Guides', item: guidesUrl },
+      { '@type': 'ListItem', position: 2, name: entry.data.title, item: new URL(currentUrl, Astro.site).href },
+    ],
+  })
+}
 ---
 
 <BaseLayout
-  title={`${entry.data.title} — devmachine docs`}
+  title={`${entry.data.title} — devmachine ${guide ? 'guides' : 'docs'}`}
   description={entry.data.summary}
   current="docs"
   markdownUrl={markdownUrlFor(entry)}
@@ -58,13 +79,68 @@ const jsonLd = [
 
     <article class="py-10 min-w-0">
       <div id="search" class="mb-8"></div>
-      <p class="text-xs font-mono uppercase tracking-wide text-[var(--muted)] mb-2">{entry.data.section}</p>
+      {
+        guide ? (
+          <nav aria-label="Breadcrumb" class="text-xs font-mono uppercase tracking-wide text-[var(--muted)] mb-2">
+            <a href="/guides/" class="hover:text-[var(--ink)]">Guides</a>
+            {category && (
+              <>
+                <span aria-hidden="true"> / </span>
+                <a href={`/guides/#${categorySlug(category)}`} class="hover:text-[var(--ink)]">{category}</a>
+              </>
+            )}
+          </nav>
+        ) : (
+          <p class="text-xs font-mono uppercase tracking-wide text-[var(--muted)] mb-2">{entry.data.section}</p>
+        )
+      }
       <h1 class="text-3xl sm:text-4xl font-light tracking-tight mb-6" style="letter-spacing: -0.03em;">
         {entry.data.title}
       </h1>
+      {
+        guide && (time || level || needs.length > 0) && (
+          <div class="guide-meta max-w-[72ch] mb-8 border hairline bg-[var(--card)] p-4 flex flex-col sm:flex-row gap-4">
+            <span class="guide-icon hidden sm:inline-flex items-center justify-center w-12 h-12 shrink-0">
+              <GuideIcon category={category ?? null} size={24} />
+            </span>
+            <dl class="grid gap-3 text-sm min-w-0">
+              {(time || level) && (
+                <div class="flex flex-wrap items-center gap-2">
+                  <dt class="sr-only">Time and level</dt>
+                  {time && <dd class="guide-chip font-mono text-xs">About {time}</dd>}
+                  {level && <dd class="guide-chip font-mono text-xs">{level}</dd>}
+                </div>
+              )}
+              {needs.length > 0 && (
+                <div class="flex flex-wrap items-center gap-2">
+                  <dt class="text-xs font-mono uppercase tracking-wide text-[var(--muted)] mr-1">What you need</dt>
+                  {needs.map((need) => (
+                    <dd class="guide-chip text-xs">{need}</dd>
+                  ))}
+                </div>
+              )}
+            </dl>
+          </div>
+        )
+      }
       <div class="prose-doc max-w-[72ch]">
         <slot />
       </div>
+
+      {
+        related.length > 0 && (
+          <section aria-labelledby="next-guides" class="mt-12">
+            <h2 id="next-guides" class="text-xs font-mono uppercase tracking-wide text-[var(--muted)] mb-3">Where to go next</h2>
+            <ul class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {related.map((g) => (
+                <li>
+                  <GuideCard guide={g} headingLevel="h3" />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
 
       <div class="mt-12 pt-6 border-t hairline flex flex-wrap items-center justify-between gap-4 text-sm">
         <a href={editUrl} target="_blank" rel="noreferrer" class="text-[var(--muted)] hover:text-[var(--ink)]">

@@ -1,0 +1,111 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import GuideCard from '../../components/GuideCard.astro'
+import GuideIcon from '../../components/GuideIcon.astro'
+import { GUIDE_CATEGORIES, categorySlug, getGuides } from '../../lib/guides'
+
+const guides = await getGuides()
+const present = new Set(guides.map((g) => g.category).filter(Boolean))
+const categories = [
+  ...GUIDE_CATEGORIES.filter((c) => present.has(c)),
+  ...[...present].filter((c): c is string => !!c && !(GUIDE_CATEGORIES as readonly string[]).includes(c)),
+]
+const countFor = (category: string) => guides.filter((g) => g.category === category).length
+const startHere = guides.find((g) => g.category === 'Get started') ?? guides[0]
+const title = 'Guides — devmachine'
+const description =
+  'Step-by-step devmachine guides: coding agents on your server, sites with HTTPS, private networks and logins. Each one by hand or with your agent.'
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'devmachine guides',
+    description,
+    url: new URL('/guides/', Astro.site).href,
+    hasPart: guides.map((g) => ({
+      '@type': 'TechArticle',
+      headline: g.title,
+      url: new URL(g.url, Astro.site).href,
+    })),
+  },
+]
+---
+
+<BaseLayout title={title} description={description} current="docs" markdownUrl="/guides.md" jsonLd={jsonLd}>
+  <section class="frame pt-12 pb-6 sm:pt-16">
+    <p class="text-xs font-mono uppercase tracking-wide text-[var(--muted)] mb-3">Guides</p>
+    <h1 class="text-4xl sm:text-5xl font-light tracking-tight mb-5" style="letter-spacing: -0.03em;">
+      Real setups, step by step.
+    </h1>
+    <p class="text-[var(--muted)] max-w-2xl text-base leading-relaxed">
+      Each guide says what you need and how long it takes. Then it shows the commands two ways: by hand, and as one
+      request to your coding agent.
+    </p>
+  </section>
+
+  {
+    categories.length > 1 && (
+      <div class="frame">
+        <div id="guide-filters" class="hidden flex-wrap gap-2 py-4 border-y hairline" role="group" aria-label="Show guides by category">
+          <button type="button" class="guide-filter" data-filter="all" aria-pressed="true">
+            All <span class="text-[var(--muted)]">{guides.length}</span>
+          </button>
+          {categories.map((c) => (
+            <button type="button" class="guide-filter" id={categorySlug(c)} data-filter={categorySlug(c)} aria-pressed="false">
+              <GuideIcon category={c} size={16} />
+              {c} <span class="text-[var(--muted)]">{countFor(c)}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  <section class="frame py-8" aria-label="All guides">
+    <ul id="guide-list" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        guides.map((g) => (
+          <li data-category={g.category ? categorySlug(g.category) : 'none'}>
+            <GuideCard guide={g} startHere={g.id === startHere?.id} />
+          </li>
+        ))
+      }
+    </ul>
+    <p class="mt-10 text-sm text-[var(--muted)] max-w-2xl">
+      Every guide is also plain Markdown in the
+      <a class="underline underline-offset-2 hover:text-[var(--ink)]" href="https://github.com/mydevmachine/devmachine/tree/main/docs/guides" target="_blank" rel="noreferrer">CLI repository<span class="sr-only"> (opens in a new tab)</span></a>.
+      Hand one to your agent, or add your own.
+    </p>
+  </section>
+
+  <script is:inline>
+    ;(() => {
+      const bar = document.getElementById('guide-filters')
+      const items = [...document.querySelectorAll('#guide-list > li')]
+      if (!bar) return
+      bar.classList.remove('hidden')
+      bar.classList.add('flex')
+      const buttons = [...bar.querySelectorAll('.guide-filter')]
+      const valid = new Set(buttons.map((b) => b.dataset.filter))
+      const apply = (filter, announce) => {
+        let shown = 0
+        for (const b of buttons) b.setAttribute('aria-pressed', String(b.dataset.filter === filter))
+        for (const li of items) {
+          const match = filter === 'all' || li.dataset.category === filter
+          li.hidden = !match
+          if (match) shown++
+        }
+        if (announce) window.announce?.(`${shown} guides shown`)
+      }
+      for (const b of buttons) {
+        b.addEventListener('click', () => {
+          const filter = b.dataset.filter
+          apply(filter, true)
+          history.replaceState(null, '', filter === 'all' ? location.pathname : `#${filter}`)
+        })
+      }
+      const fromHash = location.hash.slice(1)
+      apply(valid.has(fromHash) ? fromHash : 'all', false)
+    })()
+  </script>
+</BaseLayout>

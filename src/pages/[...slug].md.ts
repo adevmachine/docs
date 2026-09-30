@@ -7,10 +7,14 @@ const SITE = 'https://mydevmachine.sh'
 
 export async function getStaticPaths() {
   const docs = await getCollection('docs', (entry) => entry.id !== 'index')
-  return docs.map((entry) => ({
+  const paths = docs.map((entry) => ({
     params: { slug: entry.id.replace(/\.md$/, '').replace(/\/index$/, '') },
     props: { entry },
   }))
+  const movedGuides = paths
+    .filter(({ params }) => params.slug === 'guides' || params.slug.startsWith('guides/'))
+    .map(({ params, props }) => ({ params: { slug: params.slug.replace(/^guides/, 'examples') }, props }))
+  return [...paths, ...movedGuides]
 }
 
 export const GET: APIRoute = async ({ props }) => {

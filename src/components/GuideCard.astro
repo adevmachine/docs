@@ -1,0 +1,40 @@
+---
+import GuideIcon from './GuideIcon.astro'
+import { categorySlug, minutesLabel, type Guide } from '../lib/guides'
+
+interface Props {
+  guide: Guide
+  headingLevel?: 'h2' | 'h3'
+  startHere?: boolean
+}
+
+const { guide, headingLevel = 'h2', startHere = false } = Astro.props
+const Heading = headingLevel
+const time = minutesLabel(guide.minutes)
+---
+
+<a
+  href={guide.url}
+  class="guide-card group flex flex-col h-full border hairline bg-[var(--card)] p-5 hover:border-[var(--ink)] transition-colors"
+  data-category={guide.category ? categorySlug(guide.category) : undefined}
+>
+  <div class="flex items-center gap-3 mb-4">
+    <span class="guide-icon inline-flex items-center justify-center w-10 h-10 shrink-0">
+      <GuideIcon category={guide.category} />
+    </span>
+    <span class="text-xs font-mono uppercase tracking-wide text-[var(--muted)]">{guide.category ?? 'Guide'}</span>
+    {startHere && <span class="guide-badge ml-auto text-xs font-mono uppercase tracking-wide px-2 py-0.5">Start here</span>}
+  </div>
+  <Heading class="text-lg font-semibold leading-snug tracking-tight mb-2 group-hover:underline underline-offset-4">
+    {guide.title}
+  </Heading>
+  <p class="text-sm text-[var(--muted)] leading-relaxed mb-4">{guide.description}</p>
+  {
+    (time || guide.level) && (
+      <p class="mt-auto flex flex-wrap gap-2 text-xs font-mono text-[var(--muted)]">
+        {time && <span class="guide-chip">{time}</span>}
+        {guide.level && <span class="guide-chip">{guide.level}</span>}
+      </p>
+    )
+  }
+</a>

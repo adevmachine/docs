@@ -8,6 +8,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, statSy
 import { join, dirname, relative, resolve, posix } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { execFileSync } from 'node:child_process'
+import { parse as parseYaml } from 'yaml'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = join(__dirname, '..')
@@ -22,8 +23,17 @@ const DROPPED = new Set(['development.md', 'releasing.md'])
 const BASE = ''
 const GITHUB_BLOB = 'https://github.com/mydevmachine/devmachine/blob/main/docs'
 
+// The CLI renamed docs/examples/ to docs/guides/. Both are published under
+// /guides/, so the site builds from a CLI release on either side of the rename.
+const LEGACY_GUIDES_PREFIX = 'examples/'
+const GUIDES_PREFIX = 'guides/'
+
+function publicPath(relPath) {
+  return relPath.startsWith(LEGACY_GUIDES_PREFIX) ? GUIDES_PREFIX + relPath.slice(LEGACY_GUIDES_PREFIX.length) : relPath
+}
+
 const SECTION_BY_PREFIX = [
-  ['examples/', 'Real examples'],
+  ['guides/', 'Guides'],
   ['concepts/', 'Concepts'],
   ['how-it-works/', 'How it works'],
   ['reference/', 'CLI Reference'],
@@ -31,7 +41,7 @@ const SECTION_BY_PREFIX = [
 
 function sectionFor(relPath) {
   for (const [prefix, name] of SECTION_BY_PREFIX) {
-    if (relPath.startsWith(prefix)) return name
+    if (publicPath(relPath).startsWith(prefix)) return name
   }
   if (relPath === 'getting-started.md') return 'Getting started'
   if (relPath === 'agent-setup.md') return 'Getting started'
@@ -42,7 +52,7 @@ function sectionFor(relPath) {
 }
 
 function slugFor(relPath) {
-  const noExt = relPath.replace(/\.md$/, '').replace(/(^|\/)index$/, '')
+  const noExt = publicPath(relPath).replace(/\.md$/, '').replace(/(^|\/)index$/, '')
   if (noExt === '') return `${BASE}/`
   return `${BASE}/${noExt}/`
 }
@@ -78,7 +88,7 @@ function parseIndexOrder(markdown) {
   const linkRe = /\]\(([a-zA-Z0-9_./-]+\.md)(#[^)]*)?\)/g
   let match
   while ((match = linkRe.exec(markdown))) {
-    const target = match[1]
+    const target = publicPath(match[1])
     if (!order.has(target)) order.set(target, position++)
   }
   return order
@@ -87,8 +97,30 @@ function parseIndexOrder(markdown) {
 const indexOrder = parseIndexOrder(indexRaw)
 
 function orderFor(relPath) {
-  if (indexOrder.has(relPath)) return indexOrder.get(relPath)
+  const path = publicPath(relPath)
+  if (indexOrder.has(path)) return indexOrder.get(path)
   return 10000
+}
+
+function splitFrontmatter(markdown) {
+  const match = markdown.match(/^---\n([\s\S]*?)\n---\n/)
+  if (!match) return { meta: {}, content: markdown }
+  return { meta: parseYaml(match[1]) ?? {}, content: markdown.slice(match[0].length) }
+}
+
+function guideMeta(meta, relPath) {
+  if (!publicPath(relPath).startsWith(GUIDES_PREFIX)) return {}
+  const dir = dirname(relPath)
+  return {
+    description: meta.description ?? null,
+    category: meta.category ?? null,
+    minutes: typeof meta.minutes === 'number' ? meta.minutes : null,
+    level: meta.level ?? null,
+    needs: Array.isArray(meta.needs) ? meta.needs.map(String) : [],
+    related: Array.isArray(meta.related)
+      ? meta.related.map((target) => slugFor(posix.normalize(posix.join(dir, String(target)))))
+      : [],
+  }
 }
 
 function firstHeading(markdown, fallback) {
@@ -126,15 +158,19 @@ mkdirSync(outDir, { recursive: true })
 const pages = []
 
 for (const relPath of keptFiles) {
-  const raw = readFileSync(join(sourceDir, relPath), 'utf8')
-  const title = relPath === 'examples/index.md' ? 'All examples' : firstHeading(raw, relPath)
+  const { meta, content: raw } = splitFrontmatter(readFileSync(join(sourceDir, relPath), 'utf8'))
+  const title = publicPath(relPath) === 'guides/index.md' ? 'All guides' : firstHeading(raw, relPath)
   const section = sectionFor(relPath)
   const body = rewriteLinks(raw.replace(/^#\s+.+\n/, ''), relPath)
-  const firstParagraph = (body.match(/^(?!#|```|\s*$)(.+)$/m) || [, ''])[1]
+  const firstParagraph = (body.match(/^(?!#|```|\s*$)(.+(?:\n(?!\s*$|#|```|[-*] ).+)*)/m) || [, ''])[1]
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
     .replace(/[*_`]/g, '')
+    .replace(/\s+/g, ' ')
     .trim()
+  const guide = guideMeta(meta, relPath)
+  const summary = guide.description ?? firstParagraph
 
-  const outRel = relPath
+  const outRel = publicPath(relPath)
   const outPath = join(outDir, outRel)
   mkdirSync(dirname(outPath), { recursive: true })
 
@@ -144,7 +180,8 @@ for (const relPath of keptFiles) {
     `section: ${JSON.stringify(section)}`,
     `order: ${orderFor(relPath)}`,
     `sourcePath: ${JSON.stringify(`docs/${relPath}`)}`,
-    `summary: ${JSON.stringify(firstParagraph)}`,
+    `summary: ${JSON.stringify(summary)}`,
+    ...Object.entries(guide).map(([key, value]) => `${key}: ${JSON.stringify(value)}`),
     '---',
     '',
   ].join('\n')
@@ -158,7 +195,7 @@ for (const relPath of keptFiles) {
     section,
     order: orderFor(relPath),
     url: slugFor(relPath),
-    summary: firstParagraph,
+    summary,
   })
 }
 

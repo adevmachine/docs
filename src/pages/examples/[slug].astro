@@ -1,0 +1,16 @@
+---
+import MovedPage from '../../components/MovedPage.astro'
+import { getGuides } from '../../lib/guides'
+
+export async function getStaticPaths() {
+  const guides = await getGuides()
+  return guides.map((guide) => ({
+    params: { slug: guide.url.replace(/^\/guides\//, '').replace(/\/$/, '') },
+    props: { guide },
+  }))
+}
+
+const { guide } = Astro.props
+---
+
+<MovedPage to={guide.url} title={guide.title} />

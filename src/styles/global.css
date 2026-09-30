@@ -912,3 +912,50 @@ body {
   border-color: var(--accent-ink);
   white-space: nowrap;
 }
+
+.guide-icon {
+  color: var(--accent-ink);
+  background: color-mix(in srgb, var(--accent-ink) 10%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--accent-ink) 25%, var(--line));
+}
+
+.guide-badge {
+  color: var(--accent-ink);
+  border: 1px solid currentColor;
+}
+
+.guide-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.125rem 0.5rem;
+  border: 1px solid var(--line);
+  background: var(--bg);
+}
+
+.guide-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+}
+
+.guide-filter:hover {
+  border-color: var(--ink);
+}
+
+.guide-filter[aria-pressed="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--bg);
+}
+
+.guide-filter[aria-pressed="true"] span,
+.guide-filter[aria-pressed="true"] svg {
+  color: inherit;
+  opacity: 0.8;
+}

@@ -26,7 +26,7 @@ own copy of the CLI docs or the packages data.
   "Contributing" link at GitHub instead;
 - reads each page's first `# Heading` as its title;
 - derives sidebar order from `docs/index.md`'s link order, grouped into
-  Getting started, Real examples, Concepts, How it works, CLI Reference, and
+  Getting started, Guides, Concepts, How it works, CLI Reference, and
   Troubleshooting (the mapping lives in `SECTION_BY_PREFIX` and `sectionFor()`
   in `scripts/fetch-docs.mjs` — see "Adding a new CLI doc page" below);
 - reads the CLI checkout's latest git tag and the workspace default packages
@@ -36,6 +36,19 @@ own copy of the CLI docs or the packages data.
 
 A new page in the CLI's `docs/` shows up here without any change to this
 repository.
+
+### Guides
+
+`docs/guides/` in the CLI is published at `/guides/`. Older CLI releases call
+the folder `docs/examples/`; `fetch-docs.mjs` maps it to `/guides/` too, so
+the site builds from either. Each guide's YAML frontmatter (`description`,
+`category`, `minutes`, `level`, `needs`, `related`) feeds the cards on
+`/guides/`, the chips under each guide's title and its "Next" list. A guide
+without frontmatter still renders, with no chips.
+
+The old `/examples/…` URLs are small redirect pages
+(`src/pages/examples/`), and `/examples/<guide>.md` still serves the
+Markdown, so links people saved keep working.
 
 ### Packages metadata
 
@@ -132,8 +145,8 @@ page's raw-Markdown URL (see below).
 A page's sidebar section comes from its path in the CLI repo's `docs/`
 directory, mapped in `scripts/fetch-docs.mjs`:
 
-- `SECTION_BY_PREFIX` maps a path prefix to a section name: `examples/` to
-  Real examples, `concepts/` to Concepts, `how-it-works/` to How it works,
+- `SECTION_BY_PREFIX` maps a path prefix to a section name: `guides/` to
+  Guides, `concepts/` to Concepts, `how-it-works/` to How it works,
   `reference/` to CLI Reference.
 - `sectionFor()` checks that list first, then a few top-level files
   (`getting-started.md`, `agent-setup.md`, `day-to-day.md`, `upgrade.md`) go
