@@ -71,6 +71,18 @@ const allSections: Section[] = [
     ],
   },
   {
+    id: 'drop-files',
+    title: 'Drop files onto a session',
+    body: 'Drag files from Finder onto a session and they land on its machine, with the path typed at the prompt for you. Paste an image with ⌘V and it works the same way. Each file keeps its name plus the time, so nothing gets overwritten.',
+    shots: [
+      {
+        name: '22-drop-files',
+        alt: 'A file dragged over the Claude Code session of acme: the pane shows "Drop to upload to acme-devmachine", and the prompt already holds the path of an earlier upload, mockup-20260930-143012.png, inside a request to match the header.',
+        caption: 'Drop a file, get its path on the machine.',
+      },
+    ],
+  },
+  {
     id: 'command-palette',
     title: '⌘K for everything',
     body: 'Press ⌘K and type a few letters. Jump to any screen, session, machine or action without leaving the keyboard.',
@@ -188,7 +200,7 @@ const features = [
   { title: 'Sites and DNS', body: 'Publish a port in a few clicks. See the records of each provider.' },
   { title: 'Session defaults', body: 'Terminal, Claude Code, Codex or your own command, per workspace.' },
   { title: 'Menu bar', body: 'Pull requests, and Claude Code and Codex usage.' },
-  { title: 'Paste an image in', body: 'Paste a screenshot into a remote session. The file lands on the machine.' },
+  { title: 'Drop or paste files', body: 'Drag files or paste an image into a session. They land on its machine, path typed in.' },
   { title: 'A files view', body: 'Browse and preview the files of a workspace without a session.' },
 ]
 
