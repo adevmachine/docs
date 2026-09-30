@@ -103,7 +103,7 @@ const windows: Win[] = [
   <p class="sr-only">
     Illustration: terminals for you, two workspaces and a coding agent, and the Mac app, all linked to one server.
   </p>
-  <div class="hero-terminal-wrap px-4 sm:px-6" id="hero-terminal" aria-hidden="true">
+  <div class="hero-terminal-wrap px-4 sm:px-6" id="hero-terminal">
     <div class="hero-stage">
       <svg
         class="hero-link-svg"
@@ -148,7 +148,7 @@ const windows: Win[] = [
       {
         windows.map((win) => (
           <div class={`term-window term-${win.id}`} data-window={win.id}>
-            <div class="terminal">
+            <div class="terminal" aria-hidden="true">
               <div class="terminal-titlebar">
                 <span class="terminal-dot" />
                 <span class="terminal-dot" />
@@ -169,7 +169,7 @@ const windows: Win[] = [
         ))
       }
       <div class="term-window term-agent" data-window="agent">
-        <div class="terminal">
+        <div class="terminal" aria-hidden="true">
           <div class="terminal-titlebar">
             <span class="terminal-dot" />
             <span class="terminal-dot" />
@@ -182,7 +182,18 @@ const windows: Win[] = [
         </div>
       </div>
       <div class="term-window term-mac" data-window="mac">
-        <div class="mac-window">
+        <button
+          type="button"
+          id="hero-motion"
+          class="hero-motion-toggle"
+          aria-label="Pause animation"
+          aria-pressed="false"
+          title="Pause animation"
+        >
+          <svg class="icon-pause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" /><rect x="14" y="5" width="4" height="14" /></svg>
+          <svg class="icon-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+        </button>
+        <div class="mac-window" aria-hidden="true">
           <aside class="mac-sidebar">
             <div class="mac-lights">
               <span class="mac-light mac-light-close" />
@@ -234,7 +245,6 @@ const windows: Win[] = [
       </div>
     </div>
   </div>
-  <button type="button" id="hero-motion" class="hero-motion-toggle font-mono">Pause animation</button>
 </section>
 
 <script is:inline define:vars={{ windows }}>
@@ -372,7 +382,8 @@ const windows: Win[] = [
     toggle.addEventListener('click', () => {
       const paused = !hero.hasAttribute('data-paused')
       hero.toggleAttribute('data-paused', paused)
-      toggle.textContent = paused ? 'Play animation' : 'Pause animation'
+      toggle.setAttribute('aria-pressed', String(paused))
+      toggle.title = paused ? 'Play animation' : 'Pause animation'
       hero.dispatchEvent(new Event('hero-motion'))
     })
   })()
@@ -507,7 +518,7 @@ const windows: Win[] = [
       let startY = 0
 
       link.win.addEventListener('pointerdown', (e) => {
-        if (!desktopQuery.matches || e.button !== 0) return
+        if (!desktopQuery.matches || e.button !== 0 || e.target.closest('button')) return
         link.dragging = true
         link.vx = link.vy = 0
         startX = e.clientX - link.x

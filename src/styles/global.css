@@ -346,21 +346,37 @@ body {
 
 .hero-motion-toggle {
   position: absolute;
-  right: 1rem;
-  bottom: 1rem;
-  z-index: 2;
-  min-height: 1.75rem;
-  padding: 0.25rem 0.6rem;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  right: 0;
+  bottom: calc(100% + 0.4rem);
+  z-index: 6;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
   color: var(--muted);
   background: var(--bg);
   border: 1px solid var(--line);
+  cursor: pointer;
 }
 
 .hero-motion-toggle:hover {
   color: var(--ink);
+}
+
+.hero-motion-toggle .icon-play,
+.hero[data-paused] .hero-motion-toggle .icon-pause {
+  display: none;
+}
+
+.hero[data-paused] .hero-motion-toggle .icon-play {
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .hero .term-window.term-mac {
+    margin-top: 2.5rem;
+  }
 }
 
 .hero[data-paused] .hero-backdrop::before,
