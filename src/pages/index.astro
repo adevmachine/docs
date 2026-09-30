@@ -120,6 +120,11 @@ const faq = [
     link: doc('how-it-works/your-computer-as-a-machine/', 'Your computer as a machine'),
   },
   {
+    q: 'Does it work on Windows?',
+    a: `Not yet. The CLI and the Mac app run on macOS and Linux only. If a machine is already set up, you can still reach its workspaces from Windows with plain <code>ssh</code>, but you cannot run the CLI or the app there for now. Contributions are welcome.`,
+    link: `<a class="faq-link" href="https://github.com/mydevmachine/devmachine" target="_blank" rel="noreferrer">Contribute on GitHub →<span class="sr-only"> (opens in a new tab)</span></a>`,
+  },
+  {
     q: 'How do I configure my machine?',
     a: `Ask your coding agent. After <code>devmachine skills add</code>, any Claude Code or Codex session can add packages, workspaces and sites for you. For bigger changes, like writing your own package, open a session in the configuration folder: it holds your whole setup, and a <code>CLAUDE.md</code> there can tell the agent your own rules.`,
     link: doc('day-to-day/', 'Day to day'),
