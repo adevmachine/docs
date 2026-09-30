@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro'
 import AppShot from '../components/AppShot.astro'
 import ShotViewer from '../components/ShotViewer.astro'
-import type { Shot } from '../lib/app-shots'
+import { shotExists, type Shot } from '../lib/app-shots'
 
 const base = import.meta.env.BASE_URL
 const dmg = 'https://github.com/mydevmachine/app-releases/releases/latest/download/Devmachine.dmg'
@@ -16,7 +16,7 @@ interface Section {
   shots: Shot[]
 }
 
-const sections: Section[] = [
+const allSections: Section[] = [
   {
     id: 'setup',
     title: 'Set up from the app',
@@ -67,6 +67,18 @@ const sections: Section[] = [
         name: '02-session-claude',
         alt: 'A Claude Code session with the context panel open, showing its todo list, pull requests and links.',
         caption: 'The todo, pull requests and links of the session.',
+      },
+    ],
+  },
+  {
+    id: 'command-palette',
+    title: '⌘K for everything',
+    body: 'Press ⌘K and type a few letters. Jump to any screen, session, machine or action without leaving the keyboard.',
+    shots: [
+      {
+        name: '21-command-palette',
+        alt: 'The command palette open over the app, listing screens, sessions of acme, machines and actions that match the search.',
+        caption: 'One search for screens, sessions, machines and actions.',
       },
     ],
   },
@@ -159,16 +171,22 @@ const sections: Section[] = [
   },
 ]
 
+const sections = allSections.map((section) => ({ ...section, shots: section.shots.filter(shotExists) }))
+const heroShot: Shot = {
+  name: '01-sessions',
+  alt: 'Four sessions of the acme workspace in a grid: Claude Code, Codex, tests and a dev server.',
+}
+
 const features = [
   { title: 'Setup, guided', body: 'Run each step in the app, or let your agent do it.' },
   { title: 'Operator', body: 'A session in your devmachine folder, always one click away.' },
   { title: 'Real terminals', body: 'tmux over mosh (or ssh). A dropped link never drops a session.' },
   { title: 'Grids', body: 'Several sessions of one workspace, side by side.' },
+  { title: '⌘K', body: 'Jump to any screen, session, machine or action.' },
   { title: 'A context panel', body: 'Todo, pull requests, links, files and git of each session.' },
-  { title: 'Home and stats', body: 'RAM, disk, load and containers of every machine.' },
+  { title: 'Home, stats and health', body: 'RAM, disk, load, containers and the doctor checks of every machine.' },
   { title: 'Sites and DNS', body: 'Publish a port in a few clicks. See the records of each provider.' },
   { title: 'Session defaults', body: 'Terminal, Claude Code, Codex or your own command, per workspace.' },
-  { title: 'A health check', body: 'The checks of devmachine doctor, for every machine.' },
   { title: 'Menu bar', body: 'Pull requests, and Claude Code and Codex usage.' },
   { title: 'Paste an image in', body: 'Paste a screenshot into a remote session. The file lands on the machine.' },
   { title: 'A files view', body: 'Browse and preview the files of a workspace without a session.' },
@@ -201,7 +219,7 @@ const jsonLd = [
 ---
 
 <BaseLayout title="Devmachine for Mac — devmachine" description={description} current="docs" jsonLd={jsonLd}>
-  <section class="max-w-6xl mx-auto px-4 sm:px-6 pt-16 pb-12">
+  <section class="frame pt-16 pb-12">
     <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">macOS app · optional</p>
     <h1 class="text-4xl sm:text-6xl font-light tracking-tight mb-5">Devmachine for Mac.</h1>
     <p class="text-[var(--muted)] max-w-2xl">
@@ -247,11 +265,11 @@ const jsonLd = [
           </ul>
         </div>
       </div>
-      <AppShot shot={sections[2].shots[0]} eager />
+      <AppShot shot={heroShot} eager />
     </div>
   </section>
 
-  <section id="do-it-from-the-app" class="max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-12">
+  <section id="do-it-from-the-app" class="frame pt-8 pb-12">
     <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">Do it from the app</p>
     <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-10">What you can do here.</h2>
 
@@ -261,7 +279,7 @@ const jsonLd = [
         const flip = i % 2 === 1
         return (
           <article id={section.id} class="app-row grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10 items-center py-12">
-            <div class:list={['md:col-span-5', flip && 'md:order-2']}>
+            <div class:list={[section.shots.length ? 'md:col-span-5' : 'md:col-span-7', flip && section.shots.length && 'md:order-2']}>
               <p class="text-xs font-mono text-[var(--muted)] mb-4">{String(i + 1).padStart(2, '0')}</p>
               <h3 class="text-2xl sm:text-3xl font-light tracking-tight mb-3">{section.title}</h3>
               <p class="text-[var(--muted)] leading-relaxed">{section.body}</p>
@@ -286,7 +304,7 @@ const jsonLd = [
                 </p>
               )}
             </div>
-            <figure class:list={['md:col-span-7 min-w-0', flip && 'md:order-1']}>
+            {section.shots.length > 0 && (<figure class:list={['md:col-span-7 min-w-0', flip && 'md:order-1']}>
               {section.shots.length === 2 ? (
                 <div class="grid grid-cols-2 gap-4 items-start">
                   {section.shots.map((shot) => (
@@ -312,14 +330,14 @@ const jsonLd = [
                   ))}
                 </div>
               )}
-            </figure>
+            </figure>)}
           </article>
         )
       })
     }
   </section>
 
-  <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
+  <section class="frame pb-16">
     <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-4">In short</p>
     <div class="grid-cards grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
       {
@@ -334,7 +352,7 @@ const jsonLd = [
   </section>
 
   <section id="also-a-cli-command" class="dark-section">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-20">
+    <div class="frame py-20">
       <p class="text-xs font-mono uppercase tracking-widest text-[#9a9a9a] mb-3">Same tool underneath</p>
       <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-4">Everything here is also a CLI command.</h2>
       <p class="text-[#9a9a9a] max-w-2xl mb-10">
@@ -358,7 +376,7 @@ const jsonLd = [
     </div>
   </section>
 
-  <section class="max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-32 text-center">
+  <section class="frame pt-24 pb-32 text-center">
     <p class="text-[var(--muted)] max-w-xl mx-auto mb-6">
       Rather start in the terminal? The CLI is all you need. You can add the app later.
     </p>

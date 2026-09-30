@@ -3,25 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import Hero from '../components/Hero.astro'
 import AppShot from '../components/AppShot.astro'
 import ShotViewer from '../components/ShotViewer.astro'
+import { shotExists } from '../lib/app-shots'
 const base = import.meta.env.BASE_URL
-
-const howItWorks = [
-  {
-    title: 'Connect your server',
-    body: 'Run devmachine setup and answer a few questions. It connects to your server and locks it down, so only you can get in.',
-    href: `${base}how-it-works/trust-bootstrap/`,
-  },
-  {
-    title: 'A workspace per project',
-    body: 'Each project gets its own space on the server, with git, GitHub and Node ready. Open it by name.',
-    href: `${base}concepts/machines-and-workspaces/`,
-  },
-  {
-    title: 'Add tools with one command',
-    body: 'Claude Code, Docker, your GitHub login. Add one, run devmachine sync, and it is installed.',
-    href: `${base}concepts/packages/`,
-  },
-]
 
 const principles = [
   {
@@ -43,25 +26,31 @@ const principles = [
   },
 ]
 
-const machines = [
+const steps = [
   {
-    title: 'A VPS',
-    body: 'Rent a server with Debian or Ubuntu that you can reach as root over SSH. It is always on, so you can code from anywhere.',
-    href: `${base}getting-started/`,
-    link: 'Connect your server',
+    icon: 'server',
+    title: 'Your server',
+    body: 'A VPS you rent, an old laptop, or a virtual machine on your Mac. devmachine sets it up and locks it down.',
   },
   {
-    title: 'A computer you already have',
-    body: 'An old laptop, a Linux box sitting idle, a Mac at the office running a Linux virtual machine. Join it to a private network with Tailscale or another VPN, and devmachine reaches it like any server.',
-    href: `${base}concepts/reaching-your-server/`,
-    link: 'Reach it over a private network',
+    icon: 'workspaces',
+    title: 'Workspaces',
+    body: 'One per project, each with its own tools, logins and coding agent.',
   },
   {
-    title: 'Your own computer, to try',
-    body: 'No machine yet? devmachine can make a virtual machine on your computer and set it up exactly like a VPS. Throw it away when you are done.',
-    href: `${base}examples/a-local-vm-with-lima/`,
-    link: 'Try it on your own computer first',
+    icon: 'laptop',
+    title: 'You and your agents',
+    body: 'Work there from any computer: in the terminal, in the Mac app, or through Claude Code and Codex.',
   },
+]
+
+const benefits = [
+  { title: 'One workspace per project', body: "Projects never see each other's files or tokens." },
+  { title: 'Work from any computer', body: 'Your code lives on the server, not on your laptop.' },
+  { title: 'Agents ready to work', body: 'Claude Code, Codex and your skills in every workspace.' },
+  { title: 'Tools in one command', body: 'Add Docker, Claude Code or your own package, then sync.' },
+  { title: 'Apps online with HTTPS', body: 'Publish a port at your own domain with one command.' },
+  { title: 'Locked down from the start', body: 'Setup turns off password logins. Only your key gets in.' },
 ]
 
 const tiers = [
@@ -94,18 +83,12 @@ const macStrip = [
     alt: 'The home screen with two machines, staging and backup, each with RAM, disk, load and container counts.',
     caption: 'Every machine at a glance.',
   },
-]
+].filter(shotExists)
+const macFeatures = ['Guided setup', 'Operator session', 'Sessions side by side', 'All machines at a glance']
 const appSteps = [
   { title: 'Download Devmachine for Mac.', body: 'Drag it to Applications and open it.' },
   { title: 'Let it set you up.', body: 'Run each setup step in a terminal inside the app, or let Claude Code or Codex do it for you.' },
   { title: 'Open a session.', body: 'Pick a workspace in the sidebar and start working, with Claude Code, Codex or a plain terminal.' },
-]
-
-const commands = [
-  { cmd: 'devmachine setup', desc: 'connect your server and make it safe' },
-  { cmd: 'devmachine workspaces new acme', desc: 'add your first workspace' },
-  { cmd: 'devmachine sync', desc: 'build it on your server' },
-  { cmd: 'devmachine ssh acme', desc: 'open it and start working' },
 ]
 
 const description =
@@ -234,7 +217,7 @@ const jsonLd = [
     subline="Your own server. One workspace per project. Ready in a few commands."
   />
 
-  <section id="principles" class="max-w-6xl mx-auto px-4 sm:px-6 pt-4 pb-16">
+  <section id="principles" class="frame pt-4 pb-16">
     <div class="grid-cards grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       {
         principles.map((item) => {
@@ -250,32 +233,8 @@ const jsonLd = [
     </div>
   </section>
 
-  <section id="before-you-start" class="max-w-6xl mx-auto px-4 sm:px-6 pt-4 pb-20">
-    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">01 / Before you start</p>
-    <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-4">First, a machine.</h2>
-    <p class="text-[var(--muted)] max-w-2xl mb-10">
-      devmachine needs one machine to set up. Pick whichever you have. Your computer reaches it
-      through the devmachine CLI, over the internet or over a private network like Tailscale.
-    </p>
-
-    <div class="grid-cards grid-cols-1 sm:grid-cols-3">
-      {
-        machines.map((m, i) => (
-          <div class="p-6 flex flex-col">
-            <p class="text-xs font-mono text-[var(--muted)] mb-10">{String(i + 1).padStart(2, '0')}</p>
-            <h3 class="text-2xl font-light tracking-tight mb-3">{m.title}</h3>
-            <p class="text-sm text-[var(--muted)] leading-relaxed mb-4">{m.body}</p>
-            <p class="text-sm mt-auto">
-              <a href={m.href} class="underline underline-offset-2 hover:text-[var(--ink)]">{m.link} →</a>
-            </p>
-          </div>
-        ))
-      }
-    </div>
-  </section>
-
-  <section id="get-started" class="max-w-6xl mx-auto px-4 sm:px-6 pt-4 pb-20">
-    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">02 / Get started</p>
+  <section id="get-started" class="frame pt-4 pb-20">
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">01 / Get started</p>
     <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-4">Start with the app, or with the CLI.</h2>
     <p class="text-[var(--muted)] max-w-2xl mb-10">
       Pick one. The Mac app is optional: it runs the same CLI on the same configuration folder, so what you do
@@ -299,17 +258,17 @@ const jsonLd = [
           }
         </ol>
         <div class="mt-auto">
-          <div class="flex flex-wrap items-center gap-3">
-            <a
-              href={appDmg}
-              class="inline-block border border-[var(--ink)] px-6 py-3 text-sm font-mono uppercase tracking-wide hover:bg-[var(--ink)] hover:text-[var(--bg)] transition-colors"
-            >
-              Download for macOS
+          <a
+            href={appDmg}
+            class="inline-block border border-[var(--ink)] px-6 py-3 text-sm font-mono uppercase tracking-wide hover:bg-[var(--ink)] hover:text-[var(--bg)] transition-colors"
+          >
+            Download for macOS
+          </a>
+          <p class="text-sm mt-3">
+            <a href={`${base}app/`} class="underline underline-offset-2 text-[var(--muted)] hover:text-[var(--ink)]">
+              Learn before download →
             </a>
-            <a href={`${base}app/`} class="text-sm underline underline-offset-2 text-[var(--muted)] hover:text-[var(--ink)]">
-              See the app →
-            </a>
-          </div>
+          </p>
           <p class="text-xs text-[var(--muted)] mt-3">macOS 14 Sonoma or later. Or with Homebrew:</p>
           <p class="text-xs mt-1"><code class="font-mono text-[var(--ink)] break-words">brew install --cask mydevmachine/tap/devmachine-app</code></p>
         </div>
@@ -341,407 +300,199 @@ const jsonLd = [
           </button>
         </div>
 
-        <div role="tabpanel" id="panel-yourself" aria-labelledby="tab-yourself" tabindex="0" class="pt-6">
-          <p class="text-xs uppercase tracking-widest text-[var(--muted)] mb-2">From your computer, run</p>
-          <div class="border hairline bg-[var(--card)] p-4 sm:p-5 relative font-mono text-sm">
-            <div class="flex flex-wrap items-start justify-between gap-4">
-              <code id="install-cmd" class="min-w-0 whitespace-pre-wrap break-words leading-relaxed">{installLines.map((l) => (<span class="block">{l.cmd}{l.comment && <span class="block text-[var(--muted)]">{l.comment}</span>}</span>))}</code>
-              <button
-                id="install-copy"
-                type="button"
-                class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
-              >
-                Copy
-              </button>
+        <div class="tab-panels">
+          <div role="tabpanel" id="panel-yourself" aria-labelledby="tab-yourself" tabindex="0" class="pt-6">
+            <p class="text-xs uppercase tracking-widest text-[var(--muted)] mb-2">From your computer, run</p>
+            <div class="border hairline bg-[var(--card)] p-4 sm:p-5 relative font-mono text-sm">
+              <div class="flex flex-wrap items-start justify-between gap-4">
+                <code id="install-cmd" class="min-w-0 whitespace-pre-wrap break-words leading-relaxed">{installLines.map((l) => (<span class="block">{l.cmd}{l.comment && <span class="block text-[var(--muted)]">{l.comment}</span>}</span>))}</code>
+                <button
+                  id="install-copy"
+                  type="button"
+                  class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
+                >
+                  Copy
+                </button>
+              </div>
             </div>
+            <p class="text-sm mt-3 text-[var(--muted)]">
+              Then make a workspace: <code class="font-mono text-[var(--ink)]">devmachine workspaces new acme && devmachine sync</code>.
+              <a href={`${base}getting-started/`} class="underline underline-offset-2 hover:text-[var(--ink)]">
+                Getting started →
+              </a>
+            </p>
+            <p class="text-sm mt-2 text-[var(--muted)]">
+              Or with Homebrew: <code class="font-mono text-[var(--ink)]">brew install mydevmachine/tap/devmachine</code>.
+            </p>
           </div>
-          <p class="text-sm mt-3 text-[var(--muted)]">
-            Then make a workspace: <code class="font-mono text-[var(--ink)]">devmachine workspaces new acme && devmachine sync</code>.
-            <a href={`${base}getting-started/`} class="underline underline-offset-2 hover:text-[var(--ink)]">
-              Getting started →
-            </a>
-          </p>
-          <p class="text-sm mt-2 text-[var(--muted)]">
-            Or with Homebrew: <code class="font-mono text-[var(--ink)]">brew install mydevmachine/tap/devmachine</code>.
-          </p>
-        </div>
 
-        <div role="tabpanel" id="panel-agent" aria-labelledby="tab-agent" tabindex="0" class="pt-6" hidden>
-          <p class="text-sm text-[var(--muted)] mb-3">
-            Paste this into Claude Code, Codex or Cursor. It asks what it needs and does
-            the rest; you only run <code class="font-mono text-[var(--ink)]">devmachine setup</code> yourself.
-          </p>
-          <div class="border hairline bg-[var(--card)] p-4 sm:p-5 font-mono text-sm">
-            <div class="flex flex-wrap items-center justify-between gap-4">
-              <code id="agent-prompt" class="min-w-0 break-all">Set up devmachine for me: read https://mydevmachine.sh/agent-setup.md and follow it.</code>
-              <button
-                id="agent-prompt-copy"
-                type="button"
-                class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
-              >
-                Copy
-              </button>
+          <div role="tabpanel" id="panel-agent" aria-labelledby="tab-agent" tabindex="-1" class="pt-6" data-inactive>
+            <p class="text-sm text-[var(--muted)] mb-3">
+              Paste this into Claude Code, Codex or Cursor. It asks what it needs and does
+              the rest; you only run <code class="font-mono text-[var(--ink)]">devmachine setup</code> yourself.
+            </p>
+            <div class="border hairline bg-[var(--card)] p-4 sm:p-5 font-mono text-sm">
+              <div class="flex flex-wrap items-center justify-between gap-4">
+                <code id="agent-prompt" class="min-w-0 break-all">Set up devmachine for me: read https://mydevmachine.sh/agent-setup.md and follow it.</code>
+                <button
+                  id="agent-prompt-copy"
+                  type="button"
+                  class="text-xs uppercase tracking-wide px-3 py-1 border hairline shrink-0"
+                >
+                  Copy
+                </button>
+              </div>
             </div>
+            <p class="text-sm mt-3">
+              <a href={`${base}agent-setup/`} class="underline underline-offset-2 text-[var(--muted)] hover:text-[var(--ink)]">
+                Read what it will do
+              </a>
+            </p>
+            <p class="text-xs font-mono uppercase tracking-wide text-[var(--muted)] mt-3">
+              For LLMs:
+              <a href={`${base}llms.txt`} class="underline underline-offset-2 hover:text-[var(--ink)]">llms.txt</a>
+              ·
+              <a href={`${base}llms-full.txt`} class="underline underline-offset-2 hover:text-[var(--ink)]">llms-full.txt</a>
+            </p>
           </div>
-          <p class="text-sm mt-3">
-            <a href={`${base}agent-setup/`} class="underline underline-offset-2 text-[var(--muted)] hover:text-[var(--ink)]">
-              Read what it will do
-            </a>
-          </p>
-          <p class="text-xs font-mono uppercase tracking-wide text-[var(--muted)] mt-3">
-            For LLMs:
-            <a href={`${base}llms.txt`} class="underline underline-offset-2 hover:text-[var(--ink)]">llms.txt</a>
-            ·
-            <a href={`${base}llms-full.txt`} class="underline underline-offset-2 hover:text-[var(--ink)]">llms-full.txt</a>
-          </p>
         </div>
       </div>
     </div>
   </section>
 
   <section id="how-it-works" class="dark-section">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-20">
-      <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">03 / How it works</p>
-      <div class="grid grid-cols-1 gap-6 min-[900px]:grid-cols-2 min-[900px]:gap-12 mb-12">
-        <h2 class="text-3xl sm:text-4xl font-light tracking-tight">Three ideas, in order.</h2>
-        <p class="text-[#9a9a9a] max-w-2xl">
-          One command connects the server. One command makes a workspace.
-          One command adds a tool to it.
-        </p>
-      </div>
-      <div class="grid-cards grid-cols-1 sm:grid-cols-3">
+    <div class="frame py-20">
+      <p class="text-xs font-mono uppercase tracking-widest text-[#9a9a9a] mb-3">02 / How it works</p>
+      <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-12">One server. Many workspaces. Any computer.</h2>
+      <ol class="how-steps">
         {
-          howItWorks.map((item, i) => (
-            <a href={item.href} class="block p-6 hover:bg-white/5">
-              <p class="text-xs font-mono text-[#9a9a9a] mb-10">{String(i + 1).padStart(2, '0')}</p>
-              <h3 class="text-2xl font-light tracking-tight mb-3">{item.title}</h3>
-              <p class="text-sm text-[#9a9a9a] leading-relaxed">{item.body}</p>
-            </a>
+          steps.map((step) => (
+            <li class="how-step">
+              <span class="how-icon" aria-hidden="true">
+                {step.icon === 'server' && (
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="7" /><rect x="3" y="13" width="18" height="7" /><path d="M7 7.5h.01M7 16.5h.01M11 7.5h6M11 16.5h6" /></svg>
+                )}
+                {step.icon === 'workspaces' && (
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" /><rect x="13" y="3" width="8" height="8" /><rect x="3" y="13" width="8" height="8" /><rect x="13" y="13" width="8" height="8" /></svg>
+                )}
+                {step.icon === 'laptop' && (
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="11" /><path d="M2 19h20M8 9l2.5 2L8 13M12.5 13H16" /></svg>
+                )}
+              </span>
+              <h3 class="text-xl font-light tracking-tight mb-2">{step.title}</h3>
+              <p class="text-sm text-[#9a9a9a] leading-relaxed">{step.body}</p>
+            </li>
           ))
         }
-      </div>
-    </div>
-  </section>
-
-  <section id="first-commands" class="max-w-6xl mx-auto px-4 sm:px-6 pt-16 pb-10">
-    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">04 / First commands</p>
-    <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-10">Four commands.</h2>
-    <div class="grid grid-cols-1 gap-4">
-      {
-        commands.map((c) => (
-          <div class="border hairline p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-6">
-            <div class="overflow-x-auto">
-              <code class="font-mono text-sm whitespace-nowrap block">{c.cmd}</code>
-            </div>
-            <p class="text-sm text-[var(--muted)] sm:text-right shrink-0">{c.desc}</p>
-          </div>
-        ))
-      }
-    </div>
-  </section>
-
-
-  <section id="see-it-work" class="max-w-6xl mx-auto px-4 sm:px-6 pt-16 pb-20">
-    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">05 / See it work</p>
-    <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-4">Ask. It is live.</h2>
-    <p class="text-[var(--muted)] max-w-2xl mb-10">
-      Tell your coding agent what you want. It runs the commands, and your app is online with HTTPS.
-    </p>
-
-    <div class="demo-grid">
-      <div class="demo-col">
-        <div class="terminal">
-          <div class="terminal-titlebar">
-            <span class="terminal-dot" />
-            <span class="terminal-dot" />
-            <span class="terminal-dot" />
-            <span class="terminal-title font-mono">claude — ~/app</span>
-          </div>
-          <div class="terminal-body font-mono demo-terminal-body" id="demo-term-body"></div>
-        </div>
-      </div>
-
-      <div class="demo-col demo-chain-col">
-        <div class="demo-chain" id="demo-chain">
-          <div class="demo-node" data-node="dns">
-            <div class="demo-node-dot"></div>
-            <p class="demo-node-label">DNS</p>
-            <p class="demo-node-value">A&nbsp; app.example.com &rarr; 203.0.113.10</p>
-          </div>
-          <div class="demo-link" data-link="dns-caddy"><span class="demo-packet"></span></div>
-          <div class="demo-node" data-node="caddy">
-            <div class="demo-node-dot"></div>
-            <p class="demo-node-label">Caddy</p>
-            <p class="demo-node-value">app.example.com &rarr; localhost:3000 &middot; HTTPS</p>
-          </div>
-          <div class="demo-link" data-link="caddy-ws"><span class="demo-packet"></span></div>
-          <div class="demo-node" data-node="workspace">
-            <div class="demo-node-dot"></div>
-            <p class="demo-node-label">Workspace acme</p>
-            <p class="demo-node-value">:3000</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="demo-col">
-        <div class="demo-browser">
-          <div class="demo-browser-bar">
-            <span class="demo-browser-dot"></span>
-            <span class="demo-browser-dot"></span>
-            <span class="demo-browser-dot"></span>
-            <div class="demo-browser-address">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <rect x="5" y="11" width="14" height="9" rx="1.5" />
-                <path d="M8 11V7a4 4 0 0 1 8 0v4" />
-              </svg>
-              <span>https://app.example.com</span>
-            </div>
-          </div>
-          <div class="demo-browser-viewport">
-            <p class="demo-browser-empty" id="demo-browser-empty">Waiting for it to publish&hellip;</p>
-            <div class="demo-browser-site" id="demo-browser-site">
-              <div class="acme-site">
-                <div class="acme-nav">
-                  <span class="acme-logo">Acme</span>
-                  <div class="acme-nav-links">
-                    <span>Product</span>
-                    <span>Pricing</span>
-                    <span>Sign in</span>
-                  </div>
-                </div>
-                <div class="acme-hero">
-                  <h1>Acme handles the busywork.</h1>
-                  <p>Your team, minus the spreadsheets.</p>
-                  <span class="acme-cta">Get started</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="mt-8 flex justify-center">
-      <button type="button" id="demo-replay" class="text-xs uppercase tracking-wide px-3 py-1 border hairline" hidden>
-        Replay
-      </button>
-    </div>
-  </section>
-
-  <section id="skills-everywhere" class="max-w-6xl mx-auto px-4 sm:px-6 pt-16 pb-20">
-    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">06 / Agent skills</p>
-    <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-4">One set of skills, every workspace.</h2>
-    <p class="text-[var(--muted)] max-w-2xl mb-10">
-      Write an agent skill once, in a package's <code class="font-mono text-[var(--ink)]">skills/</code> folder —
-      the official <code class="font-mono text-[var(--ink)]">devmachine-skills</code>, or your own.
-      <code class="font-mono text-[var(--ink)]">devmachine sync</code> puts it in every workspace that uses the
-      package, so Claude Code or Codex knows the same skills in <code class="font-mono text-[var(--ink)]">acme</code>,
-      <code class="font-mono text-[var(--ink)]">globex</code> and any new workspace. Change one skill, sync, and it
-      is updated everywhere. Your own computer gets the set with
-      <code class="font-mono text-[var(--ink)]">devmachine skills add --package &lt;name&gt;</code>.
-    </p>
-
-    <div class="skills-diagram">
-      <div class="skills-source">
-        <p class="skills-source-path font-mono text-xs">packages/team-skills/skills/</p>
-        <ul class="skills-list" id="skills-list">
-          <li data-skill="deploy">deploy</li>
-          <li data-skill="review">review</li>
-          <li data-skill="write-tests">write-tests</li>
-        </ul>
-      </div>
-
-      <div class="skills-sync" id="skills-sync">
-        <span class="skills-sync-line"></span>
-        <span class="skills-sync-label font-mono">devmachine sync</span>
-        <span class="skills-sync-line"></span>
-      </div>
-
-      <div class="skills-workspaces">
-        <div class="skills-workspace" data-workspace="acme">
-          <p class="font-mono text-xs">acme</p>
-          <p class="skills-workspace-skill" data-slot>deploy</p>
-        </div>
-        <div class="skills-workspace" data-workspace="globex">
-          <p class="font-mono text-xs">globex</p>
-          <p class="skills-workspace-skill" data-slot>deploy</p>
-        </div>
-        <div class="skills-workspace skills-workspace-new" data-workspace="new" id="skills-workspace-new" hidden>
-          <p class="font-mono text-xs">new workspace</p>
-          <p class="skills-workspace-skill" data-slot>deploy</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="mt-6 flex flex-wrap items-center gap-4">
-      <button type="button" id="skills-edit-btn" class="text-xs uppercase tracking-wide px-3 py-1 border hairline">
-        Edit a skill
-      </button>
-      <p id="skills-status" class="text-xs text-[var(--muted)] font-mono" aria-live="polite"></p>
-    </div>
-
-    <p class="text-sm mt-8">
-      <a
-        href={`${base}concepts/agent-skills/`}
-        class="underline underline-offset-2 text-[var(--muted)] hover:text-[var(--ink)]"
-      >
-        Read about agent skills →
-      </a>
-    </p>
-  </section>
-
-  <script is:inline>
-    ;(() => {
-      const list = document.getElementById('skills-list')
-      const sync = document.getElementById('skills-sync')
-      const btn = document.getElementById('skills-edit-btn')
-      const status = document.getElementById('skills-status')
-      const newWorkspace = document.getElementById('skills-workspace-new')
-      if (!list || !sync || !btn || !status || !newWorkspace) return
-
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      const skillItem = list.querySelector('[data-skill="deploy"]')
-      const slots = Array.from(document.querySelectorAll('.skills-workspace-skill'))
-      let editing = false
-
-      function wait(ms) {
-        return new Promise((resolve) => setTimeout(resolve, reduceMotion ? 0 : ms))
-      }
-
-      function revealNewWorkspace() {
-        newWorkspace.hidden = false
-        if (reduceMotion) {
-          newWorkspace.classList.add('is-visible')
-          return
-        }
-        requestAnimationFrame(() => requestAnimationFrame(() => newWorkspace.classList.add('is-visible')))
-      }
-
-      if ('IntersectionObserver' in window) {
-        const observer = new IntersectionObserver((entries) => {
-          for (const entry of entries) {
-            if (entry.isIntersecting) {
-              revealNewWorkspace()
-              observer.disconnect()
-            }
-          }
-        })
-        observer.observe(newWorkspace.closest('.skills-diagram') ?? newWorkspace)
-      } else {
-        revealNewWorkspace()
-      }
-
-      btn.addEventListener('click', async () => {
-        if (btn.disabled) return
-        btn.disabled = true
-
-        if (!editing) {
-          editing = true
-          skillItem?.classList.add('is-editing')
-          status.textContent = 'Editing deploy in packages/team-skills/skills/deploy/SKILL.md…'
-          btn.textContent = 'Sync now'
-          btn.disabled = false
-          return
-        }
-
-        status.textContent = 'Running devmachine sync…'
-        sync.classList.add('is-active')
-        await wait(500)
-
-        for (const slot of slots) {
-          slot.classList.add('is-updated')
-          slot.textContent = 'deploy (updated)'
-        }
-        await wait(700)
-
-        sync.classList.remove('is-active')
-        skillItem?.classList.remove('is-editing')
-        status.textContent = 'Every workspace has the new skill.'
-        await wait(1200)
-
-        for (const slot of slots) {
-          slot.classList.remove('is-updated')
-          slot.textContent = 'deploy'
-        }
-        status.textContent = ''
-        editing = false
-        btn.textContent = 'Edit a skill'
-        btn.disabled = false
-      })
-    })()
-  </script>
-
-  <section id="measure-your-needs" class="dark-section">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-28 pb-32">
-    <p class="text-xs font-mono uppercase tracking-widest text-[#9a9a9a] mb-3">07 / Requirements</p>
-    <div class="grid grid-cols-1 gap-6 min-[900px]:grid-cols-2 min-[900px]:gap-12 mb-10">
-      <h2 class="text-3xl sm:text-4xl font-light tracking-tight">Measure your needs.</h2>
-      <p class="text-[#9a9a9a] max-w-2xl">
-        Rent what you need, not more. Count how many apps and coding agents you will run at the
-        same time, pick the size below, and move up later if it gets slow. A computer you
-        already have works too, if it runs Debian or Ubuntu.
+      </ol>
+      <p class="text-sm mt-10">
+        <a href={`${base}concepts/machines-and-workspaces/`} class="underline underline-offset-2 text-[#9a9a9a] hover:text-white">
+          How it works →
+        </a>
       </p>
     </div>
-    <div id="sizing" class="border hairline p-6 mb-4">
-      <label for="sizing-range" class="sr-only">How much will you run on the server?</label>
-      <input
-        id="sizing-range"
-        type="range"
-        min="0"
-        max={tiers.length - 1}
-        step="1"
-        value={recommendedTier}
-        aria-valuetext={tiers[recommendedTier].label}
-        class="w-full accent-[#5aa9e6] cursor-pointer"
-      />
-      <div class="grid grid-cols-3 text-xs font-mono uppercase tracking-wide mt-2">
-        {
-          tiers.map((tier, i) => (
-            <button
-              type="button"
-              data-tier={i}
-              class:list={[
-                'sizing-label py-1',
-                i === 0 && 'text-left',
-                i === 1 && 'text-center',
-                i === 2 && 'text-right',
-                i === recommendedTier ? 'text-[#5aa9e6]' : 'text-[#9a9a9a]',
-              ]}
-            >
-              {tier.label}
-            </button>
-          ))
-        }
-      </div>
+  </section>
+
+  <section id="what-you-get" class="frame pt-20 pb-20">
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">03 / What you get</p>
+    <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-10">Everything a project needs.</h2>
+    <div class="grid-cards grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
       {
-        tiers.map((tier, i) => (
-          <div data-tier-panel={i} hidden={i !== recommendedTier} class="mt-6" aria-live="polite">
-            <p class="text-2xl sm:text-3xl font-light tracking-tight mb-1">{tier.ram}</p>
-            <p class="text-sm font-mono text-[#9a9a9a] mb-3">{tier.cpu} · {tier.disk} · Debian or Ubuntu</p>
-            <p class="text-sm text-[#9a9a9a] leading-relaxed">{tier.body}</p>
+        benefits.map((b) => (
+          <div class="p-6">
+            <h3 class="text-lg font-light tracking-tight mb-1">{b.title}</h3>
+            <p class="text-sm text-[var(--muted)] leading-relaxed">{b.body}</p>
           </div>
         ))
       }
     </div>
-    <p class="text-xs text-[#9a9a9a]">
-      Any Debian or Ubuntu VPS works.
+  </section>
+
+  <section id="devmachine-for-mac" class="dark-section">
+    <div class="frame pt-24 pb-24">
+      <p class="text-xs font-mono uppercase tracking-widest text-[#9a9a9a] mb-3">04 / macOS app</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-start mb-12">
+        <div>
+          <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-4">Devmachine for Mac.</h2>
+          <p class="text-[#9a9a9a] max-w-lg">
+            Optional, and easier to start with. Do from one window what you would do with the CLI: set up, open
+            sessions, publish sites, check your machines. It runs the same CLI underneath.
+          </p>
+        </div>
+        <div>
+          <ul class="text-sm text-[#9a9a9a] space-y-2 mb-8">
+            {macFeatures.map((f) => <li>{f}</li>)}
+          </ul>
+          <div class="flex flex-wrap gap-3">
+            <a
+              href={`${base}app/`}
+              class="inline-block border border-white px-8 py-3 text-sm font-mono uppercase tracking-wide hover:bg-white hover:text-black transition-colors"
+            >
+              See the app →
+            </a>
+            <a
+              href={appDmg}
+              class="inline-block border border-white bg-white text-black px-8 py-3 text-sm font-mono uppercase tracking-wide hover:bg-transparent hover:text-white transition-colors"
+            >
+              Download for macOS
+            </a>
+          </div>
+          <p class="text-xs font-mono text-[#9a9a9a] mt-4 break-words">brew install --cask mydevmachine/tap/devmachine-app ·
+            <a href="https://github.com/mydevmachine/app-releases/releases" class="underline underline-offset-2 hover:text-white">All releases →</a>
+          </p>
+        </div>
+      </div>
+      {
+        macStrip.length > 0 && (
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {macStrip.map((shot) => (
+              <figure class="min-w-0">
+                <AppShot shot={shot} />
+                <figcaption class="text-sm text-[#9a9a9a] mt-2">{shot.caption}</figcaption>
+              </figure>
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <section id="measure-your-needs" class="frame pt-20 pb-4">
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">05 / Requirements</p>
+    <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-4">What to rent.</h2>
+    <p class="text-[var(--muted)] max-w-2xl mb-10">
+      Any Debian or Ubuntu server works. Count the apps and coding agents you run at once, and move up later if it
+      gets slow.
+    </p>
+    <div class="grid-cards grid-cols-1 sm:grid-cols-3">
+      {
+        tiers.map((tier, i) => (
+          <div class:list={['p-6', i === recommendedTier && 'tier-recommended']}>
+            <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-4">{tier.label}</p>
+            <p class="text-2xl font-light tracking-tight mb-1">{tier.ram}</p>
+            <p class="text-xs font-mono text-[var(--muted)] mb-3">{tier.cpu} · {tier.disk}</p>
+            <p class="text-sm text-[var(--muted)] leading-relaxed">{tier.body}</p>
+          </div>
+        ))
+      }
+    </div>
+    <p class="text-xs text-[var(--muted)] mt-4">
       No VPS yet?
       <a
         href="https://www.hostinger.com/br?REFERRALCODE=MYDEVMACHINE"
         target="_blank"
         rel="noopener sponsored"
-        class="underline underline-offset-2 hover:text-white"
+        class="underline underline-offset-2 hover:text-[var(--ink)]"
       >
         See the Hostinger deals →
       </a>
     </p>
-    </div>
   </section>
 
-  <section id="faq" class="max-w-6xl mx-auto px-4 sm:px-6 pt-20 pb-20">
+  <section id="faq" class="frame pt-20 pb-20">
     <div class="grid grid-cols-1 min-[900px]:grid-cols-[minmax(0,20rem)_1fr] gap-10 min-[900px]:gap-16">
       <div class="min-[900px]:sticky min-[900px]:top-24 min-[900px]:self-start">
-        <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">08 / FAQ</p>
+        <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">06 / FAQ</p>
         <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-4">Questions, answered.</h2>
         <p class="text-[var(--muted)] max-w-sm mb-4">
           Short answers to what people ask before they start.
@@ -772,63 +523,11 @@ const jsonLd = [
     </div>
   </section>
 
-  <section id="devmachine-for-mac" class="dark-section">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-24">
-      <p class="text-xs font-mono uppercase tracking-widest text-[#9a9a9a] mb-3">09 / macOS app</p>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-start mb-12">
-        <div>
-          <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-4">Devmachine for Mac.</h2>
-          <p class="text-[#9a9a9a] max-w-lg">
-            Optional, and easier to start with. Do from one window what you would do with the CLI: set up, open
-            sessions, publish sites, check your machines. It runs the same CLI underneath.
-          </p>
-        </div>
-        <div>
-          <ul class="text-sm text-[#9a9a9a] space-y-2 mb-8">
-            <li>Setup that runs each step for you, or lets your agent do it</li>
-            <li>Operator: a session in your devmachine folder, to ask for any change</li>
-            <li>Sessions side by side, with todo, pull requests and git next to each</li>
-            <li>Every machine at a glance: RAM, disk, load, sites and health</li>
-          </ul>
-          <div class="flex flex-wrap gap-3">
-            <a
-              href={`${base}app/`}
-              class="inline-block border border-white px-8 py-3 text-sm font-mono uppercase tracking-wide hover:bg-white hover:text-black transition-colors"
-            >
-              See the app →
-            </a>
-            <a
-              href="https://github.com/mydevmachine/app-releases/releases/latest/download/Devmachine.dmg"
-              class="inline-block border border-white bg-white text-black px-8 py-3 text-sm font-mono uppercase tracking-wide hover:bg-transparent hover:text-white transition-colors"
-            >
-              Download for macOS
-            </a>
-          </div>
-          <p class="text-xs font-mono text-[#9a9a9a] mt-4 break-words">brew install --cask mydevmachine/tap/devmachine-app ·
-            <a href="https://github.com/mydevmachine/app-releases/releases" class="underline underline-offset-2 hover:text-white">All releases →</a>
-          </p>
-        </div>
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        {
-          macStrip.map((shot) => (
-            <figure class="min-w-0">
-              <AppShot shot={shot} />
-              <figcaption class="text-sm text-[#9a9a9a] mt-2">{shot.caption}</figcaption>
-            </figure>
-          ))
-        }
-      </div>
-    </div>
-  </section>
-
-
-  <section id="read-the-docs" class="max-w-6xl mx-auto px-4 sm:px-6 pt-28 pb-32 text-center">
-    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">10 / Documentation</p>
+  <section id="read-the-docs" class="frame pt-20 pb-28 text-center">
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">07 / Documentation</p>
     <h2 class="text-3xl sm:text-5xl font-light tracking-tight mb-5">Everything is written down.</h2>
     <p class="text-[var(--muted)] max-w-xl mx-auto mb-10">
       How each command works, why it works that way, and what to do when something fails.
-      Plain words, real examples.
     </p>
     <a
       href={`${base}getting-started/`}
@@ -851,7 +550,9 @@ const jsonLd = [
           t.setAttribute('aria-selected', String(selected))
           t.tabIndex = selected ? 0 : -1
           const panel = document.getElementById(t.getAttribute('aria-controls'))
-          if (panel) panel.hidden = !selected
+          if (!panel) continue
+          panel.toggleAttribute('data-inactive', !selected)
+          panel.tabIndex = selected ? 0 : -1
         }
         if (focus) tab.focus()
       }
@@ -867,28 +568,6 @@ const jsonLd = [
           }
         })
       })
-    })()
-
-    ;(() => {
-      const range = document.getElementById('sizing-range')
-      if (!range) return
-      const labels = Array.from(document.querySelectorAll('#sizing .sizing-label'))
-      const panels = Array.from(document.querySelectorAll('#sizing [data-tier-panel]'))
-
-      function show(index) {
-        range.value = String(index)
-        range.setAttribute('aria-valuetext', labels[index]?.textContent.trim() ?? '')
-        labels.forEach((label, i) => {
-          label.classList.toggle('text-[#5aa9e6]', i === index)
-          label.classList.toggle('text-[#9a9a9a]', i !== index)
-        })
-        panels.forEach((panel, i) => {
-          panel.hidden = i !== index
-        })
-      }
-
-      range.addEventListener('input', () => show(Number(range.value)))
-      labels.forEach((label, i) => label.addEventListener('click', () => show(i)))
     })()
 
     document.getElementById('install-copy')?.addEventListener('click', (e) => {
@@ -912,180 +591,49 @@ const jsonLd = [
         btn.textContent = 'Copy'
       }, 1500)
     })
-
-    ;(() => {
-      const section = document.getElementById('see-it-work')
-      const body = document.getElementById('demo-term-body')
-      const emptyState = document.getElementById('demo-browser-empty')
-      const site = document.getElementById('demo-browser-site')
-      const replayBtn = document.getElementById('demo-replay')
-      if (!section || !body || !replayBtn) return
-
-      const nodes = {
-        dns: document.querySelector('[data-node="dns"]'),
-        caddy: document.querySelector('[data-node="caddy"]'),
-        workspace: document.querySelector('[data-node="workspace"]'),
-      }
-      const links = {
-        dnsToCaddy: document.querySelector('[data-link="dns-caddy"]'),
-        caddyToWs: document.querySelector('[data-link="caddy-ws"]'),
-      }
-
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-      function line(cls, text) {
-        const el = document.createElement('div')
-        el.className = `term-line ${cls}`
-        el.textContent = text
-        return el
-      }
-
-      function bulletLine(cls, text) {
-        const el = document.createElement('div')
-        el.className = `term-line ${cls}`
-        const marker = document.createElement('span')
-        marker.className = 'term-agent-marker'
-        marker.textContent = '● '
-        el.append(marker, document.createTextNode(text))
-        return el
-      }
-
-      function promptLine(text) {
-        const el = document.createElement('div')
-        el.className = 'term-line term-agent-prompt'
-        el.textContent = text
-        return el
-      }
-
-      const steps = [
-        { append: () => promptLine('> publish port 3000 of acme at app.example.com'), delay: 700 },
-        { append: () => bulletLine('term-agent-reply', "I'll publish it with the devmachine CLI."), delay: 500 },
-        {
-          append: () => bulletLine('term-agent-tool', 'Bash(devmachine expose add acme 3000 --host app.example.com --publish)'),
-          delay: 600,
-        },
-        {
-          append: () =>
-            line(
-              'term-out',
-              "recorded https://app.example.com -> acme:3000 in the configuration. Run devmachine sync to publish it on main.",
-            ),
-          delay: 500,
-          after: () => setActive(nodes.dns),
-        },
-        { append: () => bulletLine('term-agent-tool', 'Bash(devmachine sync --yes)'), delay: 600 },
-        { append: () => line('term-out', 'TASK [routes from the configuration]'), delay: 300 },
-        {
-          append: () => line('term-out', 'changed: [main]'),
-          delay: 400,
-          after: () => setActive(nodes.caddy, links.dnsToCaddy),
-        },
-        { append: () => line('term-out', 'TASK [reload caddy for the routes]'), delay: 300 },
-        { append: () => line('term-out', 'changed: [main]'), delay: 400 },
-        { append: () => line('term-out', 'main: ok=42 changed=2 failed=0'), delay: 600 },
-        {
-          append: () => bulletLine('term-agent-result', 'Done. https://app.example.com is live, with HTTPS.'),
-          delay: 0,
-          after: () => {
-            setActive(nodes.workspace, links.caddyToWs)
-            showSite()
-          },
-        },
-      ]
-
-      function setActive(node, link) {
-        if (link) link.classList.add('is-active')
-        if (node) node.classList.add('is-active')
-      }
-
-      function showSite() {
-        if (emptyState) emptyState.style.opacity = '0'
-        if (site) site.classList.add('is-visible')
-      }
-
-      function reset() {
-        body.innerHTML = ''
-        Object.values(nodes).forEach((n) => n?.classList.remove('is-active'))
-        Object.values(links).forEach((l) => l?.classList.remove('is-active'))
-        if (emptyState) emptyState.style.opacity = '1'
-        if (site) site.classList.remove('is-visible')
-        replayBtn.hidden = true
-      }
-
-      let pending = null
-
-      function schedule(fn, delay) {
-        const start = Date.now()
-        pending = { fn, delay, start }
-        pending.id = setTimeout(() => {
-          pending = null
-          fn()
-        }, delay)
-      }
-
-      document.addEventListener('visibilitychange', () => {
-        if (!pending) return
-        if (document.hidden) {
-          clearTimeout(pending.id)
-          pending.remaining = pending.delay - (Date.now() - pending.start)
-        } else if (pending.remaining !== undefined) {
-          const { fn, remaining } = pending
-          pending.start = Date.now()
-          pending.delay = Math.max(remaining, 0)
-          pending.id = setTimeout(() => {
-            pending = null
-            fn()
-          }, pending.delay)
-        }
-      })
-
-      function playFinalState() {
-        reset()
-        for (const step of steps) body.appendChild(step.append())
-        setActive(nodes.dns)
-        setActive(nodes.caddy, links.dnsToCaddy)
-        setActive(nodes.workspace, links.caddyToWs)
-        showSite()
-        replayBtn.hidden = false
-      }
-
-      function playSequence(i) {
-        if (i >= steps.length) {
-          replayBtn.hidden = false
-          return
-        }
-        const step = steps[i]
-        body.appendChild(step.append())
-        body.scrollTop = body.scrollHeight
-        step.after?.()
-        schedule(() => playSequence(i + 1), step.delay)
-      }
-
-      function play() {
-        reset()
-        if (reduceMotion) {
-          playFinalState()
-          return
-        }
-        playSequence(0)
-      }
-
-      replayBtn.addEventListener('click', play)
-
-      let played = false
-      const observer = new IntersectionObserver(
-        (entries) => {
-          for (const entry of entries) {
-            if (entry.isIntersecting && !played) {
-              played = true
-              play()
-              observer.disconnect()
-            }
-          }
-        },
-        { threshold: 0.35 },
-      )
-      observer.observe(section)
-    })()
   </script>
 </BaseLayout>
+
+<style>
+  .how-steps {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 900px) {
+    .how-steps {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 4rem;
+    }
+  }
+
+  .how-step {
+    position: relative;
+  }
+
+  .how-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid var(--dark-line);
+    color: #5aa9e6;
+  }
+
+  @media (min-width: 900px) {
+    .how-step:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 1.75rem;
+      left: 4.5rem;
+      right: -3rem;
+      border-top: 1px dashed var(--dark-line);
+    }
+  }
+
+  .tier-recommended {
+    box-shadow: inset 0 2px 0 #5aa9e6;
+  }
+</style>

@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+const base = import.meta.env.BASE_URL
+---
+
+<BaseLayout title="Page not found — devmachine" description="This page does not exist." current="docs">
+  <section class="frame pt-16 pb-32">
+    <p class="text-xs font-mono uppercase tracking-widest text-[var(--muted)] mb-3">404</p>
+    <h1 class="text-4xl sm:text-6xl font-light tracking-tight mb-5">Page not found.</h1>
+    <p class="text-[var(--muted)] max-w-2xl mb-10">This page does not exist, or it moved.</p>
+    <div class="flex flex-wrap gap-3">
+      <a
+        href={`${base}getting-started/`}
+        class="inline-block border border-[var(--ink)] px-6 py-3 text-sm font-mono uppercase tracking-wide hover:bg-[var(--ink)] hover:text-[var(--bg)] transition-colors"
+      >
+        Documentation →
+      </a>
+      <a href={base} class="inline-block px-6 py-3 text-sm font-mono uppercase tracking-wide underline underline-offset-2">
+        Home
+      </a>
+    </div>
+  </section>
+</BaseLayout>

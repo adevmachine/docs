@@ -32,8 +32,16 @@ export function webpSize(buf: Buffer): { width: number; height: number } | null 
   return null
 }
 
+function shotFile(shot: Shot): string {
+  return join(process.cwd(), 'public', 'app', `${shot.name}.webp`)
+}
+
+export function shotExists(shot: Shot): boolean {
+  return existsSync(shotFile(shot))
+}
+
 export function resolveShot(shot: Shot, base: string): ResolvedShot {
-  const file = join(process.cwd(), 'public', 'app', `${shot.name}.webp`)
+  const file = shotFile(shot)
   const src = `${base}app/${shot.name}.webp`
   if (!existsSync(file)) return { ...shot, src, exists: false, ...FALLBACK }
   const size = webpSize(readFileSync(file)) ?? FALLBACK

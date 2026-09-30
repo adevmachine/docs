@@ -23,8 +23,6 @@ const {
 const base = import.meta.env.BASE_URL
 const canonical = new URL(Astro.url.pathname, Astro.site).href
 const ogImage = new URL(`${base}og.png`, Astro.site).href
-// Doc pages lay out wider than the home page; the header lines up with them.
-const frame = current === 'docs' ? 'max-w-7xl' : 'max-w-6xl'
 ---
 
 <!doctype html>
@@ -89,7 +87,7 @@ const frame = current === 'docs' ? 'max-w-7xl' : 'max-w-6xl'
         current === 'home' ? 'absolute top-0 inset-x-0 bg-transparent' : 'border-b hairline sticky top-0 bg-[var(--bg)]',
       ]}
     >
-      <div class={`${frame} mx-auto px-4 sm:px-6 h-16 flex items-center justify-between`}>
+      <div class="frame h-16 flex items-center justify-between">
         <a href={`${base}`} class="flex items-center gap-1.5 font-semibold tracking-tight text-[28px] leading-none">
           <img src={`${base}favicon.svg`} alt="" width="36" height="36" class="block" />
           devmachine
@@ -99,14 +97,6 @@ const frame = current === 'docs' ? 'max-w-7xl' : 'max-w-6xl'
             <a href={`${base}getting-started/`} class="px-3 py-1.5">Documentation</a>
             <a href={`${base}packages/`} class="px-3 py-1.5">Packages</a>
             <a href={`${base}app/`} class="px-3 py-1.5">App</a>
-            <a
-              href="https://github.com/mydevmachine/devmachine"
-              class="px-3 py-1.5"
-              target="_blank"
-              rel="noreferrer"
-            >
-              GitHub
-            </a>
           </nav>
           <button
             id="mobile-nav-toggle"
@@ -121,19 +111,18 @@ const frame = current === 'docs' ? 'max-w-7xl' : 'max-w-6xl'
         <a href={`${base}getting-started/`}>Documentation</a>
         <a href={`${base}packages/`}>Packages</a>
         <a href={`${base}app/`}>App</a>
-        <a href="https://github.com/mydevmachine/devmachine" target="_blank" rel="noreferrer">GitHub</a>
       </nav>
     </header>
     <main class="flex-1 min-w-0">
       <slot />
     </main>
     <footer class="border-t hairline mt-12">
-      <div class={`${frame} mx-auto px-4 sm:px-6 py-8 flex items-start justify-between gap-4`}>
+      <div class="frame py-8 flex items-start justify-between gap-4">
         <div class="flex flex-wrap gap-x-8 gap-y-2 text-sm text-[var(--muted)] min-w-0">
-          <a href={`${base}examples/`}>Real examples</a>
           <a href={`${base}getting-started/`}>Documentation</a>
           <a href={`${base}packages/`}>Packages</a>
           <a href={`${base}app/`}>App</a>
+          <a href={`${base}examples/`}>Real examples</a>
           <a href="https://github.com/mydevmachine/devmachine" target="_blank" rel="noreferrer">GitHub</a>
           <a href="https://github.com/mydevmachine/devmachine/blob/main/LICENSE" target="_blank" rel="noreferrer">License</a>
           <a href={`${base}llms.txt`}>llms.txt</a>

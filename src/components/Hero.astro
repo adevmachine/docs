@@ -74,11 +74,13 @@ const windows: Win[] = [
           <path id="hero-link-acme" class="hero-link-line" d="M 640 370 L 588.8 310"></path>
           <path id="hero-link-bob" class="hero-link-line" d="M 640 370 L 691.2 310"></path>
           <path id="hero-link-agent" class="hero-link-line" d="M 640 370 L 691.2 430"></path>
+          <path id="hero-link-mac" class="hero-link-line" d="M 640 370 L 640 200"></path>
         </g>
         <circle id="hero-packet-you" class="hero-packet" r="3"></circle>
         <circle id="hero-packet-acme" class="hero-packet" r="3"></circle>
         <circle id="hero-packet-bob" class="hero-packet" r="3"></circle>
         <circle id="hero-packet-agent" class="hero-packet" r="3"></circle>
+        <circle id="hero-packet-mac" class="hero-packet" r="3"></circle>
       </svg>
       <div class="hero-hub" aria-hidden="true">
         <svg width="82" height="82" viewBox="3.2 3.2 25.6 25.6">
@@ -133,6 +135,31 @@ const windows: Win[] = [
           </div>
           <div class="terminal-body font-mono" id="term-body-agent">
             <div class="term-line term-agent-welcome">✻ agent@main · ~/app</div>
+          </div>
+        </div>
+      </div>
+      <div class="term-window term-mac" data-window="mac">
+        <div class="terminal">
+          <div class="terminal-titlebar">
+            <span class="terminal-dot mac-dot-close" />
+            <span class="terminal-dot mac-dot-min" />
+            <span class="terminal-dot mac-dot-max" />
+            <span class="terminal-title">Devmachine for Mac</span>
+          </div>
+          <div class="mac-app">
+            <div class="mac-sidebar">
+              <p class="mac-group">Local</p>
+              <p class="mac-row">Operator</p>
+              <p class="mac-group">main</p>
+              <p class="mac-row mac-row-active">acme</p>
+              <p class="mac-row">globex</p>
+            </div>
+            <div class="mac-grid">
+              <div class="mac-tile"><i class="mac-bar mac-bar-green" /><i class="mac-bar" /><i class="mac-bar mac-bar-short" /></div>
+              <div class="mac-tile"><i class="mac-bar mac-bar-blue" /><i class="mac-bar mac-bar-short" /><span class="mac-cursor" /></div>
+              <div class="mac-tile"><i class="mac-bar" /><i class="mac-bar mac-bar-green mac-bar-short" /></div>
+              <div class="mac-tile"><i class="mac-bar mac-bar-short" /><i class="mac-bar" /><i class="mac-bar mac-bar-blue mac-bar-short" /></div>
+            </div>
           </div>
         </div>
       </div>
@@ -286,7 +313,7 @@ const windows: Win[] = [
     const STIFFNESS = 220
     const DAMPING = 15
 
-    const keys = ['you', 'acme', 'bob', 'agent']
+    const keys = ['you', 'acme', 'bob', 'agent', 'mac']
     const links = {}
     for (const key of keys) {
       const win = stage.querySelector(`[data-window="${key}"]`)
@@ -321,7 +348,7 @@ const windows: Win[] = [
 
     const cyclePeriod = 6000
     const travelDuration = 1100
-    const phase = { you: 0, acme: 900, bob: 1800, agent: 2700 }
+    const phase = { you: 0, acme: 900, bob: 1800, agent: 2700, mac: 3600 }
 
     function movePackets(time) {
       for (const key of keys) {
@@ -890,6 +917,129 @@ const windows: Win[] = [
   @media (prefers-reduced-motion: reduce) {
     .hero-packet {
       display: none;
+    }
+  }
+
+  .mac-dot-close {
+    background: #ff5f57;
+  }
+
+  .mac-dot-min {
+    background: #febc2e;
+  }
+
+  .mac-dot-max {
+    background: #28c840;
+  }
+
+  .mac-app {
+    display: grid;
+    grid-template-columns: 34% 1fr;
+    height: 9.5rem;
+    font-size: 0.66rem;
+    text-align: left;
+  }
+
+  .mac-sidebar {
+    padding: 0.55rem 0.5rem;
+    border-right: 1px solid var(--terminal-border, #2a2a2a);
+    color: var(--terminal-ink, #e7e7e2);
+  }
+
+  .mac-group {
+    margin: 0.35rem 0 0.15rem;
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--terminal-muted, #7a7a7a);
+  }
+
+  .mac-group:first-child {
+    margin-top: 0;
+  }
+
+  .mac-row {
+    padding: 0.1rem 0.35rem;
+    line-height: 1.5;
+  }
+
+  .mac-row-active {
+    background: rgb(90 169 230 / 0.28);
+  }
+
+  .mac-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 0.35rem;
+    padding: 0.5rem;
+  }
+
+  .mac-tile {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 0.4rem;
+    border: 1px solid var(--terminal-border, #2a2a2a);
+    background: rgb(255 255 255 / 0.03);
+  }
+
+  .mac-bar {
+    display: block;
+    height: 0.22rem;
+    width: 80%;
+    background: var(--terminal-muted, #7a7a7a);
+    opacity: 0.6;
+    transform-origin: left;
+    animation: mac-type 3.2s ease-in-out infinite;
+  }
+
+  .mac-tile:nth-child(2) .mac-bar {
+    animation-delay: 0.8s;
+  }
+
+  .mac-tile:nth-child(3) .mac-bar {
+    animation-delay: 1.6s;
+  }
+
+  .mac-tile:nth-child(4) .mac-bar {
+    animation-delay: 2.4s;
+  }
+
+  .mac-bar-short {
+    width: 50%;
+  }
+
+  .mac-bar-green {
+    background: #28c840;
+  }
+
+  .mac-bar-blue {
+    background: #5aa9e6;
+  }
+
+  .mac-cursor {
+    display: block;
+    width: 0.3rem;
+    height: 0.5rem;
+    background: #28c840;
+    animation: term-blink 1s steps(1) infinite;
+  }
+
+  @keyframes mac-type {
+    0% {
+      transform: scaleX(0.2);
+    }
+    45%,
+    100% {
+      transform: scaleX(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mac-bar,
+    .mac-cursor {
+      animation: none;
     }
   }
 </style>
