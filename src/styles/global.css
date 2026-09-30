@@ -339,7 +339,8 @@ body {
 .hero-stage {
   position: relative;
   width: 100%;
-  height: 820px;
+  height: 1000px;
+  margin-bottom: -70px;
 }
 
 .term-window {
@@ -358,14 +359,14 @@ body {
 .term-window.term-mac {
   z-index: 5;
   top: 24px;
-  left: 31%;
-  width: 38%;
+  left: 29%;
+  width: 42%;
   --window-shadow: 0 34px 80px -24px rgb(0 0 0 / 0.55), 0 12px 28px -12px rgb(0 0 0 / 0.35);
 }
 
 .term-window.term-acme {
   z-index: 2;
-  top: 235px;
+  top: 330px;
   left: 0.5%;
   width: 28%;
   opacity: 0.84;
@@ -375,7 +376,7 @@ body {
 
 .term-window.term-bob {
   z-index: 1;
-  top: 210px;
+  top: 305px;
   right: 0;
   width: 27.5%;
   opacity: 0.74;
@@ -385,7 +386,7 @@ body {
 
 .term-window.term-you {
   z-index: 4;
-  bottom: 0;
+  bottom: 90px;
   left: 7%;
   width: 32%;
   opacity: 1;
@@ -396,7 +397,7 @@ body {
 
 .term-window.term-agent {
   z-index: 3;
-  bottom: 24px;
+  bottom: 120px;
   right: 6%;
   width: 31%;
   opacity: 0.9;
@@ -417,62 +418,25 @@ body {
 
 @media (max-width: 900px) {
   .hero-stage {
-    height: 22rem;
+    height: auto;
+    margin-bottom: 0;
+    padding: 0.5rem 0 2.5rem;
   }
 
-  .term-window {
-    width: auto;
-    scale: none;
-  }
-
+  .term-window.term-acme,
   .term-window.term-bob,
-  .term-window.term-agent,
-  .term-window.term-mac {
+  .term-window.term-you,
+  .term-window.term-agent {
     display: none;
   }
 
-  .term-window.term-acme {
-    z-index: 1;
-    top: 0;
-    left: 2%;
-    right: auto;
-    bottom: auto;
-    width: min(23rem, 84vw);
-    opacity: 0.85;
-  }
-
-  .term-window.term-you {
-    z-index: 2;
-    top: 2.75rem;
-    bottom: auto;
-    left: 12%;
-    width: min(24rem, 88vw);
-  }
-
-  .term-window .terminal-body {
-    height: 8.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .hero-stage {
-    height: 20rem;
-  }
-
-  .term-window.term-acme {
-    left: 1%;
-    width: min(20rem, 82vw);
-  }
-
-  .term-window.term-you {
-    top: 2.5rem;
-    left: 10%;
-    width: min(21rem, 86vw);
-  }
-
-  .term-window .terminal-body {
-    height: 7.5rem;
-    font-size: 0.72rem;
+  .term-window.term-mac {
+    display: block;
+    position: relative;
+    inset: auto;
+    width: min(34rem, 100%);
+    margin: 0 auto;
+    scale: none;
   }
 }
 
