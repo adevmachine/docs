@@ -20,12 +20,32 @@ const allSections: Section[] = [
   {
     id: 'setup',
     title: 'Set up from the app',
-    body: 'No machine yet? The app walks you through setup. Run each step in a terminal inside the app, or hand the job to Claude Code or Codex and watch it work.',
+    body: 'No machine yet? The app installs the CLI, then asks if you have a server. No server? It makes a virtual machine on your Mac. You pick the packages, your first workspace and the coding agents that learn devmachine, see every command before it runs, and watch each log as it goes.',
     shots: [
       {
-        name: '09-onboarding',
-        alt: 'The setup screen with two choices: set it up here, step by step, or let your agent do it.',
-        caption: 'Set it up here, or let your agent do it.',
+        name: '09-setup-packages',
+        alt: 'The setup on the packages step for the machine lab: essentials, docker and other package cards, a row of coding agents (Claude Code, OpenAI Codex, Pi, Antigravity CLI, opencode, Kimi Code, Cline) with Claude Code and OpenAI Codex chosen, and beside it a summary of the answers and the devmachine commands they run.',
+        caption: 'Packages, coding agents, and the commands they run.',
+      },
+      {
+        name: '09-setup-choice',
+        alt: 'The first setup step asking "Do you already have a server (VPS)?", with two cards: Yes, I have a server, or No, make a machine on this Mac.',
+        caption: 'A server you have, or a machine on your Mac.',
+      },
+      {
+        name: '09-setup-details',
+        alt: 'The details step for a Lima machine named lab: 4 CPUs, 8 GiB of memory and a 40 GiB disk, and a first workspace named acme.',
+        caption: 'Size the machine and name your first workspace.',
+      },
+      {
+        name: '09-setup-running',
+        alt: 'The setup running: the log of installing Lima and creating lab on the left, and the list of steps on the right, with Install Lima done and Create lab in progress.',
+        caption: 'Every step runs here, with its log.',
+      },
+      {
+        name: '09-setup-ready',
+        alt: 'The last setup screen, "You are all set": Devmachine is ready, with a Start using Devmachine button.',
+        caption: 'Ready to use.',
       },
     ],
   },
@@ -101,7 +121,7 @@ const allSections: Section[] = [
     shots: [
       {
         name: '19-home',
-        alt: 'The home screen with two machines, staging and backup, each with RAM, disk, load and container counts.',
+        alt: 'The home screen with three machines, main, backup and staging, each with RAM, disk, load and container counts, above the Claude Code and Codex usage cards.',
         caption: 'Every machine, on one screen.',
       },
     ],
@@ -113,7 +133,7 @@ const allSections: Section[] = [
     shots: [
       {
         name: '06-stats',
-        alt: 'The stats page of the staging machine: memory and disk bars, running containers and RAM by workspace.',
+        alt: 'The stats page of the main machine: memory and disk bars, running containers and RAM by workspace.',
         caption: 'Memory, disk and containers of one machine.',
       },
     ],
@@ -130,7 +150,7 @@ const allSections: Section[] = [
       },
       {
         name: '10-publish-port',
-        alt: 'The Add subdomain dialog with the acme workspace, the label acme and local port 3000.',
+        alt: 'The Add subdomain dialog with the acme workspace published by main, the label acme and local port 3000.',
         caption: 'Publish a port.',
       },
       {
@@ -143,12 +163,12 @@ const allSections: Section[] = [
   {
     id: 'session-defaults',
     title: 'Session defaults',
-    body: 'Choose what a new session opens, per workspace: a plain terminal, Claude Code, Codex, or a command of your own.',
+    body: 'Choose what a new session opens, per workspace: a plain terminal, a coding agent (Claude Code, Codex, Pi, Antigravity CLI, opencode, Kimi Code or Cline), or a command of your own.',
     shots: [
       {
         name: '08-session-defaults',
-        alt: 'The session defaults settings: acme opens Claude Code, globex opens a terminal, and a custom command is listed.',
-        caption: 'Terminal, Claude, Codex or your own command.',
+        alt: 'Settings, a page beside the sidebar, on Harnesses: seven coding agents to turn on, and session defaults where acme opens Claude Code, globex runs npm run dev and initech opens OpenAI Codex.',
+        caption: 'Terminal, a coding agent or your own command.',
       },
     ],
   },
@@ -159,7 +179,7 @@ const allSections: Section[] = [
     shots: [
       {
         name: '07-settings-health',
-        alt: 'The health check in settings, with every check passing for staging.',
+        alt: 'Settings, a page beside the sidebar, on Advanced: the health check for main and backup, every check passing but a certificate renewal warning.',
         caption: 'devmachine doctor, in the app.',
       },
     ],
@@ -190,7 +210,7 @@ const heroShot: Shot = {
 }
 
 const features = [
-  { title: 'Setup, guided', body: 'Run each step in the app, or let your agent do it.' },
+  { title: 'Setup, guided', body: 'A server or a machine on your Mac, set up in the app with every log shown.' },
   { title: 'Operator', body: 'A session in your devmachine folder, always one click away.' },
   { title: 'Sessions that stay', body: 'Quit or update the app: every session, local or remote, keeps running.' },
   { title: 'Grids', body: 'Several sessions of one workspace, side by side.' },
@@ -198,7 +218,7 @@ const features = [
   { title: 'A context panel', body: 'Todo, pull requests, links, files and git of each session.' },
   { title: 'Home, stats and health', body: 'RAM, disk, load, containers and the doctor checks of every machine.' },
   { title: 'Sites and DNS', body: 'Publish a port in a few clicks. See the records of each provider.' },
-  { title: 'Session defaults', body: 'Terminal, Claude Code, Codex or your own command, per workspace.' },
+  { title: 'Session defaults', body: 'Terminal, a coding agent or your own command, per workspace.' },
   { title: 'Menu bar', body: 'Pull requests, and Claude Code and Codex usage.' },
   { title: 'Drop or paste files', body: 'Drag files or paste an image into a session. They land on its machine, path typed in.' },
   { title: 'A files view', body: 'Browse and preview the files of a workspace without a session.' },
